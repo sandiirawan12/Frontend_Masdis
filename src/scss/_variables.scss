@@ -1,0 +1,23 @@
+$primary :#0070BA;
+$light :#fff;
+$dark :#212121;
+
+// -------- body
+$body-font-family:'Lato', sans-serif;
+$body-font-size:16px;
+$body-font-weight:normal;
+$body-line-height:24px;
+$body-bg:$light;
+$body-font-color:$dark;
+
+
+//---------- button
+$btn-primary-bg-color:$primary;
+$btn-primary-font-color:$light;
+$btn-primary-icon-color:$light;
+$btn-primary-hover-bg-color: darken($primary,10%);
+$btn-primary-hover-font-color:$light;
+$btn-primary-hover-icon-color:$light;
+$btn-primary-active-bg-color:darken($primary,10%);
+$btn-primary-active-font-color:$light;
+$btn-primary-active-icon-color:$light;

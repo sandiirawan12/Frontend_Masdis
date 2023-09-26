@@ -1,0 +1,22 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+
+//-------- components
+@import 'components/button';
+@import 'components/pagination';
+@import 'components/photo';
+
+/* =========== common ============== */
+@import 'common/base';
+
+/* =========== widgets ============== */
+@import 'widgets/widget-drawer';
+@import 'widgets/widget-search';
+@import 'widgets/widget-flight';
+@import 'widgets/widget-homepage';
+@import 'widgets/widget-blogs';
+
+// @use "react-w";
+
+
+@import 'custom';

@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[7314],{70428:function(n,u,_){(window.__NEXT_P=window.__NEXT_P||[]).push(["/product/category/[slug]",function(){return _(55242)}])}},function(n){n.O(0,[6319,1954,186,7381,542,5496,1844,939,9317,454,6385,2651,6672,9774,2888,179],(function(){return u=70428,n(n.s=u);var u}));var u=n.O();_N_E=u}]);
