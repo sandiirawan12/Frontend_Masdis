@@ -57,13 +57,11 @@ function HotelPage() {
 
     useEffect(() => {
         if (navigator.geolocation) {
-            // alert("Geolocation is useEffect.");
             navigator.geolocation.getCurrentPosition(
                 handleSuccess,
                 handleError
             );
         } else {
-            alert("Geolocation is not supported by this browser.");
         }
     }, [])
 
@@ -72,7 +70,6 @@ function HotelPage() {
     const handleSuccess = (position) => {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
-        alert("Current latitude:" + latitude + ", " + longitude);
 
         setLatUser(parseFloat(latitude, 2));
         setLngUser(parseFloat(longitude, 1));
@@ -81,45 +78,20 @@ function HotelPage() {
         homeApi.getHotelTerdekat(latitude, longitude).then(res => {
             if (res.success) {
                 const updatedHotelTerdekat = { ...hotelTerdekat, data: res.data, isLoading: false };
-                console.log(updatedHotelTerdekat);
                 setHotelTerdekat(updatedHotelTerdekat);
             }
         })
-
-        // homeApi.getGeocoder(latitude, longitude).then(res => {
-        //     if (res.status === 'OK') {
-        //         if (res.results[0]) {
-        //             const address = res.results[0].formatted_address;
-        //             const addressComponents = res.results[0].address_components;
-        //             const cityComponent = addressComponents.find(component =>
-        //                 component.types.includes('administrative_area_level_2')
-        //             );
-
-        //             // alert("Current latitude:" + addressComponents + ", " + cityComponent);
-        //             if (cityComponent) {
-        //                 const city = cityComponent.long_name.replace('Kota ', '');;
-        //                 setCityUser(city);
-        //                 const lat = parseFloat(latitude, 2);
-        //                 const long = parseFloat(longitude, 1);
-
-        //             } else {
-        //                 alert("City not found in geocode results.");
-        //                 // this.setState({ city: '', error: 'City not found in geocode results.' });
-        //             }
-        //             // alert("Current location:" + address);
-        //             setAddressNow(address)
-        //         } else {
-        //             alert("No results found.");
-        //         }
-        //     } else {
-        //         alert("Geocoder failed due to:" + res.status);
-        //     }
-        // })
     };
 
 
     const handleError = (error) => {
-        console.log("Error occurred while retrieving geolocation:", error);
+        setHotelTerdekat({ ...hotelTerdekat, isLoading: true })
+        homeApi.getHotelTerdekat('', '').then(res => {
+            if (res.success) {
+                const updatedHotelTerdekat = { ...hotelTerdekat, data: res.data, isLoading: false };
+                setHotelTerdekat(updatedHotelTerdekat);
+            }
+        })
     };
 
     return (
@@ -131,8 +103,7 @@ function HotelPage() {
                             <div className="text-white" >
                                 <h1 className='font-weight-bold'>Hotel</h1>
                                 <p className="lead" style={{ width: '400px' }}>
-                                    Kunjungi akomondasi hotel terbaik di setiap wilayah dan dapatkan penawaran menarik untuk melengkapi perjalanan impian anda
-                                    
+                                    Kunjungi akomondasi hotel terbaik di setiap wilayah dan dapatkan penawaran menarik untuk melengkapi perjalanan impian anda   
                                 </p>
                             </div>
                         </div>
@@ -149,6 +120,9 @@ function HotelPage() {
             </section>
             <section className='container'>
                 <BestCity data={bestCity} />
+            </section>
+            <section className='container my-5'>
+                <hr />
             </section>
             <section className="py-3 mt-5" style={{ background: '#F5F6FA' }}>
                 <div className="container">
@@ -235,8 +209,6 @@ function HotelPage() {
                     </div>
                 </div>
             </section>
-
-
         </>
     )
 }

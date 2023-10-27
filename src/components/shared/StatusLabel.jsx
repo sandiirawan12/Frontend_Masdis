@@ -1,13 +1,13 @@
 import moment from "moment";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import Link from 'next/link';
 import { useMediaQuery } from "react-responsive";
 
 function StatusLabel(props) {
     const user = useSelector(state => state.user);
     const { purchase, setClickable, clickable, handleOpenPayment, handleSubmitIssued, setTokenIssued } = props
     const isTabletOrMobile = useMediaQuery({ query: '(max-width:1224px)' });
-    console.log(purchase, user);
     return (
         <>
             {(purchase.status.id === 13) &&
@@ -20,7 +20,7 @@ function StatusLabel(props) {
                     </h4>
                 </>
             }
-            {(purchase.status.id === 3 && (purchase.product === 'hotel' || purchase.product === 'product') && !isTabletOrMobile) &&
+            {(purchase.status.id === 3 && (purchase.product === 'hotel' || purchase.product === 'train' || purchase.product === 'product') && !isTabletOrMobile) &&
                 <> {
                     user.role == 'user' ?
                         <>
@@ -29,21 +29,25 @@ function StatusLabel(props) {
                                 <div className="btn-group btn-block">
                                     <button id="pay-button"
                                         onClick={() => {
-                                            setClickable(true)
-                                            window.snap.pay(purchase?.payments.token, {
-                                                onSuccess: function () {
-                                                    setClickable(false)
-                                                },
-                                                onPending: function () {
-                                                    setClickable(false)
-                                                },
-                                                onError: function () {
-                                                    setClickable(false)
-                                                },
-                                                onClose: function () {
-                                                    setClickable(false)
-                                                }
-                                            })
+                                        setClickable(true)
+                                            if (typeof window.snap !== 'undefined') {
+                                                window.snap.pay(purchase?.payments.token, {
+                                                    onSuccess: function () {
+                                                        setClickable(false);
+                                                    },
+                                                    onPending: function () {
+                                                        setClickable(false);
+                                                    },
+                                                    onError: function () {
+                                                        setClickable(false);
+                                                    },
+                                                    onClose: function () {
+                                                        setClickable(false);
+                                                    }
+                                                });
+                                            } else {
+                                                console.error('Snap is not defined. Make sure it is loaded.');
+                                            }
                                         }}
                                         disabled={clickable} style={{ width: '70%' }} className="btn btn-primary">BAYAR SEKARANG</button>
                                     <button onClick={handleOpenPayment} type="button" className="btn btn-info">Ganti Metode</button>
@@ -106,7 +110,6 @@ function StatusLabel(props) {
                                 </div>
                                 :
                                 <button onClick={handleOpenPayment} type="button" className="btn btn-block btn-info" >Pilih Metode Pembayaran</button>
-
                             }
                         </>
                         :
@@ -194,7 +197,16 @@ function StatusLabel(props) {
 
             {(purchase.status.id === 9 || purchase.status.vendor === 'CONFIRMED' && !isTabletOrMobile) &&
                 <>
-                    Pesanan berhasil <div className="row"><div className="col-md-12"><a href={purchase.doc.eticket} target='_blank' className="btn btn-primary btn-block mt-3">eVoucher</a></div></div>
+                Pesanan berhasil
+                <div className="row">
+                    <div className="col-md-12">
+                        <Link href={'/user/invoice/' + purchase.codeId} target='_blank'>
+                            <div className="btn btn-primary btn-block mt-3">
+                                eVoucher
+                            </div>
+                        </Link>
+                    </div>
+                </div>
                 </>
             }
 

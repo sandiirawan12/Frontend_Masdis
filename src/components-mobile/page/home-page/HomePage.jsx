@@ -70,7 +70,7 @@ function HomePage(props) {
         handleChange('popularFlight', { name: 'isLoading', value: true })
         homeApi.getPopularFlight(access_token, { limit: 10 }).then(res => {
             if (res.success) {
-                handleChange('popularFlight', { name: 'data', value: res.data })
+                handleChange('popularFlight', { name: 'data', value: res.data.data })
             }
             handleChange('popularFlight', { name: 'isLoading', value: false })
         })
@@ -150,7 +150,7 @@ function HomePage(props) {
                         </div>
                     </div>
                 </a></Link>
-                <CategoryCard data={state.categoryProduct.data} />
+                <CategoryCard data={state.categoryProduct} />
 
             </div>
             <div className="container-fluid my-2">
@@ -160,42 +160,39 @@ function HomePage(props) {
                 </section> */}
 
                 {/* new product */}
-                <section className='my-3'>
+                <section className='my-4'>
                     {useMemo(() =>
                         <NewProduct data={state.newProduct} />
                         , [state.newProduct])}
                 </section>
 
                 {/* 10 kota terbaik */}
-                <section className="mt-3">
+                <section className="my-4">
                     {useMemo(() =>
                         <BestCity data={state.bestTenCity} />
                         , [state.bestTenCity])}
                 </section>
 
                 {/* penerbangan popular */}
-                <section className="mt-3">
+                <section className="my-4">
                     {useMemo(() =>
                         <PopularFlight data={state.popularFlight} />
                         , [state.popularFlight])}
                 </section>
 
                 {state.promo.data?.length > 0 &&
-                    <Promo data={state.promo} />
+                    <section className='my-4'>
+                        <Promo data={state.promo} />
+                    </section>
                 }
 
                 {/* info covid-19 */}
                 <section style={{ background: '#F5F6FA' }}>
-                    <section className='mt-4'>
-                        {useMemo(() => {
-                            return <BlogSlider title='Info Covid-19' data={state.infoCovid} />
-                        }, [state.infoCovid])}
-                    </section>
                     <section style={{
                         // marginTop: '-6rem'
                     }}>
                         {useMemo(() => {
-                            return <BlogSlider title='Inspirasi' data={state.blogs} />
+                            return <BlogSlider title='Baca dan bangkitkan semangat liburanmu' data={state.blogs} />
                         }, [state.blogs])}
                     </section>
                     <section style={{

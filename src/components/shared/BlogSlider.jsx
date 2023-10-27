@@ -8,6 +8,7 @@ import { useMediaQuery } from 'react-responsive';
 import { CardStyle, TitleStyled, WrapperImage } from '../styled/blog';
 import classNames from 'classnames';
 import { Icon } from '@iconify/react';
+import Image from 'next/image';
 
 
 const SliderWrap = styled.div`
@@ -48,24 +49,41 @@ function BlogSlider(props) {
         <SliderWrap width={data?.length > 3 ? '' : 'true'}>
             <Swiper style={{
                 height: isTabletOrMobile ? '160px' : '270px'
-            }} slidesPerView={isTabletOrMobile ? 1.5 : 3.5} spaceBetween={10}>
+            }} slidesPerView={isTabletOrMobile ? 1.5 : 3.5} spaceBetween={10} className='p-1'>
                 {data?.map((item, index) => (
                     <SwiperSlide key={index}>
                         <Link href={url.blog(item.title_slug)}><a className='text-decoration-none text-dark'>
                             <CardStyle>
                                 <WrapperImage>
-                                    <img alt={item.title} src={`${item.img}`} />
+                                    <Image layout='fill' alt={item.title} src={`${item.img}`} />
                                     <p className="card-text mb-0" style={{ position: 'absolute', bottom: 8, left: 8 }}><span className="badge badge-warning font-weight-bold">{item.category.name_blog_category}</span></p>
-
                                 </WrapperImage>
-                                <div className="content p-3" >
-                                    <p className='card-text text-secondary label-name' style={{
-                                        display:'-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient:'vertical',
-                                        overflow:'hidden',textOverflow:'ellipsis'
-                                    }}>{item.title}</p>
-                                </div>
+                                {
+                                    !isTabletOrMobile ?
+                                        <>
+                                            <div className="content p-3">
+                                                <p className='card-text text-secondary label-name' style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>{item.title}</p>
+                                            </div>
+                                        </>
+                                        :
+                                        <>
+                                            <div className="content p-2">
+                                                <p className='card-text text-secondary label-name' style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>{item.title}</p>
+                                            </div>
+                                        </>
+                                }
 
                             </CardStyle>
                         </a></Link>

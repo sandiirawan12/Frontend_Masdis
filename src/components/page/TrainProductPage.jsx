@@ -21,6 +21,8 @@ import SortIcon from '@iconify-icons/fa/filter'
 import WidgetFilterFlight from "@/components-mobile/shared/WidgetFilterFlight";
 import WidgetSort from "@/components-mobile/shared/WidgetSort";
 import FlightPage from "@/components-mobile/page/FlightPage";
+import ReactPlaceholder from 'react-placeholder/lib';
+import Swal from 'sweetalert2';
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('G-56R5954QCE');
@@ -39,10 +41,10 @@ const initialState = {
         },
         {
             name: 'Waktu', slug: 'departure_time', value: [], type: 'time', items: [
-                { slug: '00:00-05:59', name: 'Dini Hari', icon: 'moonSolid' },
-                { slug: '06:00-11:59', name: 'Pagi Hari', icon: 'sunSolid' },
-                { slug: '12:00-17:59', name: 'Siang Hari', icon: 'sunRegular' },
-                { slug: '18:00-23:59', name: 'Malam Hari', icon: 'moonRegular' },
+                { slug: '00:00-06:00', name: 'Malam Ke Pagi', icon: 'moonSolid' },
+                { slug: '06:00-12:00', name: 'Pagi Ke Siang', icon: 'sunSolid' },
+                { slug: '12:00-18:00', name: 'Siang Ke Sore', icon: 'sunRegular' },
+                { slug: '18:00-24:00', name: 'Sore Ke Malam', icon: 'moonRegular' },
             ]
         },
         // {
@@ -219,6 +221,7 @@ function TrainProductPage() {
 
     const [open, setOpen] = useState({ filter: false, sort: false })
 
+    const [detailSearch, setDetailSearch] = useState({});
 
     const isTabletOrMobile = useMediaQuery({ query: '(max-width:1224px)' })
 
@@ -270,19 +273,47 @@ function TrainProductPage() {
 
     useEffect(() => {    
         dispatch({ type: 'FETCH_TRAIN' })
-        shopApi.getTrainProducts(access_token, state.options, { ...state.filters, statSort }).then(res => {
-            if (res.status.code === 200) {
-                if (trainChoose.train1) {
-                    // dispatch({ type: 'FETCH_TRAIN_SUCCESS', payload: res.data.optionsRt })
-                    dispatch({ type: 'FETCH_TRAIN_SUCCESS', payload: res.data.keberangkatan })
+        shopApi.getTrainProducts(access_token, state.options, { ...state.filters, statSort })
+            .then(res => {
+                if (res.status.code === 200) {
+                    setDetailSearch(res.detail)
+
+                    if (state.options.direct === "RT") {
+                        setOptionsRt(res.data.kepulangan.length)
+                    }
+
+                    if (trainChoose.train1) {
+                        dispatch({ type: 'FETCH_TRAIN_SUCCESS', payload: res.data.kepulangan })
+                    } else {
+                        dispatch({ type: 'FETCH_TRAIN_SUCCESS', payload: res.data.keberangkatan })
+                    }
+                    if (!isTabletOrMobile) {
+                        setStatSort(prev => ({ ...prev, [state.filters.orderType]: !prev[state.filters.orderType] }))
+                    }
                 } else {
-                    dispatch({ type: 'FETCH_TRAIN_SUCCESS', payload: res.data.keberangkatan })
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal !',
+                        text: 'Data KAI sedang mengalami gangguan',
+                        allowOutsideClick: false
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            router.reload()
+                        }
+                    })
                 }
-                if (!isTabletOrMobile) {
-                    setStatSort(prev => ({ ...prev, [state.filters.orderType]: !prev[state.filters.orderType] }))
-                }
-            }
-        })
+            }).catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal !',
+                    text: 'Data KAI sedang mengalami gangguan',
+                    allowOutsideClick: false
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        router.reload()
+                    }
+                })
+            })
     }, [state.options, state.filters]);
 
 
@@ -301,29 +332,40 @@ function TrainProductPage() {
                 setTrainChoose({ ...trainChoose, train1: item })
                 dispatch({ type: 'RESET_FILTER' })
             } else {
-                setTrainChoose({ ...trainChoose, train2: item })
                 if (!auth) {
-                    dispatchReduce(changeRedirectUrl(`/product/train/train-passenger/${trainChoose.train1.segment_code}?key=${item.segment_code}`))
-                }
+                    router.push(`/login`)
+                } else {
+                    const dataContact = contact
 
-                router.push(`/product/train/train-passenger/${trainChoose.train1.segment_code}?key=${item.segment_code}`)
+                    shopApi.getSelectTrainSchedule(access_token, dataContact.email, state.options, trainChoose.train1, item)
+                        .then(res => {
+                            if (res.status.code === 200) {
+                                router.push(`/product/train/train-passenger/${res.id_schedule}`)
+
+                                if (!isTabletOrMobile) {
+                                    setStatSort(prev => ({ ...prev, [state.filters.orderType]: !prev[state.filters.orderType] }))
+                                }
+                            }
+                        })
+                }
             }
         } else {
             if (!auth) {
-                dispatchReduce(changeRedirectUrl(`/product/train/train-passenger/${item}`))
+                router.push(`/login`)
+            } else {
+                const dataContact = contact
+
+                shopApi.getSelectTrainSchedule(access_token, dataContact.email, state.options, item)
+                    .then(res => {
+                        if (res.status.code === 200) {
+                            router.push(`/product/train/train-passenger/${res.id_schedule}`)
+
+                            if (!isTabletOrMobile) {
+                                setStatSort(prev => ({ ...prev, [state.filters.orderType]: !prev[state.filters.orderType] }))
+                            }
+                        }
+                    })
             }
-
-            const dataContact = contact
-
-            shopApi.getSelectTrainSchedule(access_token, dataContact.email, state.options, item).then(res => {
-                if (res.status.code === 200) {
-                    router.push(`/product/train/train-passenger/${res.id_schedule}`)
-
-                    if (!isTabletOrMobile) {
-                        setStatSort(prev => ({ ...prev, [state.filters.orderType]: !prev[state.filters.orderType] }))
-                    }
-                }
-            })
         }
     }
 
@@ -351,7 +393,7 @@ function TrainProductPage() {
                         <>
                             <div className="col-8 font-weight-bold">
                                 <div className="font-weight-bold p-0">
-                                    <p className="text-center text-white d-block" style={{ fontSize: '14px', marginBottom: '-5px' }}>{state.options.to}-{state.options.from}, {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)} Penumpang</p>
+                                    <p className="text-center text-white d-block" style={{ fontSize: '14px', marginBottom: '-5px' }}>{detailSearch.to} - {detailSearch.from}, {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)} Penumpang</p>
                                     <p className="text-center text-white mb-0" style={{ fontSize: '12px' }}>{moment(toDate(state.options.dateTo)).locale('id', idLocale).format('DD MMM YYYY')}
                                     </p>
                                 </div>
@@ -364,7 +406,7 @@ function TrainProductPage() {
                         <>
                             <div className="col-8 font-weight-bold">
                                 <div className="font-weight-bold p-0">
-                                    <p className="text-center text-white d-block" style={{ fontSize: '14px', marginBottom: '-5px' }}>{state.options.from} - {state.options.to}, {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)} penumpang</p>
+                                    <p className="text-center text-white d-block" style={{ fontSize: '14px', marginBottom: '-5px' }}>{detailSearch.from} - {detailSearch.to}, {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)} penumpang</p>
                                     <p className="text-center text-white mb-0" style={{ fontSize: '12px' }}>{moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('DD MMM YYYY')}
                                     </p>
                                 </div>
@@ -378,80 +420,89 @@ function TrainProductPage() {
             }
 
             {!isTabletOrMobile && <>
-                <section className="border-bottom mb-3" style={{ background: '#0070BA' }}>
+                <section className="border-bottom mt-3" style={{ background: '#f5f6fa' }}>
                     <div className="container">
-                        <div className="row">
-                            <div className="py-2 col-md-5">
-                                {trainChoose.train1 ?
-                                    <div>
-                                        <div className="media bg-white text-primary font-weight-bold p-2 rounded">
-                                            <div className="h-100 bg-white mr-3 p-2 rounded">
-                                                <img style={{ height: '42px' }} src={trainChoose.train1?.image} className="airline-img" alt="AirAsia Airways" />
-                                            </div>
-                                            <div className="media-body"><div className="d-flex align-items-center"><div className="text-center">
-                                                <p className="mb-0" /><b>{trainChoose.train1?.detail.from.code}</b></div>
-                                                <span className="mx-2">→</span><div className="text-center"><p className="mb-0"><b>{trainChoose.train1?.detail.to.code}</b></p></div></div><p className="mb-0">{trainChoose.train1?.detail.train[0].departure.date} {trainChoose.train1?.detail.train[0].departure.time}</p><p className="mb-0"><b> IDR {trainChoose.train1?.price.toLocaleString()}</b></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    :
-                                    <div className="d-flex text-primary font-weight-bold justify-content-around  align-items-center p-2 rounded" style={{ background: 'white' }}>
-                                        <span className="mb-0 s_origin">{state.options.from}</span>
-                                        <span className="mx-2">→</span>
-                                        <span className="mb-0 s_destination">{state.options.to}</span>
-                                        |
-                                        <p className="mb-0 s_departuredate">{
-                                            moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('ddd, DD MMM YYYY')
-                                        }</p>
-                                        |
-                                        <p className="mb-0"><span className="s_guest">
-                                            {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)}
-                                        </span>{" "}Penumpang</p>
-                                    </div>
-                                }
-                            </div>
-                            <div className="py-2 col-md-5">
-                                {trainChoose.train2 ?
-                                    <div>
-                                        <div className="media bg-white text-primary font-weight-bold p-2 rounded">
-                                            <div className="h-100 bg-white mr-3 p-2 rounded">
-                                                <img style={{ height: '42px' }} src={trainChoose.train2?.image} className="airline-img" alt="AirAsia Airways" />
-                                            </div>
-                                            <div className="media-body"><div className="d-flex align-items-center"><div className="text-center">
-                                                <p className="mb-0" /><b>{trainChoose.train2?.detail.from.code}</b></div>
-                                                <span className="mx-2">→</span><div className="text-center"><p className="mb-0"><b>{trainChoose.train2?.detail.to.code}</b></p></div></div><p className="mb-0">{trainChoose.train2?.detail.train[0].departure.date} {trainChoose.train2?.detail.train[0].departure.time}</p><p className="mb-0"><b> IDR {trainChoose.train2?.price.toLocaleString()}</b></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    :
-                                    <>
-                                        {state.options.dateTo &&
-                                            <div className="d-flex justify-content-around text-primary font-weight-bold align-items-center p-2 rounded" style={{ background: 'white' }}>
-                                                <span className="mb-0 s_origin">{state.options.to}</span>
-                                                <span className="mx-2">→</span>
-                                                <span className="mb-0 s_destination">{state.options.from}</span>
-                                                |
-                                                <p className="mb-0 s_departuredate">{
-                                                    moment(toDate(state.options.dateTo)).locale('id', idLocale).format('ddd, DD MMM YYYY')
-                                                }</p>
-                                                |
-                                                <p className="mb-0"><span className="s_guest">
-                                                    {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)}
-                                                </span>{" "}Penumpang</p>
-                                            </div>
-                                        }
-                                    </>
-                                }
+                        <div className="row mb-2">
+                            <div className="py-2 col-md-10">
+                                <div className="d-flex text-primary font-weight-bold justify-content-around  align-items-center p-2 rounded" style={{ background: 'white', border: '1px solid #dfdfdf' }}>
+                                    <span className="mb-0 s_origin">{detailSearch.from} ({state.options.from})</span>
+                                    <span className="mx-2">→</span>
+                                    <span className="mb-0 s_destination">{detailSearch.to} ({state.options.to})</span>
+                                    |
+                                    <p className="mb-0 s_departuredate">{
+                                        moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('ddd, DD MMM YYYY')
+                                    }</p>
+                                    |
+                                    <p className="mb-0"><span className="s_guest">
+                                        {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)}
+                                    </span>{" "}Penumpang</p>
+                                </div>
                             </div>
                             <div className="col-md-2 py-2 ">
-                                <button onClick={() => setIsChange(!isChange)} className="btn btn-block btn-warning font-weight-bold" type="button" >
-                                    Ganti pencarian</button>
+                                <span onClick={() => setIsChange(!isChange)} className="text-primary p-2" type="button" >
+                                    <Icon icon="icon-park-twotone:search" className="mr-1" /> Ganti pencarian
+                                </span>
                             </div>
                         </div>
                     </div>
                 </section>
+                {trainChoose.train1 ?
+                    <div className="border-bottom mt-2" style={{ background: '#f5f6fa' }}>
+                        <div className="container">
+                            <div className="row mb-2">
+                                <div className="col-md-12">
+                                    <div className="d-flex align-items-center bg-white p-2 rounded" style={{ border: '1px solid #dfdfdf' }}>
+                                        <div className="mx-3">
+                                            Pilihan Keberangkatan
+                                        </div>
+                                        <div className="bg-white mr-3">
+                                            <img style={{ width: '42px', height: '20px' }} src="https://cdn.masterdiskon.com/masterdiskon/img/kai-logo.png" className="airline-img" alt="airline-img" />
+                                        </div>
+                                        <div className="d-flex align-items-center my-1">
+                                            <div>
+                                                <div className="d-flex align-items-center">
+                                                    <span className="font-weight-bold">{trainChoose.train1?.nama_kereta}</span>
+                                                    <span className="mx-2">-</span>
+                                                    <span>{trainChoose.train1?.no_kereta}</span>
+                                                    <span className="mx-2">-</span>
+                                                    <span>{trainChoose.train1?.kelas_kereta} (Class {trainChoose.train1?.tipe_kereta})</span>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex align-items-center mx-4">
+                                                <div className="text-center">
+                                                    <span className="mb-0">
+                                                        {trainChoose.train1?.stasiun_awal}
+                                                    </span>
+                                                </div>
+                                                <span className="mx-2 text-primary"><Icon icon="pepicons-print:arrow-right" /></span>
+                                                <div className="text-center">
+                                                    <span className="mb-0">
+                                                        {trainChoose.train1?.stasiun_akhir}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="mr-4">
+                                                <span>{trainChoose.train1?.tgl_keberangkatan} {trainChoose.train1?.waktu_keberangkatan}</span>
+                                            </div>
+                                            <div className="mr-4">
+                                                <span>{trainChoose.train1?.durasi_perjalanan}</span>
+                                            </div>
+                                            <div>
+                                                <p className="mb-1" style={{ fontSize: '20px' }}>
+                                                    <b className="text-danger">Rp {trainChoose.train1?.harga_tiket_dewasa.toLocaleString()}</b>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    ''        
+                }
                 <Collapse isOpen={isChange} >
-                    <div className="container">
+                    <div className="container mt-3">
                         <WidgetTrain handleChangeOptions={handleChangeOptions} options={state.options} />
                     </div>
                 </Collapse>
@@ -461,6 +512,41 @@ function TrainProductPage() {
                 <div className="row">
                     {!isTabletOrMobile &&
                         <div className="col-3">
+                            <div className="mb-4 p-3 bg-white rounded border">
+                                <span className="font-weight-bold">
+                                    <Icon icon="noto:train" className="mr-3" style={{ fontSize: '20px' }} />
+                                    Perjalanan Anda
+                                </span>
+                                {state.isLoading ?
+                                    <ReactPlaceholder type='rect' style={{ height: '30px', width: '200px' }} className="mt-3" showLoadingAnimation ready={!state.isLoading} />
+                                    :
+                                    <div>
+                                        {state.options.dateFrom ?
+                                            <div className="mt-3" style={{ borderRight: '3px solid #015386' }}>
+                                                <small>{moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('ddd, DD MMM YYYY')}</small> <br />
+                                                <span className="font-weight-bold">{detailSearch.from} <Icon icon="solar:arrow-right-line-duotone" className="text-primary mx-2" /> {detailSearch.to}</span>
+                                            </div>
+                                            :
+                                            <></>
+                                        }
+                                        {state.options.dateTo ?
+                                            <div>
+                                                <hr />
+                                                <div style={{ borderRight: '3px solid #015386' }}>
+                                                    <small>{moment(toDate(state.options.dateTo)).locale('id', idLocale).format('ddd, DD MMM YYYY')}</small> <br />
+                                                    <span className="font-weight-bold">
+                                                        {detailSearch.to}
+                                                        <Icon icon="solar:arrow-right-line-duotone" className="text-primary mx-2" />
+                                                        {detailSearch.from}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            :
+                                            <></>
+                                        }
+                                    </div>
+                                }
+                            </div>
                             <WidgetFilter title='Filter' filters={state.dataFilters} values={state.filters} dispatch={dispatch} />
                         </div>
                     }
@@ -469,7 +555,6 @@ function TrainProductPage() {
                     })}>
 
                         {!isTabletOrMobile && <>
-                            <h4 className="font-weight-bold text-primary mb-3">Jadwal Kereta</h4>
                         </>}
                         {(state.isLoading) ?
                             [1, 2, 3, 4, 5].map((item, index) => (

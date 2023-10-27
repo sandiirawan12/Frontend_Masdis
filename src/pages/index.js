@@ -12,10 +12,14 @@ function Page() {
 
   return (
     <>
-      {/* <Head>
-        <title>Master Diskon - Cari tiket pesawat dan Hotel promo murah</title>
-      </Head> */}
-      <HomePage />
+      <Head>
+          <title>Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023</title>
+          <meta
+            name="description"
+            content="Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023"
+          />
+      </Head>
+      <HomePage/>
     </>
   )
 }

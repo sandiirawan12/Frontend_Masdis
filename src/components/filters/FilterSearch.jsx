@@ -8,9 +8,9 @@ function FilterSearch(props) {
         <div className="form-group mb-0">
             <label className="font-weight-bold">{data.name}</label>
             <input type="text" id="cari-hotel" onChange={(e) => updateValue(e.target.value)} value={value} className="form-control" style={{
-                border: '1px solid black',
-                borderRadius: '0'
-            }} placeholder="Cari hotel impian anda ..." autoComplete="off" autoFocus />
+                border: '1px solid #e7e7e7',
+                borderRadius: '10px'
+            }} placeholder="Cari nama hotel ..." autoComplete="off" autoFocus />
         </div>
 
     );

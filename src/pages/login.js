@@ -10,7 +10,11 @@ function Page() {
     return (
         <>
             <Head>
-                <title>Login Akun Masterdiskon.com</title>
+                <title>Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023</title>
+                <meta
+                    name="description"
+                    content="Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023"
+                />
             </Head>
             <LoginComponent />
         </>

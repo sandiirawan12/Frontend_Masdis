@@ -89,21 +89,45 @@ function WidgetTrain(props) {
 
   useEffect(() => {
     if (options?.from) {
-      homeApi.getAutocompleteTrain(access_token, { product: 'train', q: options?.from }).then(res => {
-        if (res.success) {
-          handleChangeFrom('selected', res.data.filter(item => item.station_code === options.from))
-        }
-      })
+      homeApi.getAutocompleteTrain(access_token, { product: 'train', q: options?.from })
+        .then(res => {
+          if (res.status.code === 200) {
+            handleChangeFrom('selected', res.data.filter(item => item.station_code === options.from))
+          }
+        }).catch(error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal !',
+            text: 'Data KAI sedang mengalami gangguan',
+            allowOutsideClick: false
+          }).then(result => {
+            if (result.isConfirmed) {
+              router.reload()
+            }
+          })
+        })
     }
   }, [options?.from])
 
   useEffect(() => {
     if (options?.to) {
-      homeApi.getAutocompleteTrain(access_token, { product: 'train', q: options?.to }).then(res => {
-        if (res.success) {
-          handleChangeTo('selected', res.data.filter(item => item.station_code === options.to))
-        }
-      })
+      homeApi.getAutocompleteTrain(access_token, { product: 'train', q: options?.to })
+        .then(res => {
+          if (res.status.code === 200) {
+            handleChangeTo('selected', res.data.filter(item => item.station_code === options.to))
+          }
+        }).catch(error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal !',
+            text: 'Data KAI sedang mengalami gangguan',
+            allowOutsideClick: false
+          }).then(result => {
+            if (result.isConfirmed) {
+              router.reload()
+            }
+          })
+        })
     }
   }, [options?.to])
 
@@ -251,24 +275,32 @@ function WidgetTrain(props) {
                 : (
                   <>
                     <span className="d-flex justify-content-between align-items-center">
-                      <div>
-                        <strong style={{
-                          textOverflow: 'ellipsis',
-                          width: '220px',
-                          fontSize: '16px',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.station_name}
-                        </strong>
-                        <br />
-                        <small style={{
-                          width: '100%',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.city}, Indonesia
-                        </small>
+                      <div className='d-flex align-items-center'>
+                        <Icon icon="pepicons-print:train"
+                          style={{
+                            fontSize: '28px',
+                            color:'#f44336'
+                          }}
+                        />
+                        <div className='ml-3' style={{ width: '95%' }}>
+                          <strong style={{
+                            textOverflow: 'ellipsis',
+                            width: '210px',
+                            fontSize: '16px',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.station_name}
+                          </strong>
+                          <br />
+                          <small style={{
+                            width: '100%',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.city}, Indonesia
+                          </small>
+                        </div>
                       </div>
                       <span className="badge bg-danger text-uppercase text-white ml-1">{option.station_code}</span>
                     </span>
@@ -308,24 +340,32 @@ function WidgetTrain(props) {
                   </span> :
                   <>
                     <span className="d-flex justify-content-between align-items-center">
-                      <div>
-                        <strong style={{
-                          textOverflow: 'ellipsis',
-                          width: '220px',
-                          fontSize: '16px',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.station_name}
-                        </strong>
-                        <br />
-                        <small style={{
-                          width: '100%',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.city}, Indonesia
-                        </small>
+                      <div className='d-flex align-items-center'>
+                        <Icon icon="pepicons-print:train"
+                          style={{
+                            fontSize: '28px',
+                            color: '#f44336'
+                          }}
+                        />
+                        <div className='ml-3' style={{ width: '95%' }}>
+                          <strong style={{
+                            textOverflow: 'ellipsis',
+                            width: '210px',
+                            fontSize: '16px',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.station_name}
+                          </strong>
+                          <br />
+                          <small style={{
+                            width: '100%',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.city}, Indonesia
+                          </small>
+                        </div>
                       </div>
                       <span className="badge bg-danger text-uppercase text-white ml-1">{option.station_code}</span>
                     </span>
@@ -385,7 +425,7 @@ function WidgetTrain(props) {
         <ListItemStyled className="list-group-item p-0 bg-warning w-20 tombolcari">
           <button onClick={handleSearch} className="btn btn-transparent d-flex justify-content-center align-items-center font-weight-bold h-100 btn-block">
             <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
-              <Image layout='fill' src={'https://cdn.masterdiskon.com/masterdiskon/icon/fe/luv.png'} />
+              <Icon icon="icon-park-twotone:search"></Icon>
             </div>
             Search</button>
         </ListItemStyled>

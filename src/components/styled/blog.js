@@ -24,9 +24,9 @@ export const CardStyle = styled.div`
     }
 
     @media screen and (max-width:1224px){
-        min-height: 130px; 
+        min-height: 150px; 
         .content{
-            height:42px;
+            height: 50px;
         }
         .label-name{
             font-weight:500;

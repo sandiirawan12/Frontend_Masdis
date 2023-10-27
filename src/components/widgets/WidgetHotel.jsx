@@ -197,18 +197,18 @@ function WidgetHotel(props) {
             setcolorC('#E1C250')
         }
         else if (dayName === 'Jumat') {
-            setcolorA('#00bb1f')
-            setcolorB('#3aff93')
-            setcolorC('#e4ff50')
+            setcolorA('#3500bb')
+            setcolorB('#b13aff')
+            setcolorC('#5082ff')
         }
         else if (dayName === 'Sabtu') {
             setcolorA('#9300bb')
             setcolorB('#ff3afe')
             setcolorC('#ff50cb')
         } else {
-            setcolorA('#0C71B6')
-            setcolorB('#DC6506')
-            setcolorC('#E1C250')
+            setcolorA('#0071a3')
+            setcolorB('#32cde3')
+            setcolorC('#581fc3')
         }
     }, [date])
 
@@ -286,9 +286,8 @@ function WidgetHotel(props) {
                                     selected= {hotelSelected}
                                     onChange= {(val) => setHotelSelected(val)}
                                     filterBy= {() => true}
-                                    minLength= {3}
+                                    minLength= {1}
                                     labelKey= "fullname"
-                                    highlightOnlyResult
                                     onSearch= {handleChangeKeyword}
                                     onInputChange= {handleChangeKeyword}
                                     options= {listHotel}
@@ -451,9 +450,11 @@ function WidgetHotel(props) {
                 </ListItemStyled>
                 <ListItemStyled className="list-group-item pb-0 w-40">
                     <div className="form-group mb-0">
-                        <label htmlFor="exampleInputEmail1" style={{ marginBottom: '-20px' }}><span className={classNames("", {
+                        <label htmlFor="exampleInputEmail1" style={{ marginBottom: '-20px' }} aria-label="true">
+                            <span className={classNames("", {
                             'font-weight-bold': willSearch
-                        })}>Tamu &amp; Kamar</span></label>
+                            })}>Tamu &amp; Kamar</span>
+                        </label>
                         <DropdownVisitor willSearch={willSearch} visitor={visitor} childAge={childAge} room={room} handleAddVisitor={handleAddVisitor} handleChangeAge={handleChangeAge} handleChangeRoom={handleChangeRoom} handleReduceVisitor={handleReduceVisitor} />
 
                     </div>
@@ -466,7 +467,7 @@ function WidgetHotel(props) {
                         }}
                         className="btn font-weight-bold btn-warning d-flex justify-content-center align-items-center h-100 btn-block">
                         <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
-                            <Image layout='fill' src={'https://cdn.masterdiskon.com/masterdiskon/icon/fe/luv.png'} />
+                            <Icon icon="icon-park-twotone:search"></Icon>
                         </div>
                         Search
                     </button>

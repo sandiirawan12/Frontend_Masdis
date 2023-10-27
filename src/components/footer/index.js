@@ -28,7 +28,7 @@ const DownloadApp = styled.img`
 
 const DownloadApp1 = styled.img`
     width:130px;
-    height:40px;
+    height:45px;
     cursor: pointer;
 `
 
@@ -38,26 +38,28 @@ function Footer() {
       <div className="container pb-5">
         <div className="row">
           <div className="col-md-3 p-0 mb-2">
-            <Link href='/' >
-                <a className="navbar-brand mb-4">
-                    <LogoStyled placeholder='blur' src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/masterdiskon_logo_big.png" />
-                </a>
+            <Link href='/'>
+                <Image src='https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/masterdiskon_logo.png' width={140} height={70} alt='Logo Masterdiskon' />
             </Link>
-            <h6><b>Tersedia Pembayaran</b></h6>
-            <ul className="list-unstyled foot-link d-flex flex-wrap">
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoBCA.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoMandiri.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoBRI.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoBNI.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoVISA.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoMSTC.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoATM.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoQRIS.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoGOPAY.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoSHOPEEPAY.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoINDODANA.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoAKULAKU.png" alt='' /></li>
-            </ul>
+            <br />
+            <br />
+            <div>
+              <h5 className='text-primary mb-2'><b>Tersedia Pembayaran</b></h5>
+              <ul className="list-unstyled foot-link d-flex flex-wrap">
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoBCA.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoMandiri.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoBRI.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoBNI.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoVISA.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoMSTC.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoATM.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoQRIS.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoGOPAY.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoSHOPEEPAY.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoINDODANA.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/payment/logoAKULAKU.png" alt="Image Masterdiskon" /></li>
+              </ul>
+            </div>
           </div >
           <div className="col-md-3 p-0">
             <h6 className='text-primary'><b>Tentang Master Diskon</b></h6>
@@ -146,12 +148,12 @@ function Footer() {
             <h6 className='text-primary'><b>Download Masterdiskon App</b></h6>
             <div>
               <Link href='/download'>
-                <DownloadApp src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/google-play-badge.svg" />
+                <DownloadApp src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/google-play-badge.svg" alt="Image Masterdiskon" />
               </Link>
             </div>
             <div>
               <Link href='/download'>
-                <DownloadApp1 src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/id-badge-ios.png" />
+                <DownloadApp1 src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/id-badge-ios.png" alt="Image Masterdiskon" />
               </Link>
             </div>
           </div>
@@ -159,9 +161,7 @@ function Footer() {
             <h6 className='text-primary'><b>Bantuan</b></h6>
             <ul className="list-unstyled foot-link">
               <li>
-                <Link href='mailto:cs@masterdiskon.com' className="text-info">
-                  cs@masterdiskon.com
-                </Link>
+                <span className="text-muted">cs@masterdiskon.com</span>
               </li>
               <li><span className="text-muted">Whatsapp 0822 5500 3525</span></li>
               <li><span className="text-muted">Telp (021) 27811300</span></li>
@@ -169,14 +169,16 @@ function Footer() {
                 <p className="text-muted">Gedung Alamanda Tower Lt.20/F,<br />Jl. TB Simatupang No.22-26, <br />  Cilandak Bar., Kec. Cilandak, Kota Jakarta Selatan, DKI Jakarta 12430</p>
               </li>
             </ul>
-            <h6><b className='text-primary'>Group Perusahaan</b></h6>
-            <ul className="list-unstyled foot-link d-flex flex-wrap">
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoEurLog.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoEurBok.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoRace.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoJaja.png" alt='' /></li>
-              <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoKatras.png" alt='' /></li>
-            </ul>
+            <div>
+              <h6><b className='text-primary'>Group Perusahaan</b></h6>
+              <ul className="list-unstyled foot-link d-flex flex-wrap">
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoEurLog.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoEurBok.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoRace.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoJaja.png" alt="Image Masterdiskon" /></li>
+                <li><IconStyled blurDataURL width={65} height={65} placeholder='blur' className="icon-byr" src="https://cdn.masterdiskon.com/masterdiskon/assets/images/logoGroup/logoKatras.png" alt="Image Masterdiskon" /></li>
+              </ul>
+            </div>
           </div>
         </div >
       </div >

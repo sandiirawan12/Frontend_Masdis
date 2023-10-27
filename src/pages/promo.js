@@ -72,10 +72,10 @@ function Page() {
                             </div>
                         }
                         {listPromo.map(item => (
-                            <div className='col-md-3'>
+                            <div className='col-md-4'>
                                 <Link as={`/promo/${item.slug}`} href={`/promo/[slug]`}><a style={{ color: 'inherit', textDecoration: 'none' }}>
-                                    <div className="card" style={{borderRadius: '20px'}}>
-                                        <img className="card-img-top" src={item.image} alt="promo" />
+                                    <div className="card" style={{ borderRadius: '20px' }}>
+                                        <img src={`${item.image}`} alt="Image Promo" style={{width:'100%', height:'auto', borderRadius:'20px 20px 0px 0px'}} />
                                         <div className="card-body py-2 px-3">
                                             <h6
                                                 style={{

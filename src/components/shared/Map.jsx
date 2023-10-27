@@ -2,6 +2,7 @@ import GoogleMapReact from 'google-map-react';
 import { useState } from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 import BedIcon from '@iconify/icons-fa-solid/bed';
 import { Icon } from '@iconify/react';
@@ -12,12 +13,14 @@ const markerStyle = {
     width: 25
 };
 function Map({ setCoordinates, coordinates, setChildClicked, places }) {
-    return <div style={{ height: "70vh", width: "100%" }}>
+    const { auth } = useSelector(state => state)
+
+    return <div style={{ height: "100vh", width: "100%" }}>
         <GoogleMapReact
             bootstrapURLKeys={{ key: "AIzaSyC_O0-LKyAboQn0O5_clZnePHSpQQ5slQU" }}
             defaultCenter={coordinates}
             center={coordinates}
-            defaultZoom={16}
+            defaultZoom={15}
             margin={[20]}
             options={''}
             onChange={e => {
@@ -39,15 +42,20 @@ function Map({ setCoordinates, coordinates, setChildClicked, places }) {
                 //     </>
                 // </PlaceStyled>
 
-
                 <PlaceStyled className='active' lng={Number(place.detail.longitude)} lat={Number(place.detail.latitude)} >
-
-
-                    <div className='label row' style={{ zIndex: 1000, position: 'absolute', borderRadius: 50, color: '#FFF', padding: 5, marginTop: -20, backgroundColor: place.price > 0 ? '#005EAA' : '#C74545', borderWidth: 0 }}>
-                        <> <span style={{ color: '#FFF', fontSize: '12px', }}> <Icon icon={BedIcon} className="ml-1" /> </span> </>
+                    <div className='label row' style={{ zIndex: 1000, position: 'absolute', borderRadius: 50, color: '#FFF', padding: 10, marginTop: -20, backgroundColor: place.price > 0 ? '#005EAA' : '#C74545', borderWidth: 0 }}>
+                        <> <span style={{ color: '#FFF', fontSize: '14px', }}> <Icon icon="solar:bed-line-duotone" className="ml-1" /> </span> </>
                         <>
-                            <span style={{ color: '#FFF', fontSize: '12px', marginLeft: '5px', display: place.price > 0 ? 'block' : 'none' }}> Rp{place.promoPrice.toLocaleString().replaceAll(',', '.')}</span>
-                            <span style={{ color: '#FFF', fontSize: '12px', marginLeft: '5px', display: place.price < 1 ? 'block' : 'none' }}> Full Booking</span>
+                            {!auth ?
+                                <>
+                                    <span style={{ color: '#FFF', fontSize: '14px', marginLeft: '5px', display: place.price > 0 ? 'block' : 'none' }}>Rp {place.price.toLocaleString().replaceAll(',', '.')}</span>
+                                </>
+                                :
+                                <>
+                                    <span style={{ color: '#FFF', fontSize: '14px', marginLeft: '5px', display: place.price > 0 ? 'block' : 'none' }}>Rp {place.promoPrice.toLocaleString().replaceAll(',', '.')}</span>
+                                </>
+                            }
+                            <span style={{ color: '#FFF', fontSize: '14px', marginLeft: '5px', display: place.price < 1 ? 'block' : 'none' }}>Full Booking</span>
                         </>
                     </div>
                     <div className='label' style={{ marginLeft: -20 }} >
@@ -58,8 +66,6 @@ function Map({ setCoordinates, coordinates, setChildClicked, places }) {
                         }
                     </div>
                 </PlaceStyled>
-
-
             ))}
         </GoogleMapReact>
     </div >

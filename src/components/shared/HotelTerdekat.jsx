@@ -7,12 +7,15 @@ import { TitleBackgroundStyled } from '../styled/home-page';
 import { useMediaQuery } from 'react-responsive';
 import { CardImage, CardLoading, CardStyle } from '../styled/bestCity';
 import { Icon } from '@iconify/react';
+import { useSelector } from 'react-redux'
 
 import Image from 'next/image';
 
 function HotelTerdekat(props) {
     const { data, isLoading } = props.data
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
+    const { auth } = useSelector(state => state)
+
     let arr = [1, 2, 3, 4]
 
     if (!isTabletOrMobile) {
@@ -51,25 +54,34 @@ function HotelTerdekat(props) {
             arr[index] = index;
         }
         return arr.map(() => (
-            <div style={{ width: '15px', height: '15px', position: 'relative', display: 'inline-block' }}>
-                <Image src='https://cdn.masterdiskon.com/masterdiskon/icon/fe/star.png' layout='fill' objectFit='cover' />
+            <div style={{ width: '20px', height: '20px', position: 'relative', display: 'inline-block' }} className='mr-1 mb-2'>
+                <Icon style={{ fontSize: '20px' }} icon="fluent-emoji-flat:star"></Icon>
             </div>
-        )
-
-        )
+        ))
     }
 
     return <>
-        <TitleBackgroundStyled><Icon icon='pepicons-print:map' className='mr-2 text-primary'></Icon> Hotel Terdekat dari lokasimu</TitleBackgroundStyled>
-        <Swiper className='mt-3' slidesPerView={isTabletOrMobile ? 2.5 : 5.5}
+        <TitleBackgroundStyled>
+            <Icon icon='pepicons-print:map' className='mr-2 text-primary'></Icon>
+            {data[0]?.typeHotel === 'TERBAIK' ?
+                <>
+                Hotel rekomendasi terbaik
+                </>
+                :
+                <>
+                Hotel terdekat dari lokasimu
+                </>
+            }
+        </TitleBackgroundStyled>
+        <Swiper className='mt-3 p-1' slidesPerView={isTabletOrMobile ? 2.5 : 5.5}
             style={{ padding: '0 0 10px 0' }}
             spaceBetween={10}>
             {data?.map((item) => (
                 <SwiperSlide key={item.name}>
                     <Link target="_blank" href={makeUrl(item)}><a>
                         <CardStyle className="card" img={item.image} style={{
-                            boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)', border: '1px solid #f8f9fa'
-                        }} >
+                            boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)'
+                        }} alt='Image Masterdiskon'>
                             <div className="d-flex flex-column justify-content-between">
 
                                 <CardImage image={item.image}>
@@ -94,13 +106,22 @@ function HotelTerdekat(props) {
                                             <br /> Reviews
                                         </span>
                                         <div>
-                                            <span className={`badge badge-sm badge-warning text-white mr-1`} style={{ padding: '4px', fontSize: '12px', }}>{item.propertyType}</span>
+                                            <span className={`badge badge-sm text-white mr-1`} style={{ padding: '4px', fontSize: '12px', background: '#bb00b0' }}>{item.propertyType}</span>
                                         </div>
                                     </h6>
                                     <div>
-                                        <p className="font-weight-bold mb-0 label-price__text text-danger"><s>Rp {item.price.toLocaleString().replaceAll(',', '.')}</s></p>
-                                        <p className="font-weight-bold label-price__price text-primary">
-                                            Rp <strong>{item.promoPrice.toLocaleString().replaceAll(',', '.')}</strong></p>
+                                        {!auth ?
+                                            <>
+                                                <p className="font-weight-bold label-price__price text-primary">
+                                                    Rp <strong>{item.price.toLocaleString().replaceAll(',', '.')}</strong></p>
+                                            </>
+                                            :
+                                            <>
+                                                <p className="font-weight-bold mb-0 label-price__text text-danger"><s>Rp {item.price.toLocaleString().replaceAll(',', '.')}</s></p>
+                                                <p className="font-weight-bold label-price__price text-primary">
+                                                    Rp <strong>{item.promoPrice.toLocaleString().replaceAll(',', '.')}</strong></p>
+                                            </>
+                                        }
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">
                                         <p className="mb-0 label-price__text">
@@ -112,10 +133,16 @@ function HotelTerdekat(props) {
                                                 height: isTabletOrMobile ? '37px' : '50px',
                                             }}>{item.address}</strong>
                                         </p>
-                                        <span className={`badge badge-md badge-info text-white`} style={{ height: '30px', fontSize: '15px', padding: '6px' }}>{item.reviewScore}</span>
+                                        <span className={`badge badge-md text-white`} style={{ height: '30px', fontSize: '15px', padding: '6px', background:'#003896' }}>{item.reviewScore}</span>
                                     </div>
                                 </div>
-                                <div className='text-center bg-primary mt-1' style={{ borderRadius: '0px 0px 10px 10px' }}><small className="mb-0 font-weight-bold text-white">Jarak {item.distance} km</small></div>
+                                {item.distance ?
+                                    <>
+                                        <div className='text-center mt-1' style={{ borderRadius: '0px 0px 10px 10px', background: '#f0f0f0' }}><small className="mb-0 font-weight-bold text-primary">Jarak {item.distance} km</small></div>
+                                    </>
+                                    :
+                                    <></>
+                                }
                             </div>
                         </CardStyle>
                     </a></Link>

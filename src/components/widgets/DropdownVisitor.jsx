@@ -35,7 +35,9 @@ function DropdownVisitor(props) {
                 <DropdownToggle
                     tag={'div'}
                     className="form-group"
-                    data-toggle="dropdown" key={visitor.child}>
+                    data-toggle="dropdown"
+                    key={visitor.child}
+                    >
                     <input type="text" readOnly value={`${Number(visitor['child'] || 0) + Number(visitor['adult'] || 0)} Tamu, ${room} Kamar`} className={classNames("form-control border-0 m-0 p-0 bg-transparent", {
                         'font-weight-bold': !willSearch
                     })} style={{ cursor: 'pointer', boxShadow: 'none', color: 'black' }} />

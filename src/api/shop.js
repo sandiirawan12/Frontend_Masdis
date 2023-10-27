@@ -2,9 +2,13 @@ import moment from 'moment';
 import queryString from 'query-string';
 import metadataApi from '@/api/metadata';
 
+const api_masterdiskon_com = process.env.NEXT_PUBLIC_API_URL || "https://api.masterdiskon.com/v1/";
+const staging_masterdiskon_com = process.env.NEXT_PUBLIC_STAGING_URL || " https://staging-api.masterdiskon.com/";
+const api_masterdiskon_com_apitrav = process.env.NEXT_PUBLIC_HOTELEX_API_URL || "https://api.masterdiskon.com/v1/apitrav/";
+
 const shopApi = {
     submitIssued: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/confirmissued`, {
+        return fetch(`${api_masterdiskon_com}booking/confirmissued`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             method: 'post',
             body: JSON.stringify(req)
@@ -23,7 +27,7 @@ const shopApi = {
                 direct: options['direct']
             }
         }
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/search`, {
+        return fetch(`${api_masterdiskon_com}booking/search`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -118,14 +122,14 @@ const shopApi = {
                 train_name: []
             }
         }
-        return fetch(`${process.env.NEXT_PUBLIC_STAGING_URL}KAI/station/search-station`, {
+        return fetch(`${staging_masterdiskon_com}KAI/station/search-station`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req)
         }).then(res => res.json())
     },
 
-    getSelectTrainSchedule: (token, email, options, item) => {
+    getSelectTrainSchedule: (token, email, options, item, item2) => {
         // Tanggal dalam format "DD-MM-YYYY" diubah menjadi "YYYY-MM-DD"
         const tanggalBerangkat = options['dateFrom'];
         const tanggalPecah = tanggalBerangkat.split('-');
@@ -146,14 +150,15 @@ const shopApi = {
             origin: options['from'],
             destination: options['to'],
             departure_date: tanggalBerangkatAkhir,
-            return_date: tanggalPulangAkhir,
+            return_date: options['direct'] === "OW" ? "" : tanggalPulangAkhir,
             direction: options['direct'],
             adult: Number(options['adult']),
             child: Number(options['child']),
             infant: Number(options['infant']),
-            data_schedule: item
+            data_schedule: item,
+            data_schedule_return: options['direct'] === "OW" ? null : item2
         }
-        return fetch(`${process.env.NEXT_PUBLIC_STAGING_URL}KAI/station/select-schedule`, {
+        return fetch(`${staging_masterdiskon_com}KAI/station/select-schedule`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req)
@@ -161,11 +166,11 @@ const shopApi = {
     },
 
     getDataSchedule: (id_schedule, email) => {
-        return fetch(`${process.env.NEXT_PUBLIC_STAGING_URL}KAI/station/get-schedule?id_schedule=${id_schedule}&email=${email}`).then(res => res.json())
+        return fetch(`${staging_masterdiskon_com}KAI/station/get-schedule?id_schedule=${id_schedule}&email=${email}`).then(res => res.json())
     },
 
     getFlightProduct: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/detail`, {
+        return fetch(`${api_masterdiskon_com}booking/detail`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -173,13 +178,13 @@ const shopApi = {
     },
 
     getPaymentCategory: (token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}order/payment/category`, {
+        return fetch(`${api_masterdiskon_com}order/payment/category`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
 
     getFlightRepricing: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/repricing`, {
+        return fetch(`${api_masterdiskon_com}booking/repricing`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -187,7 +192,7 @@ const shopApi = {
     },
 
     getCountPrice: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/count`, {
+        return fetch(`${api_masterdiskon_com}booking/count`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -195,7 +200,7 @@ const shopApi = {
     },
     
     submitCheckout: (token, req) => {
-        const baseUrl = req.product == 'hotel' ? process.env.NEXT_PUBLIC_HOTELEX_API_URL : process.env.NEXT_PUBLIC_API_URL
+        const baseUrl = req.product == 'hotel' ? api_masterdiskon_com_apitrav : api_masterdiskon_com
 
         return fetch(`${baseUrl}booking/checkout`, {
             method: 'post',
@@ -206,7 +211,7 @@ const shopApi = {
     },
 
     submitCheckoutTrain: (req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_STAGING_URL}KAI/booking/create-booking`, {
+        return fetch(`${staging_masterdiskon_com}KAI/booking/create-booking`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req)
@@ -215,9 +220,7 @@ const shopApi = {
     },
     
     cekCoupon: (token, req) => {
-
-        const baseUrl = req.product == 'hotel' ? process.env.NEXT_PUBLIC_HOTELEX_API_URL : process.env.NEXT_PUBLIC_API_URL
-
+        const baseUrl = req.product == 'hotel' ? api_masterdiskon_com_apitrav : api_masterdiskon_com
 
         return fetch(`https://jsx.masterdiskon.com/voucher/makeotp?code=${req}`, {
             method: 'get',
@@ -270,7 +273,7 @@ const shopApi = {
             req.filter = obj
         });
 
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}booking/search`, {
+        return fetch(`${api_masterdiskon_com_apitrav}booking/search`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -292,7 +295,7 @@ const shopApi = {
                 "childAge": options.childAge
             },
         }
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}booking/offerdetail`, {
+        return fetch(`${api_masterdiskon_com_apitrav}booking/offerdetail`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -306,7 +309,6 @@ const shopApi = {
             dateFrom: options.dateFrom, //'19-04-2023', 
             dateTo: options.dateTo,  //"20-04-2023",Silahkan pilih ulang pesanan anda
         }
-        console.log("idHotel" + JSON.stringify(req))
         return fetch(`https://jsx.masterdiskon.com/getRoomVia`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -315,7 +317,7 @@ const shopApi = {
     },
 
     getAvailHotelVia: (token, req) => {
-        return fetch(`https://api.masterdiskon.com/v1/booking/prebook`, {
+        return fetch(`${api_masterdiskon_com}booking/prebook`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -328,7 +330,7 @@ const shopApi = {
             product: 'hotel',
 
         }
-        return fetch(`https://api.masterdiskon.com/v1/booking/prebook`, {
+        return fetch(`${api_masterdiskon_com}booking/prebook`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -336,15 +338,15 @@ const shopApi = {
     },
     
     getCheckoutHotelVia: (token, options) => {
-        return fetch(`https://api.masterdiskon.com/v1/booking/checkout?${queryString.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}booking/checkout?${queryString.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` },
         }).then(res => res.json())
     },
 
     submitCheckoutVia: (token, req) => {
-        const baseUrl = req.product == 'hotel' ? process.env.NEXT_PUBLIC_HOTELEX_API_URL : process.env.NEXT_PUBLIC_API_URL
+        const baseUrl = req.product == 'hotel' ? api_masterdiskon_com_apitrav : api_masterdiskon_com
 
-        return fetch(`https://api.masterdiskon.com/v1/booking/checkout`, {
+        return fetch(`${api_masterdiskon_com}booking/checkout`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -359,7 +361,7 @@ const shopApi = {
             product: 'hotel',
 
         }
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}booking/prebook`, {
+        return fetch(`${api_masterdiskon_com_apitrav}booking/prebook`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify(req)
@@ -367,13 +369,13 @@ const shopApi = {
     },
     
     getCheckoutHotel: (token, options) => {
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}booking/checkout?${queryString.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com_apitrav}booking/checkout?${queryString.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` },
         }).then(res => res.json())
     },
     
     getCategoryGeneralProduct: (token, params) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/category?${queryString.stringify(params)}`, {
+        return fetch(`${api_masterdiskon_com}product/category?${queryString.stringify(params)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
@@ -394,55 +396,55 @@ const shopApi = {
             params = obj
         });
 
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product?${queryString.stringify(params)}`, {
+        return fetch(`${api_masterdiskon_com}product?${queryString.stringify(params)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getGeneralProduct: (token, slug) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/${slug}`, {
+        return fetch(`${api_masterdiskon_com}product/${slug}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getCheckoutGeneralProduct: (token, options) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/checkout?${queryString.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}booking/checkout?${queryString.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getTagCategory: (token, params) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/tag?${queryString.stringify(params)}`, {
+        return fetch(`${api_masterdiskon_com}product/tag?${queryString.stringify(params)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getFilterCity: (token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/city`, {
+        return fetch(`${api_masterdiskon_com}product/city`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
 
     getFilterCity: (token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/city`, {
+        return fetch(`${api_masterdiskon_com}product/city`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
 
     getListPromo: (token, options) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}promotion/promo?${queryString.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}promotion/promo?${queryString.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
 
     getDetailPromo: (token, slug) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}promotion/promo/${slug}`, {
+        return fetch(`${api_masterdiskon_com}promotion/promo/${slug}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
 
     claimPromo: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}promotion/coupon/claim`, {
+        return fetch(`${api_masterdiskon_com}promotion/coupon/claim`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             method: 'post',
             body: JSON.stringify(req)
@@ -450,19 +452,19 @@ const shopApi = {
     },
     
     getReviews: (token, options) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/review?${queryString.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}product/review?${queryString.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getReviewType: (token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/review/type`, {
+        return fetch(`${api_masterdiskon_com}product/review/type`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     addReview: (data, token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/review`, {
+        return fetch(`${api_masterdiskon_com}product/review`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             method: 'post',
             body: JSON.stringify(data)
@@ -470,33 +472,33 @@ const shopApi = {
     },
     
     getStore: (id, token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}partner/store/${id}`, {
+        return fetch(`${api_masterdiskon_com}partner/store/${id}`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
         }).then(res => res.json())
     },
     
     getProductByStore: (token, options) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product?${queryString.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}product?${queryString.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
         }).then(res => res.json())
     },
     
     getTagEvent: (token, options) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/events/tag`, {
+        return fetch(`${api_masterdiskon_com}product/events/tag`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
         }).then(res => res.json())
 
     },
     
     getEventSchedule: (token, param) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/events/schedule/${param}`, {
+        return fetch(`${api_masterdiskon_com}product/events/schedule/${param}`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
         }).then(res => res.json())
 
     },
     
     getAvailHotel: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}booking/avail`, {
+        return fetch(`${api_masterdiskon_com_apitrav}booking/avail`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -504,14 +506,14 @@ const shopApi = {
     },
 
     getVendorOffices: (token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}product/offices`, {
+        return fetch(`${api_masterdiskon_com_apitrav}product/offices`, {
             method: 'get',
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getDetailVendorOffice: (token, id) => {
-        return fetch(`${process.env.NEXT_PUBLIC_HOTELEX_API_URL}product/offices/${id}`, {
+        return fetch(`${api_masterdiskon_com_apitrav}product/offices/${id}`, {
             method: 'get',
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
@@ -519,14 +521,14 @@ const shopApi = {
     },
     
     getArenaByCategory: (token, slug) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/events/arena/${slug}`, {
+        return fetch(`${api_masterdiskon_com}product/events/arena/${slug}`, {
             method: 'get',
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     getTagArena: (token) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/events/tag-arena`, {
+        return fetch(`${api_masterdiskon_com}product/events/tag-arena`, {
             method: 'get',
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json())

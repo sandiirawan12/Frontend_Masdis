@@ -216,6 +216,7 @@ function TrainPassanger() {
 
     const handleConfirm = () => {
         const req = {
+            "id_schedule": router.query.id,
             "first_name": contact.first,
             "last_name": contact.last,
             "title": contact.title.toUpperCase(),
@@ -230,6 +231,7 @@ function TrainPassanger() {
             "child": dataSchedule.child,
             "infant": dataSchedule.infant,
             "segment_code": dataSchedule.data_schedule.segment_code,
+            "segment_code_return": dataSchedule.direction === 'OW' ? null : dataSchedule.data_schedule_return.segment_code,
             "passengers": passenger.adult.map(item => ({
                 "fullname": `${item.firstName + ' ' + item.lastName}`,
                 "title": item.title,
@@ -259,7 +261,7 @@ function TrainPassanger() {
 
         shopApi.submitCheckoutTrain(req).then(res => {
             if (res.status.code === 200) {
-                router.push(`/user/purchase/train/${res.data.id_order}`);
+                router.push(`/user/purchase/detail/${res.data.id_order}`);
             } else {
                 res.errors.forEach(error => {
                     toast.error(error.message, {
@@ -415,7 +417,138 @@ function TrainPassanger() {
                         <h3 className="font-weight-bold mt-4 mb-3">Order Detail</h3>
                         <div className="row">
                             <div className="col-md-8">
-                                <div className="card mb-3" style={{
+                                <div className="card" style={{
+                                    borderRadius: '20px',
+                                    boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)',
+                                }}>
+                                    <div className="card-body">
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                <div className="d-flex align-items-center">
+                                                    <Icon icon='pepicons-print:train' className="text-info mr-3 mt-2" style={{ fontSize: '30px' }}></Icon>
+
+                                                    <span className="font-weight-bold">{dataSchedule?.data_schedule?.stasiun_awal}</span>
+                                                    <Icon icon='fluent:arrow-swap-28-filled' className="text-primary mx-3" style={{ fontSize: '20px' }}></Icon>
+                                                    <span className="font-weight-bold">{dataSchedule?.data_schedule?.stasiun_akhir}</span>
+                                                </div>
+
+                                                <hr />
+
+                                                <div>
+                                                    <p className="font-weight-bold">Departure <br />
+                                                        <small>
+                                                            {dataSchedule?.tgl_schedule}
+                                                        </small>
+                                                    </p>
+                                                </div>
+
+                                                <div className="mt-3">
+                                                    <p className="font-weight-bold">{dataSchedule?.data_schedule?.nama_kereta} ({dataSchedule?.data_schedule?.no_kereta}) <br />
+                                                        <small>
+                                                            {dataSchedule?.data_schedule?.kelas_kereta} (Subclass {dataSchedule?.data_schedule?.tipe_kereta})
+                                                        </small>
+                                                    </p>
+                                                </div>
+
+                                                <TimeLineStyled className="mb-2">
+                                                    <>
+                                                        <li>
+                                                            <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule?.waktu_keberangkatan}</b> <small>{dataSchedule?.data_schedule?.asal_kota}, {dataSchedule?.data_schedule?.stasiun_awal} Station</small></p>
+                                                            <p className="pt-3"><Icon icon='pepicons-print:rewind-time' className="mr-2 text-primary" />{dataSchedule?.data_schedule?.durasi_perjalanan}</p>
+                                                        </li>
+                                                        <li className>
+                                                            <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule?.waktu_tiba}</b> <small>{dataSchedule?.data_schedule?.tujuan}, {dataSchedule?.data_schedule?.stasiun_akhir} Station</small></p>
+                                                        </li>
+                                                    </>
+                                                </TimeLineStyled>
+                                            </div>
+                                            {dataSchedule.direction === 'RT' ?
+                                                <>
+                                                    <div className="col-md-6">
+                                                        <div className="d-flex align-items-center">
+                                                            <Icon icon='pepicons-print:train' className="text-info mr-3 mt-2" style={{ fontSize: '30px' }}></Icon>
+
+                                                            <span className="font-weight-bold">{dataSchedule?.data_schedule?.stasiun_awal}</span>
+                                                            <Icon icon='fluent:arrow-swap-28-filled' className="text-primary mx-3" style={{ fontSize: '20px' }}></Icon>
+                                                            <span className="font-weight-bold">{dataSchedule?.data_schedule?.stasiun_akhir}</span>
+                                                        </div>
+
+                                                        <hr />
+
+                                                        <div>
+                                                            <p className="font-weight-bold">Departure <br />
+                                                                <small>
+                                                                    {dataSchedule?.tgl_schedule}
+                                                                </small>
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="mt-3">
+                                                            <p className="font-weight-bold">{dataSchedule?.data_schedule?.nama_kereta} ({dataSchedule?.data_schedule?.no_kereta}) <br />
+                                                                <small>
+                                                                    {dataSchedule?.data_schedule?.kelas_kereta} (Subclass {dataSchedule?.data_schedule?.tipe_kereta})
+                                                                </small>
+                                                            </p>
+                                                        </div>
+
+                                                        <TimeLineStyled className="mb-2">
+                                                            <>
+                                                                <li>
+                                                                    <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule?.waktu_keberangkatan}</b> <small>{dataSchedule?.data_schedule?.asal_kota}, {dataSchedule?.data_schedule?.stasiun_awal} Station</small></p>
+                                                                    <p className="pt-3"><Icon icon='pepicons-print:rewind-time' className="mr-2 text-primary" />{dataSchedule?.data_schedule?.durasi_perjalanan}</p>
+                                                                </li>
+                                                                <li className>
+                                                                    <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule?.waktu_tiba}</b> <small>{dataSchedule?.data_schedule?.tujuan}, {dataSchedule?.data_schedule?.stasiun_akhir} Station</small></p>
+                                                                </li>
+                                                            </>
+                                                        </TimeLineStyled>
+                                                    </div>
+                                                    <div className="col-md-6">
+                                                        <div className="d-flex align-items-center">
+                                                            <Icon icon='pepicons-print:train' className="text-danger mr-3 mt-2" style={{ fontSize: '30px' }}></Icon>
+
+                                                            <span className="font-weight-bold">{dataSchedule?.data_schedule_return?.stasiun_awal}</span>
+                                                            <Icon icon='fluent:arrow-swap-28-filled' className="text-primary mx-3" style={{ fontSize: '20px' }}></Icon>
+                                                            <span className="font-weight-bold">{dataSchedule?.data_schedule_return?.stasiun_akhir}</span>
+                                                        </div>
+
+                                                        <hr />
+
+                                                        <div>
+                                                            <p className="font-weight-bold">Return <br />
+                                                                <small>
+                                                                    {dataSchedule?.tgl_schedule_return}
+                                                                </small>
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="mt-3">
+                                                            <p className="font-weight-bold">{dataSchedule?.data_schedule_return?.nama_kereta} ({dataSchedule?.data_schedule_return?.no_kereta}) <br />
+                                                                <small>
+                                                                    {dataSchedule?.data_schedule_return?.kelas_kereta} (Subclass {dataSchedule?.data_schedule_return?.tipe_kereta})
+                                                                </small>
+                                                            </p>
+                                                        </div>
+
+                                                        <TimeLineStyled className="mb-2">
+                                                            <>
+                                                                <li>
+                                                                    <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule_return?.waktu_keberangkatan}</b> <small>{dataSchedule?.data_schedule_return?.asal_kota}, {dataSchedule?.data_schedule_return?.stasiun_awal} Station</small></p>
+                                                                    <p className="pt-3"><Icon icon='pepicons-print:rewind-time' className="mr-2 text-primary" />{dataSchedule?.data_schedule_return?.durasi_perjalanan}</p>
+                                                                </li>
+                                                                <li className>
+                                                                    <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule_return?.waktu_tiba}</b> <small>{dataSchedule?.data_schedule_return?.tujuan}, {dataSchedule?.data_schedule_return?.stasiun_akhir} Station</small></p>
+                                                                </li>
+                                                            </>
+                                                        </TimeLineStyled>
+                                                    </div>
+                                                </>
+                                                : ''
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="card mb-3 mt-3" style={{
                                     borderRadius: '15px',
                                     boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)',
                                 }}>
@@ -497,50 +630,6 @@ function TrainPassanger() {
                                     borderRadius: '20px',
                                     boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)',
                                 }}>
-                                    <div className="card-body">
-                                        <div className="d-flex">
-                                            <Icon icon='pepicons-print:train' className="text-info mr-3 mt-2" style={{ fontSize: '30px' }}></Icon>
-
-                                            <p className="mb-1 mr-3 font-weight-bold">{dataSchedule?.data_schedule?.asal_kota}</p>
-                                            <Icon icon='fluent:arrow-swap-28-filled' className="text-primary mr-3 mt-2" style={{ fontSize: '20px' }}></Icon>
-                                            <p className="mb-1 ml-3 font-weight-bold">{dataSchedule?.data_schedule?.tujuan}</p>
-                                        </div>
-
-                                        <hr />
-
-                                        <div>
-                                            <p className="font-weight-bold">Departure <br />
-                                                <small>
-                                                    {dataSchedule?.tgl_schedule}
-                                                </small>
-                                            </p>
-                                        </div>
-
-                                        <div className="mt-3">
-                                            <p className="font-weight-bold">{dataSchedule?.data_schedule?.nama_kereta} ({dataSchedule?.data_schedule?.no_kereta}) <br />
-                                                <small>
-                                                    {dataSchedule?.data_schedule?.kelas_kereta} (Subclass {dataSchedule?.data_schedule?.tipe_kereta})
-                                                </small>
-                                            </p>
-                                        </div>
-
-                                        <TimeLineStyled className="mb-2">
-                                            <>
-                                                <li>
-                                                    <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule?.waktu_keberangkatan}</b> <small>{dataSchedule?.data_schedule?.asal_kota}, {dataSchedule?.data_schedule?.stasiun_awal} Station</small></p>
-                                                    <p className="pt-3"><Icon icon='pepicons-print:rewind-time' className="mr-2 text-primary" />{dataSchedule?.data_schedule?.durasi_perjalanan}</p>
-                                                </li>
-                                                <li className>
-                                                    <p className="mb-0"><b className="mr-2">{dataSchedule?.data_schedule?.waktu_tiba}</b> <small>{dataSchedule?.data_schedule?.tujuan}, {dataSchedule?.data_schedule?.stasiun_akhir} Station</small></p>
-                                                </li>
-                                            </>
-                                        </TimeLineStyled>
-                                    </div>
-                                </div>
-                                <div className="card mb-3" style={{
-                                    borderRadius: '20px',
-                                    boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)',
-                                }}>
                                     <div className="card-header text-white font-weight-bold" style={{ borderTopLeftRadius: '20px', borderTopRightRadius: '20px', background: '#c12735' }}>
                                         <h5 className="pb-0 mb-0">Rincian Harga </h5>
                                     </div>
@@ -549,24 +638,19 @@ function TrainPassanger() {
                                             {dataSchedule?.adult > 0 && 
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <span className="pb-2"><strong>{dataSchedule?.adult} Dewasa</strong></span>
-                                                    <p>Rp {dataSchedule?.data_schedule?.harga_tiket_dewasa.toLocaleString()}</p>
+                                                    <p>Rp {dataSchedule?.count?.adult.toLocaleString()}</p>
                                                 </div>
                                             }
                                             {dataSchedule?.infant > 0 &&
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <span className="pb-2"><strong>{dataSchedule?.infant} Bayi</strong></span>
-                                                    <p>Rp {dataSchedule?.data_schedule?.harga_tiket_bayi.toLocaleString()}</p>
+                                                    <p>Rp {dataSchedule?.count?.infant.toLocaleString()}</p>
                                                 </div>
                                             }
                                             <hr />
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <span className="pb-2"><strong>Subtotal</strong></span>
-                                                <p>Rp 
-                                                    {(
-                                                        (dataSchedule?.data_schedule?.harga_tiket_dewasa * dataSchedule?.adult) +
-                                                        (dataSchedule?.data_schedule?.harga_tiket_bayi * dataSchedule?.infant)
-                                                    ).toLocaleString()}
-                                                </p>
+                                                <p>Rp {dataSchedule?.count?.subtotal.toLocaleString()}</p>
                                             </div>
                                             {/* <div className="d-flex justify-content-between align-items-center">
                                                 <span className="pb-2"><strong>Pajak dan lainnya</strong></span>
@@ -613,11 +697,7 @@ function TrainPassanger() {
                                                 <span className="pb-2"><strong>Total</strong></span>
                                                 <strong>
                                                     <h4 className="text-primary font-weight-bold">
-                                                        Rp 
-                                                        {(
-                                                            (dataSchedule?.data_schedule?.harga_tiket_dewasa * dataSchedule?.adult) +
-                                                            (dataSchedule?.data_schedule?.harga_tiket_bayi * dataSchedule?.infant)
-                                                        ).toLocaleString()}
+                                                        Rp {dataSchedule?.count?.total.toLocaleString()}
                                                     </h4>
                                                 </strong>
                                             </div>
@@ -625,11 +705,7 @@ function TrainPassanger() {
                                     </div>
                                 </div>
                                 <ButtonCheckoutTrain
-                                    total=
-                                    {(
-                                        (dataSchedule?.data_schedule?.harga_tiket_dewasa * dataSchedule?.adult) +
-                                        (dataSchedule?.data_schedule?.harga_tiket_bayi * dataSchedule?.infant)
-                                    )}
+                                    total= {dataSchedule?.count?.total}
                                     selectSeat= {handleSeat}
                                     onSubmit={handleConfirm}
                                 />

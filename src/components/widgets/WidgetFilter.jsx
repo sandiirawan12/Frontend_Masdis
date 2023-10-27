@@ -47,7 +47,7 @@ function WidgetFilter(props) {
         const FilterComponent = filterComponents[item.type];
 
         if (index !== filters.length - 1) {
-            borderView = <div style={{ borderBottom: '6px solid white' }}></div>
+            borderView = <div style={{ borderBottom: '2px solid #e4e4e4' }}></div>
         }
 
         if (FilterComponent) {
@@ -55,7 +55,7 @@ function WidgetFilter(props) {
                 <div className="card-body d-flex flex-column justify-content-center py-3 px-3">
                     {(item.slug.includes('recomendedOnly') && forCom === 'hotel') &&
                         <div className="d-flex justify-content-between align-items-center">
-                            <h6 className='font-weight-bold'>{title}</h6>
+                            <h5 className='font-weight-bold'>{title}</h5>
                             <h6 className='font-weight-bold' onClick={handleReset} style={{ cursor: 'pointer' }}>
                                 Reset
                             </h6>
@@ -84,7 +84,7 @@ function WidgetFilter(props) {
                     </h6> */}
                 </div>
             }
-            <RootStyled className="card border-0">
+            <RootStyled className="card">
                 {filterList}
             </RootStyled>
         </>
@@ -92,10 +92,10 @@ function WidgetFilter(props) {
 }
 
 const RootStyled = styled.div`
-    background: rgb(93,156,209);
+    background: white;
     border-radius: 15px;
-    color: white;
-    box-shadow: 6px 6px 10px -5px rgba(0,0,0,.5);
+    color: #0070ba;
+    box-shadow: -1px 3px 11px -7px rgba(156,156,156,0.75);
 
 `
 

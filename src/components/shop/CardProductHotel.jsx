@@ -70,7 +70,7 @@ function CardProductHotel(props) {
         //     confirmButtonText:'Pesan',
         //     confirmButtonColor:'#0070BA'
         // })
-        if (process.env.NEXT_PUBLIC_HOTELEX_API_URL) {
+        if (process.env.NEXT_PUBLIC_HOTELEX_API_URL || "https://api.masterdiskon.com/v1/apitrav/") {
             shopApi.getAvailHotel(access_token, {
                 "productId": options.productId,
                 "dateFrom": options.dateFrom,

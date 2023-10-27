@@ -9,12 +9,12 @@ export const TitleBackgroundStyled = styled.div`
 // border-radius: 20px 0px 20px 0px;
 font-weight:bold;
 font-size: 24px;
-color:#414042;
-font-family:blogger-sans,sans-serif;
+color: #414042;
+font-family: blogger-sans,sans-serif;
 margin-bottom: 20px;
 @media screen and (max-width:1224px){
-    margin-bottom:5px;
-    padding:5px 15px;
-    font-size:12px
+    margin-bottom: 10px;
+    // padding: 5px 15px;
+    font-size: 17px
 }
 `

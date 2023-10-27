@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import IconResearchSvg from '../../svg/icon-research.svg'
 import SearchIcon from '../../svg/024-magnifying-glass.svg'
 import CoinIcon from '../../svg/icon-3d-coin.svg'
+import ListMaskapai from './home-page/ListMaskapai'
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('G-56R5954QCE');
@@ -34,17 +35,26 @@ const IconStyled = styled.div`
 function FlightPage() {
     const [openMore, setOpenMore] = useState(false);
     const [flightPopular, setFlightPopular] = useState({ data: undefined, isLoading: true });
+    const [maskapaiFlight, setMaskapaiFlight] = useState({ data: undefined, isLoading: true });
     const { access_token } = useSelector(state => state.token)
 
     useEffect(() => {
-
         document.title = 'Tiket Pesawat | Harga Tiket Pesawat Promo Paling Murah Spesial 2023';
         ReactGA.pageview(window.location.pathname + window.location.search);
 
         setFlightPopular({ data: undefined, isLoading: true });
         homeApi.getPopularFlight(access_token).then(res => {
             if (res.success) {
-                setFlightPopular({ data: res.data, isLoading: false });
+                setFlightPopular({ data: res.data.data, isLoading: false });
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        setMaskapaiFlight({ data: undefined, isLoading: true });
+        homeApi.getPopularFlight(access_token).then(res => {
+            if (res.success) {
+                setMaskapaiFlight({ data: res.data.maskapai, isLoading: false });
             }
         })
     }, [])
@@ -74,9 +84,13 @@ function FlightPage() {
                 <PopularFlight data={flightPopular} />
             </section>
 
+            <section className='container my-5'>
+                <hr />
+            </section>
+
             <section style={{ background: '#F5F6FA' }} className="desktop-only">
                 <div className="container">
-                    <div className="py-5">
+                    <div className="py-3">
                         <div className="row">
                             <div className="col-4">
                                 <div className="text-center mb-3 mx-4">
@@ -130,7 +144,9 @@ function FlightPage() {
                 </div>
             </section>
 
-
+            <section>
+                <ListMaskapai data={maskapaiFlight} />
+            </section>
         </>
     )
 }

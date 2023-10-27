@@ -42,49 +42,67 @@ function FilterCheck(props) {
         let label;
         if (item.icon) {
             if (item.loop) {
-                label = []
-                for (let index = 0; index < Number(item.slug); index++) {
-                    if (item.isImg) {
-                        label[index] = <div style={{ width: '20px', height: '20px', position: 'relative', display: 'inline-block' }}>
-                            <Image src={item.icon} layout='fill' objectFit='cover' />
-                        </div>
-                    } else {
-                        label[index] = <Icon icon={item.icon} className={item.className} />
+                if (item.iconType) {
+                    label = []
+                    for (let index = 0; index < 1; index++) {
+                        label[index] =
+                            <div>
+                                <Icon icon={item?.icon} style={{ width: '20px', height: '20px' }} />
+                                <span className='ml-2'>{item.name}</span>
+                            </div> 
+                    }
+                } else {
+                    label = []
+                    for (let index = 0; index < Number(item.slug); index++) {
+                        if (item.isImg) {
+                            label[index] = <div style={{ width: '30px', height: '30px', position: 'relative', display: 'inline-block' }}>
+                                <Icon icon={item.icon} style={{ width: '20px', height: '20px' }} />
+                            </div>
+                        } else {
+                            label[index] = <Icon icon={item.icon} style={{ width: '20px', height: '20px' }} />
+                        }
                     }
                 }
             } else {
                 if (item.isImg) {
-                    label[index] = <div style={{ width: '20px', height: '20px', position: 'relative', display: 'inline-block' }}>
-                        <Image src={item.icon} layout='fill' objectFit='cover' />
+                    label[index] = <div style={{ width: '30px', height: '30px', position: 'relative', display: 'inline-block' }}>
+                        <Icon icon={item.icon} style={{ width: '20px', height: '20px' }} />
                     </div>
                 } else {
-                    label = <Icon icon={item.icon} className={item.className} />
+                    label[index] = <Icon icon={item.icon} style={{ width: '20px', height: '20px' }} />
                 }
             }
         } else {
-            label = item.name
+            if (item.imgType) {
+                label =
+                <div>
+                    <img src={item.img} style={{ width: '20px', height: '20px' }} />
+                    <span className='ml-2'>{item.name}</span>
+                </div>
+            } else {
+                label = item.name
+            }
         }
 
         return (
-            <div key={item.slug} className="custom-control custom-checkbox">
+            <div key={item.slug} className="custom-control custom-checkbox mb-2">
                 <input type="checkbox" className="custom-control-input" id={`${item.slug}_${index}`} name="transit" value={item.slug} checked={value.find(v => v == item.slug)} onChange={handleChange} />
-                <label className="custom-control-label" htmlFor={`${item.slug}_${index}`}>{label}</label>
+                <label className="custom-control-label text-dark" htmlFor={`${item.slug}_${index}`}>{label}</label>
             </div>
         )
     })
 
     return (
         <>
-            <h6 className='font-weight-bold'>{data.name}</h6>
+            <h6 className='font-weight-bold mb-2' style={{ fontSize: '16px' }}>{data.name}</h6>
             {itemList}
             {(data.items.length >= limit && data.items.length > 10) &&
-                <a className='text-white mt-4 d-flex align-items-center' href='javascript:void(0)' onClick={handleShowMore}>{showMore ? <>
-                    {'Lihat sebagian'}
-                    <i className="fas fa-angle-up ml-2 mt-1"></i>
+                <a className='d-flex justify-content-between align-items-center mt-4' href='javascript:void(0)' onClick={handleShowMore}>{showMore ? <>
+                    <span className='font-weight-bold text-dark'>{'Lihat sedikit'}</span>
+                    <Icon icon="line-md:chevron-up-circle-twotone" style={{ fontSize: '24px' }} className='text-primary' />
                 </> : <>
-                    {`Lihat semua (${data.items.length})`}
-
-                    <i class="fas fa-angle-down ml-2 mt-1"></i>
+                    <span className='font-weight-bold text-dark'>{`Lihat semua`}</span>
+                    <Icon icon="line-md:chevron-down-circle-twotone" style={{ fontSize: '24px' }} className='text-primary' />
                 </>
                 }</a>
             }

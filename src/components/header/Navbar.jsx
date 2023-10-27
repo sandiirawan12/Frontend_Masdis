@@ -44,27 +44,24 @@ function Navbar() {
             {/* ============ */}
             <nav className="navbar bg-white navbar-expand-lg shadow">
                 <div className="container">
-                    <Link href='/' >
-                        <a className="navbar-brand mr-4">
-                            <LogoStyled placeholder='blur' src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/masterdiskon_logo_big.png" />
-                        </a>
-                    </Link>
-                    <div className="navbar-collapse">
+                    <div className="navbar-brand mt-2" style={{ padding: "4px" }}>
+                        <Link href='/'>
+                            <Image src='https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/masterdiskon_logo.png' width={130} height={60} alt='Logo Masterdiskon' />
+                        </Link>
+                    </div>
+                    <div className="navbar-collapse ml-4">
                         <ul className="navbar-nav nav-menu">
                             <li className="nav-item mr-2 d-flex flex-column justify-content-center">
-                                <Link href='/flights' >
-                                    <LinkStyled className="font-weight-bold text-dark d-flex align-items-center rounded-pill">
-                                        <IconStyled img='https://cdn.masterdiskon.com/masterdiskon/icon/fe/flight-blue.png' />
-                                        Flights</LinkStyled>
-                                </Link>
+                                <LinkStyled className="font-weight-bold text-dark d-flex align-items-center rounded-pill" href='/hotels'>
+                                    <Icon icon="solar:bed-line-duotone" className='mr-2 ml-1 text-primary' style={{fontSize:'20px'}} />
+                                    Hotels
+                                </LinkStyled>
                             </li>
-                            <li className="nav-item mr-2 d-flex flex-column justify-content-center">
-                                <Link href='/hotels' >
-                                    <LinkStyled className="font-weight-bold text-dark d-flex align-items-center rounded-pill">
-                                        <IconStyled img='https://cdn.masterdiskon.com/masterdiskon/icon/general/new/icon_masdis_hotels.png' />
-                                        Hotels
-                                    </LinkStyled>
-                                </Link>
+                            <li className="nav-item mr-2 d-flex flex-column justify-content-center"> 
+                                <LinkStyled className="font-weight-bold text-dark d-flex align-items-center rounded-pill" href='/flights'>
+                                    <Icon icon="ph:airplane-duotone" className='mr-2 ml-1 text-primary' style={{ fontSize: '20px' }} />
+                                    Flights
+                                </LinkStyled>
                             </li>
                             {/* <li className="nav-item">
                             <Link href='/sports'>
@@ -75,11 +72,10 @@ function Navbar() {
                             </Link>
                         </li> */}
                             <li className="nav-item" style={{ marginLeft: '15px' }}>
-                                <Link href='/promo'>
-                                    <LinkStyled className="font-weight-bold text-dark d-flex align-items-center rounded-pill">
-                                        <IconStyled style={{ backgroundSize: '23px', paddingRight: '26px' }} img='https://cdn.masterdiskon.com/masterdiskon/icon/fe/Promo.png' />
-                                        Promo</LinkStyled>
-                                </Link>
+                                <LinkStyled className="font-weight-bold text-dark d-flex align-items-center rounded-pill" href='/promo'>
+                                    <IconStyled style={{ backgroundSize: '23px', paddingRight: '26px' }} img='https://cdn.masterdiskon.com/masterdiskon/icon/fe/Promo.png' alt='Icon Masterdiskon' />
+                                    Promo
+                                </LinkStyled>
                             </li>
                         </ul>
                         <div className="form-inline my-lg-0 mr-auto form-cari">
@@ -98,12 +94,12 @@ function Navbar() {
                                         <div className="form-row p-2">
                                             <div className="col-md-6">
                                                 <a target="_blank" href="https://play.google.com/store/apps/details?id=com.masterdiskon" rel="noreferrer">
-                                                    <img src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/google-play-badge.svg" className="img-fluid lazy" />
+                                                    <img src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/google-play-badge.svg" alt='Image Masterdiskon' className="img-fluid lazy" />
                                                 </a>
                                             </div>
                                             <div className="col-md-6">
                                                 <a target="_blank" href="https://apps.apple.com/id/app/masdis/id1549125351" rel="noreferrer">
-                                                    <img src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/id-badge-ios.png" style={{ width: '100%', height:'35px'}} className="img-fluid lazy" />
+                                                    <img src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/id-badge-ios.png" alt='Image Masterdiskon' style={{ width: '100%', height:'35px'}} className="img-fluid lazy" />
                                                 </a>
                                             </div>
                                         </div>
@@ -136,7 +132,7 @@ function Navbar() {
                                                 width: '100%',
                                                 objectFit: 'cover',
                                                 height: '31px',
-                                            }} src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/flag/209-indonesia.svg" className='mr-1' />
+                                            }} src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/flag/209-indonesia.svg" alt='Icon Masterdiskon' className='mr-1' />
                                         </div>
                                         <span className='font-weight-bold'>
                                             ID
@@ -147,7 +143,7 @@ function Navbar() {
                                         <div className="form-row mt-2">
                                             <div className="col-md-6">
                                                 <button className="btn btn-sm">
-                                                    <Image layout='fill' className="mr-1" style={{ width: "20px", height: "20px" }} src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/flag/209-indonesia.svg" /> ID
+                                                    <Image layout='fill' className="mr-1" style={{ width: "20px", height: "20px" }} src="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/icon/flag/209-indonesia.svg" alt='Icon Masterdiskon' /> ID
                                                 </button>
                                             </div>
                                             {/* <div className="col-md-6">
@@ -177,14 +173,14 @@ function Navbar() {
                                         <DropdownToggle style={{ background: 'none', border: 'none' }}>
                                             <a className="nav-link d-flex justify-content-center text-dark" href="#">
                                                 <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block mr-2'>
-                                                    <Image layout='fill' src={'https://cdn.masterdiskon.com/masterdiskon/icon/fe/user.png'} />
+                                                    <Image layout='fill' src={'https://cdn.masterdiskon.com/masterdiskon/icon/fe/user.png'} alt="Image Masterdiskon" />
                                                 </div>
                                                 <span className="d-inline-block" style={{
                                                     textOverflow: 'ellipsis',
                                                     overflow: 'hidden',
                                                     whiteSpace: 'nowrap',
                                                 }}>
-                                                    {user?.username?.replaceAll('null', '') || user?.name?.replaceAll('null', '')}
+                                                    {user?.username?.replaceAll('null', '').substring(0, 10) || user?.name?.replaceAll('null', '').substring(0, 10)}
                                                 </span>
                                             </a>
                                         </DropdownToggle>

@@ -33,12 +33,12 @@ const CardStyle = styled.div`
         font-size:16px;
     }
     @media screen and (max-width:1224px){
-        min-height:200px;
+        min-height:250px;
         p{
             font-size:10px;
         }
         h5,.icon{
-            font-size:12px;
+            font-size:16px;
         }
     }
 `
@@ -67,7 +67,7 @@ function PopularFlight(props) {
         const params = {
             from: 'CGK',
             to: item.destination,
-            dateFrom: moment(new Date()).format('DD-MM-YYYY'),
+            dateFrom: moment(new Date()).add(2, 'days').format('DD-MM-YYYY'),
             dateTo: '',
             classCabin: '',
             direct: false,
@@ -79,7 +79,7 @@ function PopularFlight(props) {
 
     return <>
         <TitleBackgroundStyled><Icon icon='ph:binoculars-duotone' className='mr-2 text-success'></Icon> Tamasya keliling indonesia, kunjungi destinasinya!</TitleBackgroundStyled>
-        <Swiper className='mt-3' slidesPerView={isTabletOrMobile ? 2.5 : 5.5} spaceBetween={10}>
+        <Swiper className='mt-3 p-1' slidesPerView={isTabletOrMobile ? 2.5 : 5.5} spaceBetween={10}>
             {data?.map(item => (
                 <SwiperSlide key={item.name}>
                     <Link href={makeUrl(item)}><a>

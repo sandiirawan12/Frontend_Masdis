@@ -1,5 +1,7 @@
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import Image from "next/image";
+
 const { createSliderWithTooltip } = Slider;
 const Range = (Slider.Range);
 
@@ -22,23 +24,34 @@ function FilterSlider(props) {
             let separator = sisa ? '.' : '';
             rupiah += separator + ribuan.join('.');
         }
-        return `Rp. ${rupiah}`
+        return `Rp ${rupiah}`
     }
 
     return (
         <>
-            <h6 className='mb-1 font-weight-bold'>{data.name}</h6>
+            <h6 className='mb-1 font-weight-bold'>
+                {data.name}
+            </h6>
+            {/* {data ?
+                <>
+                    <small className='text-dark'>Per kamar, per malam</small>
+                </>
+                :
+                <></>
+            } */}
             <div className='flex-column'>
-                <small>{formatRupiah(value[0])}</small>
-                <small className='float-right'>{formatRupiah(value[1])}</small>
+                <small className='text-dark'>{formatRupiah(value[0])}</small>
+                <small className='float-right text-dark'>{formatRupiah(value[1])}</small>
             </div>
-            <br />
-            <div style={{ margin: '0 35px' }}>
+            <div className='mt-2'>
                 {/* <Range autoFocus value={value.length > 0 ? value : data.defaultValue} defaultValue={data.defaultValue} onChange={updateValue} tipProps={{ visible: true }} tipFormatter={value => `${formatRupiah(value)}`} allowCross={false} min={data.defaultValue[0]} max={data.defaultValue[1]}
                 /> */}
 
-                <Range defaultValue={data.defaultValue} onChange={updateValue} min={data.defaultValue[0]} max={data.defaultValue[1]}
-                />
+                {/* <div>
+                    <img src="https://cdn.masterdiskon.com/masterdiskon/img/traffic-hotel.png" style={{ width: '100%', height: '100px' }} alt="Image Masterdiskon" />
+                </div> */}
+
+                <Range defaultValue={data.defaultValue} onChange={updateValue} min={data.defaultValue[0]} max={data.defaultValue[1]}/>
             </div>
         </>
     );

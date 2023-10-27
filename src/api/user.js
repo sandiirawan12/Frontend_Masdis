@@ -1,17 +1,21 @@
 import qs from 'query-string'
 import moment from 'moment';
 
+const api_masterdiskon_com = process.env.NEXT_PUBLIC_API_URL || "https://api.masterdiskon.com/v1/";
+const staging_masterdiskon_com = process.env.NEXT_PUBLIC_STAGING_URL || " https://staging-api.masterdiskon.com/";
+const api_masterdiskon_com_apitrav = process.env.NEXT_PUBLIC_HOTELEX_API_URL || "https://api.masterdiskon.com/v1/apitrav/";
+
 const userApi = {
     getProfile: (token) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/profile?type=masterdiskon`, {
+        return fetch(`${api_masterdiskon_com}user/profile?type=masterdiskon`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
 
     updateProfile: (token, req) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/profile`, {
+        return fetch(`${api_masterdiskon_com}user/profile`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             method: 'put',
             body: JSON.stringify(req)
@@ -19,7 +23,7 @@ const userApi = {
     },
 
     submitIssued: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/confirmissued`, {
+        return fetch(`${api_masterdiskon_com}booking/confirmissued`, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             method: 'post',
             body: JSON.stringify(req)
@@ -27,11 +31,17 @@ const userApi = {
     },
 
     submitInvoice: (token, req) => {
-        return fetch(`https://api.masterdiskon.com/v1/order/invoice`, {
-            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        return fetch(`${staging_masterdiskon_com}BACKEND/invoice/create-invoice-jurnal`, {
+            headers: { Authorization: `Bearer 4p1m4sd1spr0duct10nn3w`, 'Content-Type': 'application/json' },
             method: 'post',
             body: JSON.stringify(req)
         }).then(res => res.json());
+
+        // return fetch(`https://api.masterdiskon.com/v1/order/invoice`, {
+        //     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        //     method: 'post',
+        //     body: JSON.stringify(req)
+        // }).then(res => res.json());
     },
 
     submitInvoicexx: (token, req) => {
@@ -45,7 +55,7 @@ const userApi = {
     getListQuickpick: (token, options) => {
         const params = { ...options, };
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick?${qs.stringify(params)}`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick?${qs.stringify(params)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
@@ -53,14 +63,14 @@ const userApi = {
     getQuickpick: (token, options) => {
         const params = { ...options, type: 'user' };
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick/detail?${qs.stringify(params)}`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick/detail?${qs.stringify(params)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
 
     addQuickpick: (token, req) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -71,7 +81,7 @@ const userApi = {
 
     updateQuickpick: (token, req, id) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick/${id}`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -82,7 +92,7 @@ const userApi = {
 
     getDetailQuickpick: (token, id) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick/${id}`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -91,7 +101,7 @@ const userApi = {
 
     deleteQuickpick: (token, id) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick/${id}`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }, method: 'delete'
@@ -101,7 +111,7 @@ const userApi = {
     getListPurchase: (token, options) => {
         const params = { ...options, q: options.keyword }
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/purchase?${qs.stringify(params)}`, {
+        return fetch(`${api_masterdiskon_com}user/purchase?${qs.stringify(params)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
@@ -128,28 +138,28 @@ const userApi = {
 
     getListFavourite: (token, options) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/favourite?${qs.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}product/favourite?${qs.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
 
     getListInbox: (token, options) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/notification?${qs.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}user/notification?${qs.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
 
     getListReview: (token, options) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/review?${qs.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}product/review?${qs.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
 
     getListCoupon: (token, options) => {
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}promotion/coupon/mycoupon?${qs.stringify(options)}`, {
+        return fetch(`${api_masterdiskon_com}promotion/coupon/mycoupon?${qs.stringify(options)}`, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => res.json());
     },
@@ -164,7 +174,7 @@ const userApi = {
         urlencoded.append("grant_type", "password");
 
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/token`, {
+        return fetch(`${api_masterdiskon_com}auth/token`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -184,7 +194,7 @@ const userApi = {
         urlencoded.append("grant_type", "password");
 
         // eslint-disable-next-line no-undef
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/login/b2b`, {
+        return fetch(`${api_masterdiskon_com}auth/login/b2b`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -195,19 +205,27 @@ const userApi = {
     },
     
     getCountries: () => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/location/country`).then(res => res.json())
+        return fetch(`${api_masterdiskon_com}user/location/country`).then(res => res.json())
     },
     
     getPurchase: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/detail`, {
+        return fetch(`${api_masterdiskon_com}booking/detail`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
+
+    getInvoiceDetail: (token, req) => {
+        return fetch(`${staging_masterdiskon_com}BACKEND/invoice/data-invoice-jurnal`, {
+            headers: { Authorization: `Bearer 4p1m4sd1spr0duct10nn3w`, 'Content-Type': 'application/json' },
+            method: 'post',
+            body: JSON.stringify(req),
+        }).then(res => res.json());
+    },
     
     changePaymentMethod: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/payment`, {
+        return fetch(`${api_masterdiskon_com}booking/payment`, {
             method: 'put',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
@@ -216,7 +234,7 @@ const userApi = {
     },
     
     register: (req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/register`, {
+        return fetch(`${api_masterdiskon_com}auth/register`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json' }
@@ -224,14 +242,14 @@ const userApi = {
     },
     
     setSeen: (token, id) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/notification/${id}`, {
+        return fetch(`${api_masterdiskon_com}user/notification/${id}`, {
             method: 'post',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
         }).then(res => res.json())
     },
     
     addQuickpick: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}user/quickpick`, {
+        return fetch(`${api_masterdiskon_com}user/quickpick`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
@@ -239,7 +257,7 @@ const userApi = {
     },
     
     addProductFavourite: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/favourite`, {
+        return fetch(`${api_masterdiskon_com}product/favourite`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
@@ -247,11 +265,11 @@ const userApi = {
     },
     
     forgotPassword: (email) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/forgotpassword/${email}`).then(res => res.json())
+        return fetch(`${api_masterdiskon_com}auth/forgotpassword/${email}`).then(res => res.json())
     },
     
     resetPassword: (req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/resetpassword`, {
+        return fetch(`${api_masterdiskon_com}auth/resetpassword`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json' }
@@ -259,7 +277,7 @@ const userApi = {
     },
     
     deleteProductFavourite: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}product/favourite`, {
+        return fetch(`${api_masterdiskon_com}product/favourite`, {
             method: 'delete',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
@@ -267,7 +285,7 @@ const userApi = {
     },
     
     createCancellation: (token, req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/cancel/create`, {
+        return fetch(`${api_masterdiskon_com}booking/cancel/create`, {
             method: 'post',
             body: JSON.stringify(req),
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
@@ -275,7 +293,7 @@ const userApi = {
     },
     
     verifyRegister: (req) => {
-        return fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/verify?${qs.stringify(req)}`).then(res => res.json())
+        return fetch(`${api_masterdiskon_com}auth/verify?${qs.stringify(req)}`).then(res => res.json())
     }
 }
 

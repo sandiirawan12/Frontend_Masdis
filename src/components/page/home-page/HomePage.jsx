@@ -12,6 +12,7 @@ import WidgetFlight from '@/components/widgets/WidgetFlight'
 import WidgetHotel from '@/components/widgets/WidgetHotel'
 import Benefit from './Benefit'
 import DownloadPage from './DownloadPage'
+import ListMaskapai from './ListMaskapai'
 import CategoryProduct from './CategoryProduct'
 import homeApi from '@/api/home'
 import { useSelector } from 'react-redux'
@@ -30,7 +31,6 @@ import QuestionIcon from '@iconify/icons-fa-solid/question-circle';
 import GoogleMapReact, { Marker, InfoWindow } from 'google-map-react';
 
 import ReactGA from 'react-ga';
-import { stringify } from 'query-string'
 ReactGA.initialize('G-56R5954QCE');
 
 
@@ -57,14 +57,11 @@ function HomePage() {
   const [state, setState] = useState({
     blogs: { data: undefined, isLoading: true },
     coupon: { data: undefined, isLoading: true },
-    infoCovid: { data: undefined, isLoading: true },
     banner: { data: undefined, isLoading: true },
     popularFlight: { data: undefined, isLoading: true },
+    maskapaiFlight: { data: undefined, isLoading: true },
     bestTenCity: { data: undefined, isLoading: true },
     hotelTerdekat: { data: undefined, isLoading: true },
-    promo: { data: undefined, isLoading: true },
-    categoryProduct: { data: undefined, isLoading: true },
-    newProduct: { data: undefined, isLoading: true },
     promo: { data: undefined, isLoading: true },
   })
 
@@ -95,12 +92,12 @@ function HomePage() {
       setcolorTab('#8B1874')
     }
     else if (dayName === 'Jumat') {
-      setcolorTab('#00bb1f')
+      setcolorTab('#3500bb')
     }
     else if (dayName === 'Sabtu') {
       setcolorTab('#9300bb')
     } else {
-      setcolorTab('#0C71B6')
+      setcolorTab('#0071a3')
     }
   }, [])
 
@@ -108,13 +105,25 @@ function HomePage() {
     handleChange('popularFlight', { name: 'isLoading', value: true })
     homeApi.getPopularFlight(access_token, { limit: 10 }).then(res => {
       if (res.success) {
-        handleChange('popularFlight', { name: 'data', value: res.data })
+        handleChange('popularFlight', { name: 'data', value: res.data.data })
       }
       handleChange('popularFlight', { name: 'isLoading', value: false })
     })
   }, [])
 
   useEffect(() => {
+    handleChange('maskapaiFlight', { name: 'isLoading', value: true })
+    homeApi.getPopularFlight(access_token, { limit: 10 }).then(res => {
+      if (res.success) {
+        handleChange('maskapaiFlight', { name: 'data', value: res.data.maskapai })
+      }
+      handleChange('maskapaiFlight', { name: 'isLoading', value: false })
+    })
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.lang = 'id'
+    
     handleChange('banner', { name: 'isLoading', value: true })
     homeApi.getBanner(access_token, { limit: 10 }).then(res => {
       if (res.success) {
@@ -135,36 +144,6 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
-    handleChange('categoryProduct', { name: 'isLoading', value: true })
-    shopApi.getCategoryGeneralProduct(access_token, { status: 1 }).then(res => {
-      if (res.success) {
-        handleChange('categoryProduct', { name: 'data', value: res.data })
-      }
-      handleChange('categoryProduct', { name: 'isLoading', value: false })
-    })
-  }, [])
-
-  useEffect(() => {
-    handleChange('dataOther', { name: 'isLoading', value: true })
-    shopApi.getCategoryGeneralProduct(access_token, { status: 1, part: 'other' }).then(res => {
-      if (res.success) {
-        handleChange('dataOther', { name: 'data', value: res.data })
-      }
-      handleChange('dataOther', { name: 'isLoading', value: false })
-    })
-  }, [])
-
-  useEffect(() => {
-    handleChange('newProduct', { name: 'isLoading', value: true })
-    shopApi.getGeneralProducts(access_token, { status: 1, limit: 9, page: 1 }, {}).then(res => {
-      if (res.success) {
-        handleChange('newProduct', { name: 'data', value: res.data })
-      }
-      handleChange('newProduct', { name: 'isLoading', value: false })
-    })
-  }, [])
-
-  useEffect(() => {
     handleChange('promo', { name: 'isLoading', value: true })
     shopApi.getListPromo(access_token, { page: 1, limit: 10 }).then(res => {
       if (res.success) {
@@ -175,7 +154,6 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
-    document.title = 'Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023';
     ReactGA.pageview(window.location.pathname + window.location.search);
     handleChange('blogs', { name: 'isLoading', value: true })
     homeApi.getBlogs(access_token).then(res => {
@@ -187,12 +165,13 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
-    handleChange('infoCovid', { name: 'isLoading', value: true })
-    homeApi.getBlogs(access_token, { category: 'covid-19', limit: 10 }).then(res => {
-      if (res.success) {
-        handleChange('infoCovid', { name: 'data', value: res.data })
+    homeApi.getHotelTerdekat('', '').then(res => {
+      if (res.success === true) {
+        handleChange('hotelTerdekat', { name: 'data', value: res.data })
+      } else {
+        alert('error get data hotel terdekat')
       }
-      handleChange('infoCovid', { name: 'isLoading', value: false })
+      handleChange('hotelTerdekat', { name: 'isLoading', value: false })
     })
   }, [])
 
@@ -203,16 +182,13 @@ function HomePage() {
         handleError
       );
     } else {
-      console.log("Geolocation is not supported by this browser.");
     }
   }, [])
-
 
 
   const handleSuccess = (position) => {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
-    alert("Current latitude:" + latitude + ", " + longitude);
 
     setLatUser(parseFloat(latitude, 2));
     setLngUser(parseFloat(longitude, 1));
@@ -225,50 +201,17 @@ function HomePage() {
       }
       handleChange('hotelTerdekat', { name: 'isLoading', value: false })
     })
-
-    // homeApi.getGeocoder(latitude, longitude).then(res => {
-    //   if (res.status === 'OK') {
-    //     if (res.results[0]) {
-    //       setOpenModal(!openModal)
-    //       const address = res.results[0].formatted_address;
-    //       const addressComponents = res.results[0].address_components;
-    //       const cityComponent = addressComponents.find(component =>
-    //         component.types.includes('administrative_area_level_2')
-    //       );
-
-    //       // alert("Current latitude:" + addressComponents + ", " + cityComponent);
-    //       if (cityComponent) {
-    //         const city = cityComponent.long_name.replace('Kota ', '');;
-    //         setCityUser(city);
-    //         const lat = parseFloat(latitude, 2);
-    //         const long = parseFloat(longitude, 1);
-
-    //         // homeApi.getHotelTerdekat(access_token, city, lat.toFixed(1), long.toFixed(2)).then(res => {
-    //         homeApi.getHotelTerdekat(lat, long).then(res => {
-    //           if (res.success === true) {
-    //             handleChange('hotelTerdekat', { name: 'data', value: res.data })
-    //           } else {
-    //             alert('error get data hotel terdekat')
-    //           }
-    //           handleChange('hotelTerdekat', { name: 'isLoading', value: false })
-    //         })
-    //       } else {
-    //         alert("City not found in geocode results.");
-    //         // this.setState({ city: '', error: 'City not found in geocode results.' });
-    //       }
-    //       // alert("Current location:" + address);
-    //       setAddressNow(address)
-    //     } else {
-    //       alert("No results found.");
-    //     }
-    //   } else {
-    //     alert("Geocoder failed due to:" + res.status);
-    //   }
-    // })
   };
 
   const handleError = (error) => {
-    console.log("Error occurred while retrieving geolocation:", error);
+    homeApi.getHotelTerdekat('', '').then(res => {
+      if (res.success === true) {
+        handleChange('hotelTerdekat', { name: 'data', value: res.data })
+      } else {
+        alert('error get data hotel terdekat')
+      }
+      handleChange('hotelTerdekat', { name: 'isLoading', value: false })
+    })
   };
 
   const handleChangeActive = (menu) => {
@@ -298,7 +241,6 @@ function HomePage() {
 
   return (
     <>
-
       <div className={classNames('home-page-widget-overlay', {
         show: showOverlay
       })} />
@@ -314,35 +256,44 @@ function HomePage() {
           </div>
         </ModalBody>
       </Modal> */}
+
       <section>
         {useMemo(() =>
           <Banner data={state.banner} />
           , [state.banner])}
       </section>
+
       <section className={classNames('widget-search container', {
         focus: showOverlay
       })} tabIndex='0' onFocus={() => setShowOverlay(true)} onBlur={() => setShowOverlay(false)}>
         <ul className='widget-search__tabs'>
           <li className='lead' onClick={() => handleChangeActive('hotel')} role="presentation">
             <a className={classNames({ active: active === 'hotel' })}
-              style={{ background: active === 'hotel' ? colorTab : '#FFF' }} href='#'>
-              <img src='https://cdn.masterdiskon.com/masterdiskon/icon/general/new/icon_masdis_hotels.png' />
+              style={{ background: active === 'hotel' ? colorTab : '#fff', color: active === 'hotel' ? '#fff' : '#0070ba' }} href='#'>
+              <span style={{ fontSize: '26px', padding: '12px' }}>
+                <Icon icon="solar:bed-line-duotone" />
+              </span>
               Hotels
             </a>
           </li>
           <li className='lead' onClick={() => handleChangeActive('flight')} role="presentation">
             <a className={classNames({ active: active === 'flight' })}
-              style={{ background: active === 'flight' ? '#1c7ecc' : '#FFF' }} href='#'>
-              <img src='https://cdn.masterdiskon.com/masterdiskon/icon/fe/flight-blue.png' />
-              Flights</a>
-          </li>
-          <li className='lead' onClick={() => handleChangeActive('train')} role="presentation">
-            <a className={classNames({ active: active === 'train' })}
-              style={{ background: active === 'train' ? '#aa2413' : '#FFF' }} href='#'>
-              <img src='https://cdn.masterdiskon.com/masterdiskon/icon/general/new/icon_masdis_train.png' style={{ padding: '12px' }} />
-              Train
+              style={{ background: active === 'flight' ? '#1c7ecc' : '#FFF', color: active === 'flight' ? '#fff' : '#0070ba' }} href='#'>
+              <span style={{ fontSize: '26px', padding: '12px' }}>
+                <Icon icon="ph:airplane-duotone" />
+              </span>
+              Flights
             </a>
           </li>
+          {/* <li className='lead' onClick={() => handleChangeActive('train')} role="presentation">
+            <a className={classNames({ active: active === 'train' })}
+              style={{ background: active === 'train' ? '#a92413' : '#FFF', color: active === 'train' ? '#fff' : '#0070ba' }} href='#'>
+              <span style={{ fontSize: '26px', padding: '12px' }}>
+                <Icon icon="pepicons-print:train" />
+              </span>
+              Train
+            </a>
+          </li> */}
           {/* <li className='lead' onClick={() => handleChangeActive('offices')} role="presentation">
             <a className={classNames({
               active: active === 'offices'
@@ -374,23 +325,11 @@ function HomePage() {
           {renderWidget(state.dataOther)}
         </CardStyled>
       </section >
+
       <main className='container' style={{
         marginTop: '3rem',
         marginBottom: '2rem'
       }}>
-        {/* <section>
-          <CategoryProduct data={state.categoryProduct} />
-        </section> */}
-
-        {/* 
-        {state.newProduct &&
-          <section className='mb-3 mt-5'>
-            {useMemo(() =>
-              <NewProduct data={state.newProduct} />
-              , [state.newProduct])}
-          </section>
-        } */}
-
         <section className='my-5'>
           {useMemo(() =>
             <HotelTerdekat data={state.hotelTerdekat} />
@@ -415,14 +354,9 @@ function HomePage() {
           </section>
         }
       </main>
+
       <section style={{ background: '#F5F6FA' }}>
         <div className="container">
-          {/* <section className='mt-5'>
-            {useMemo(() => {
-              return <BlogSlider title='Info Covid-19' data={state.infoCovid} />
-            }, [state.infoCovid])}
-          </section> */}
-
           {!auth ? <>
             <section className="my-5">
               <div className="card" style={{
@@ -433,7 +367,7 @@ function HomePage() {
                 <div className="p-3">
                   <div className="d-flex flex">
                     <div style={{ width: '90px', height: '90px', display: 'inline-block', position: 'relative' }}>
-                      <Image layout='fill' src={`https://cdn.masterdiskon.com/masterdiskon/icon/fe/add-user.png`} />
+                      <Image layout='fill' src={`https://cdn.masterdiskon.com/masterdiskon/icon/fe/add-user.png`} width={200} height={200} alt='Image Masterdiskon' />
                     </div>
                     <div className='ml-3'>
                       <p className="mb-0">Login untuk promo khusus member</p>
@@ -464,7 +398,14 @@ function HomePage() {
           </section>
           <Benefit />
         </div>
-      </section >
+      </section>
+
+      <section>
+        {useMemo(() =>
+          <ListMaskapai data={state.maskapaiFlight} />
+          , [state.maskapaiFlight])}
+      </section>
+
       <DownloadPage />
     </>
   )

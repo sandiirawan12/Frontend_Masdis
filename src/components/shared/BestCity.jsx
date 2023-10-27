@@ -44,7 +44,7 @@ function BestCity(props) {
 
     return <>
         <TitleBackgroundStyled><Icon icon='solar:bed-line-duotone' className='mr-2 text-info'></Icon> Temukan hotel yang kamu suka di setiap wilayah</TitleBackgroundStyled>
-        <Swiper className='mt-3' slidesPerView={isTabletOrMobile ? 2.5 : 5.5}
+        <Swiper className='mt-3 p-1' slidesPerView={isTabletOrMobile ? 2.5 : 5.5}
             style={{ padding: '0 0 10px 0' }}
             spaceBetween={10}>
             {data?.map((item) => (
@@ -79,7 +79,7 @@ function BestCity(props) {
                                         height: isTabletOrMobile ? '37px' : '37px',
 
                                     }}>Kota {item.name}</p>
-                                    <p className="font-weight-bold mb-2 text-small label-price__text text-info">{item.total.toLocaleString().replaceAll(',', '.')} akomondasi</p>
+                                    <p className="font-weight-bold mb-2 text-small label-price__text"><span style={{ color: '#bb00b0' }}>{item.total.toLocaleString().replaceAll(',', '.')}</span> akomondasi</p>
                                     <p className="font-weight-bold mb-0 label-price__text">Mulai dari</p>
                                     <p className="font-weight-bold label-price__price" style={{ color: '#de0309', }}>
                                         Rp <strong>{item.price.toLocaleString().replaceAll(',', '.')}</strong></p>

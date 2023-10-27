@@ -21,6 +21,8 @@ import SortIcon from '@iconify-icons/fa/filter'
 import WidgetFilterFlight from "@/components-mobile/shared/WidgetFilterFlight";
 import WidgetSort from "@/components-mobile/shared/WidgetSort";
 import FlightPage from "@/components-mobile/page/FlightPage";
+import Link from 'next/link'
+import ReactPlaceholder from 'react-placeholder/lib';
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('G-56R5954QCE');
@@ -31,35 +33,36 @@ const initialState = {
     filters: {},
     dataFilters: [
         {
-            name: 'Transit', slug: 'transit', value: [], type: 'check', items: [
+            name: 'Jumlah Transit', slug: 'transit', value: [], type: 'check', items: [
                 { slug: '0', name: 'Langsung' },
                 { slug: '1', name: '1 Transit' },
                 { slug: '2', name: '2+ Transit' },
             ]
         },
         {
-            name: 'Jam Berangkat', slug: 'departure_time', value: [], type: 'time', items: [
-                { slug: '00:00-05:59', name: 'Dini Hari', icon: 'moonSolid' },
-                { slug: '06:00-11:59', name: 'Pagi Hari', icon: 'sunSolid' },
-                { slug: '12:00-17:59', name: 'Siang Hari', icon: 'sunRegular' },
-                { slug: '18:00-23:59', name: 'Malam Hari', icon: 'moonRegular' },
+            name: 'Waktu Berangkat', slug: 'departure_time', value: [], type: 'time', items: [
+                { slug: '00:00-06:00', name: 'Malam Ke Pagi', icon: 'moonSolid' },
+                { slug: '06:00-12:00', name: 'Pagi Ke Siang', icon: 'sunSolid' },
+                { slug: '12:00-18:00', name: 'Siang Ke Sore', icon: 'sunRegular' },
+                { slug: '18:00-24:00', name: 'Sore Ke Malam', icon: 'moonRegular' },
             ]
         },
         {
-            name: 'Jam Kedatangan', slug: 'arrival_time', value: [], type: 'time', items: [
-                { slug: '00:00-05:59', name: 'Dini Hari', icon: 'moonSolid' },
-                { slug: '06:00-11:59', name: 'Pagi Hari', icon: 'sunSolid' },
-                { slug: '12:00-17:59', name: 'Siang Hari', icon: 'sunRegular' },
-                { slug: '18:00-23:59', name: 'Malam Hari', icon: 'moonRegular' },
+            name: 'Waktu Tiba', slug: 'arrival_time', value: [], type: 'time', items: [
+                { slug: '00:00-06:00', name: 'Malam Ke Pagi', icon: 'moonSolid' },
+                { slug: '06:00-12:00', name: 'Pagi Ke Siang', icon: 'sunSolid' },
+                { slug: '12:00-18:00', name: 'Siang Ke Sore', icon: 'sunRegular' },
+                { slug: '18:00-24:00', name: 'Sore Ke Malam', icon: 'moonRegular' },
             ]
         },
         {
-            name: 'Fasilitas', slug: 'facility', value: [], type: 'check', items: [
-                { slug: 'baggage', name: 'Bagasi' },
-                { slug: 'meal', name: 'Makanan' },
+            name: 'Fasilitas', value: [], type: 'check', slug: 'facility',
+            items: [
+                { slug: 'baggage', name: 'Bagasi', icon: 'fluent-emoji:luggage', loop: true, iconType: true, className: 'text-warning' },
+                { slug: 'meal', name: 'Makanan Di Pesawat', icon: 'fxemoji:hamburger', loop: true, iconType: true, className: 'text-warning' }
             ]
         },
-        { name: 'Range Harga', slug: 'price', value: [], type: 'range', defaultValue: [100000, 100000000] },
+        { name: 'Kisaran Harga', slug: 'price', value: [], type: 'range', defaultValue: [0, 50000000] },
     ],
     meta: {},
     listFlight: undefined,
@@ -75,8 +78,8 @@ function parseQueryOptions(location) {
         to: "",
         dateFrom: "",
         dateTo: "",
-        direct: false,
-        classCabin: 'E'
+        classCabin: "",
+        direct: "",
     };
 
     if (typeof query.from === "string") {
@@ -104,8 +107,8 @@ function parseQueryOptions(location) {
         optionValues.classCabin = query.classCabin
     }
 
-    if (typeof query.direct === 'string') {
-        optionValues.direct = query.direct
+    if (typeof query.direct === "string") {
+        optionValues.direct = query.direct === false ? false : query.direct === "false" ? false : true
     }
     return optionValues;
 }
@@ -113,12 +116,12 @@ function parseQueryOptions(location) {
 function parseQueryFilters(location) {
     const query = queryString.parse(location);
     const filterValues = {
-        transit: '',
-        departure_time: '',
-        arrival_time: '',
-        facility: '',
-        airline_code: '',
-        price: '100000,100000000'
+        transit: "",
+        departure_time: "",
+        arrival_time: "",
+        facility: "",
+        airline_code: "",
+        price: "100000,50000000"
     }
 
     Object.keys(query).forEach((param) => {
@@ -151,7 +154,7 @@ function buildQuery(options, filters) {
     if (options.dateFrom !== "") {
         params.dateFrom = options.dateFrom
     }
-    if (options.dateTo !== "") {
+    if (options.dateTo === "") {
         params.dateTo = options.dateTo
     }
     if (options.adult !== "") {
@@ -163,12 +166,12 @@ function buildQuery(options, filters) {
     if (options.infant !== "") {
         params.infant = options.infant
     }
-    if (options.classCabin !== "") {
+    if (options.classCabin === "") {
         params.classCabin = options.classCabin
     }
 
     if (options.direct !== "") {
-        params.direct = options.direct
+        params.direct = options.direct === false ? false : options.direct === "false" ? false : true 
     }
 
     Object.keys(filters)
@@ -232,8 +235,17 @@ function FlightProductPage() {
     const [optionsRt, setOptionsRt] = useState([])
     const auth = useSelector(state => state.auth);
 
+    const [detailSearch, setDetailSearch] = useState({});
+
     const [open, setOpen] = useState({ filter: false, sort: false })
 
+    const [passanger, setPassanger] = useState({
+        adult: state.options.adult ? state.options.adult : 1,
+        child: state.options.child ? state.options.child : 0,
+        infant: state.options.infant ? state.options.infant : 0
+    })
+
+    const [flightReturn, setFlightReturn] = useState(state.options?.dateTo ? true : false)
 
     const isTabletOrMobile = useMediaQuery({ query: '(max-width:1224px)' })
 
@@ -252,6 +264,24 @@ function FlightProductPage() {
 
     const handleOpen = (field) => {
         setOpen(state => ({ ...state, [field]: !state[field] }));
+    }
+
+    const handleSearch = () => {
+        const params = {
+            ...passanger,
+            from: state.options.from,
+            to: state.options.to,
+            dateFrom: state.options.dateFrom,
+            dateTo: flightReturn ? state.options.dateTo : '',
+            classCabin: state.options.classCabin,
+            direct: state.options.direct === false ? false : state.options.direct === "false" ? false : true
+        }
+
+        if (handleChangeOptions) {
+            handleChangeOptions(params)
+        }
+
+        router.push(`/product/flight?${queryString.stringify(params)}`)
     }
 
     // replace url
@@ -288,9 +318,9 @@ function FlightProductPage() {
         dispatch({ type: 'FETCH_FLIGHT' })
         shopApi.getFlightProducts(access_token, state.options, { ...state.filters, statSort }).then(res => {
             if (res.success) {
-                let items = res.data.filter.airlines.onward.map(item => ({ name: item.name, slug: item.code }))
+                let items = res.data.filter.airlines.onward.map(item => ({ name: item.name, slug: item.code, img: item.image, imgType: true }))
                 if (flightChoose.flight1) {
-                    items = res.data.filter.airlines.return.map(item => ({ name: item.name, slug: item.code }))
+                    items = res.data.filter.airlines.return.map(item => ({ name: item.name, slug: item.code, img: item.image, imgType: true }))
                 }
                 const value = {
                     name: 'Maskapai', slug: 'airline_code', value: [], type: 'check', items
@@ -298,11 +328,13 @@ function FlightProductPage() {
 
                 dispatch({ type: 'SET_DATA_FILTER', value })
                 setOptionsRt(res.data.optionsRt.length)
+
+                setDetailSearch(res.data.detail)
+
                 if (flightChoose.flight1) {
                     dispatch({ type: 'FETCH_FLIGHT_SUCCESS', payload: res.data.optionsRt })
                 } else {
                     dispatch({ type: 'FETCH_FLIGHT_SUCCESS', payload: res.data.options })
-
                 }
                 if (!isTabletOrMobile) {
                     setStatSort(prev => ({ ...prev, [state.filters.orderType]: !prev[state.filters.orderType] }))
@@ -393,83 +425,109 @@ function FlightProductPage() {
             }
 
             {!isTabletOrMobile && <>
-                <section className="border-bottom" style={{ background: '#0070BA' }}>
+                <section className="border-bottom mt-3" style={{ background: '#f5f6fa' }}>
                     <div className="container">
-                        <div className="row">
-                            <div className="py-2 col-md-5">
-                                {flightChoose.flight1 ?
-                                    <div>
-                                        <div className="media bg-white text-primary font-weight-bold p-2 rounded">
-                                            <div className="h-100 bg-white mr-3 p-2 rounded">
-                                                <img style={{ height: '42px' }} src={flightChoose.flight1?.image} className="airline-img" alt="AirAsia Airways" />
-                                            </div>
-                                            <div className="media-body"><div className="d-flex align-items-center"><div className="text-center">
-                                                <p className="mb-0" /><b>{flightChoose.flight1?.detail.from.code}</b></div>
-                                                <span className="mx-2">→</span><div className="text-center"><p className="mb-0"><b>{flightChoose.flight1?.detail.to.code}</b></p></div></div><p className="mb-0">{flightChoose.flight1?.detail.flight[0].departure.date} {flightChoose.flight1?.detail.flight[0].departure.time}</p><p className="mb-0"><b> IDR {flightChoose.flight1?.price.toLocaleString()}</b></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    :
-                                    <div className="d-flex text-primary font-weight-bold justify-content-around  align-items-center p-2 rounded" style={{ background: 'white' }}>
-                                        <span className="mb-0 s_origin">{state.options.from}</span>
-                                        <span className="mx-2">→</span>
-                                        <span className="mb-0 s_destination">{state.options.to}</span>
-                                        |
-                                        <p className="mb-0 s_departuredate">{
-                                            moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('ddd, DD MMM YYYY')
-                                        }</p>
-                                        |
-                                        <p className="mb-0"><span className="s_guest">
-                                            {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)}
-                                        </span>{" "}Penumpang</p>
-                                        |
-                                        <p className="mb-0 s_cabinclass">{state.options.classCabin}</p>
-                                    </div>
-                                }
-                            </div>
-                            <div className="py-2 col-md-5">
-                                {flightChoose.flight2 ?
-                                    <div>
-                                        <div className="media bg-white text-primary font-weight-bold p-2 rounded">
-                                            <div className="h-100 bg-white mr-3 p-2 rounded">
-                                                <img style={{ height: '42px' }} src={flightChoose.flight2?.image} className="airline-img" alt="AirAsia Airways" />
-                                            </div>
-                                            <div className="media-body"><div className="d-flex align-items-center"><div className="text-center">
-                                                <p className="mb-0" /><b>{flightChoose.flight2?.detail.from.code}</b></div>
-                                                <span className="mx-2">→</span><div className="text-center"><p className="mb-0"><b>{flightChoose.flight2?.detail.to.code}</b></p></div></div><p className="mb-0">{flightChoose.flight2?.detail.flight[0].departure.date} {flightChoose.flight2?.detail.flight[0].departure.time}</p><p className="mb-0"><b> IDR {flightChoose.flight2?.price.toLocaleString()}</b></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    :
-                                    <>
-                                        {state.options.dateTo &&
-                                            <div className="d-flex justify-content-around text-primary font-weight-bold align-items-center p-2 rounded" style={{ background: 'white' }}>
-                                                <span className="mb-0 s_origin">{state.options.to}</span>
-                                                <span className="mx-2">→</span>
-                                                <span className="mb-0 s_destination">{state.options.from}</span>
-                                                |
-                                                <p className="mb-0 s_departuredate">{
-                                                    moment(toDate(state.options.dateTo)).locale('id', idLocale).format('ddd, DD MMM YYYY')
-                                                }</p>
-                                                |
-                                                <p className="mb-0"><span className="s_guest">
-                                                    {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)}
-                                                </span>{" "}Penumpang</p>
-                                                |
-                                                <p className="mb-0">{state.options.classCabin}</p>
-                                            </div>
+                        <div className="row mb-2">
+                            <div className="py-2 col-md-10">
+                                <div className="d-flex text-white font-weight-bold justify-content-around align-items-center p-2 rounded" style={{ background: '#1d81c6', border: '1px solid #dfdfdf' }}>
+                                    <span className="mb-0 s_origin">{detailSearch.from} ({state.options.from})</span>
+                                    <span className="mx-2">→</span>
+                                    <span className="mb-0 s_destination">{detailSearch.to} ({state.options.to})</span>
+                                    |
+                                    {state.options.dateFrom ?
+                                        <p className="mb-0 s_departuredate">{moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('ddd, DD MMM YYYY')}</p>
+                                        :
+                                        <></>
+                                    }
+                                    {state.options.dateTo ?
+                                        <span>&</span>
+                                        :
+                                        <></>
+                                    }
+                                    {state.options.dateTo ?
+                                        <p className="mb-0 s_departuredate"> {moment(toDate(state.options.dateTo)).locale('id', idLocale).format('ddd, DD MMM YYYY')}</p>
+                                        :
+                                        <></>
+                                    }
+                                    |
+                                    <p className="mb-0"><span className="s_guest">
+                                        {Number(state.options.adult || 0) + Number(state.options.infant || 0) + Number(state.options.child || 0)}
+                                    </span>{" "}Penumpang</p>
+                                    |
+                                    <p className="mb-0 s_cabinclass">
+                                        {
+                                            state.options.classCabin === "" ? 'All' :
+                                                state.options.classCabin === "E" ? 'Economy' :
+                                                    state.options.classCabin === "S" ? 'Premium Economy' :
+                                                        state.options.classCabin === "B" ? 'Bussiness' :
+                                                            state.options.classCabin === "F" ? 'First Class' : ''
                                         }
-                                    </>
-                                }
+                                    </p>
+                                </div>
                             </div>
-                            <div className="col-md-2 py-2 ">
-                                <button onClick={() => setIsChange(!isChange)} className="btn btn-block btn-warning" type="button" >
-                                    <Icon icon={EditIcon} /> Ganti pencarian</button>
+                            <div className="py-2 col-md-2">
+                                <span onClick={() => setIsChange(!isChange)} className="text-primary p-2" type="button" >
+                                    <Icon icon="icon-park-twotone:search" className="mr-1" /> Ganti pencarian
+                                </span>
                             </div>
                         </div>
-                    </div></section>
+                    </div>
+                </section>
+                {flightChoose.flight1 ?
+                    <div className="border-bottom mt-2" style={{ background: '#f5f6fa' }}>
+                        <div className="container">
+                            <div className="row mb-2">
+                                <div className="col-md-12">
+                                    <div className="d-flex align-items-center bg-white p-2 rounded" style={{ border: '1px solid #dfdfdf' }}>
+                                        <div className="mx-2">
+                                            Pilihan Keberangkatan
+                                        </div>
+                                        <div className="bg-white mr-3">
+                                            <img style={{ width:'42px', height: '42px' }} src={flightChoose.flight1?.image} className="airline-img" alt="airline-img" />
+                                        </div>
+                                        <div className="d-flex align-items-center my-1">
+                                            <div>
+                                                <div className="d-flex align-items-center">
+                                                    <span className="font-weight-bold">{flightChoose.flight1?.name}</span>
+                                                    <span className="mx-2">-</span>
+                                                    <span>{flightChoose.flight1?.code}</span>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex align-items-center mx-4">
+                                                <div className="text-center">
+                                                    <span className="mb-0">
+                                                        {flightChoose.flight1?.detail.from.city}
+                                                    </span>
+                                                </div>
+                                                <span className="mx-2 text-primary"><Icon icon="pepicons-print:arrow-right" /></span>
+                                                <div className="text-center">
+                                                    <span className="mb-0">
+                                                        {flightChoose.flight1?.detail.to.city}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="mr-4">
+                                                <span>{flightChoose.flight1?.detail.flight[0].departure.date} {flightChoose.flight1?.detail.flight[0].departure.time}</span>
+                                            </div>
+                                            <div className="mr-4">
+                                                <span>{flightChoose.flight1?.duration}</span>
+                                            </div>
+                                            <div>
+                                                <p className="mb-1" style={{ fontSize: '20px' }}>
+                                                    <b className="text-danger">Rp {flightChoose.flight1?.price.toLocaleString()}</b>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    ''
+                }
                 <Collapse isOpen={isChange} >
-                    <div className="container">
+                    <div className="container mt-3">
                         <WidgetFlight handleChangeOptions={handleChangeOptions} options={state.options} />
                     </div>
                 </Collapse>
@@ -479,6 +537,41 @@ function FlightProductPage() {
                 <div className="row">
                     {!isTabletOrMobile &&
                         <div className="col-3">
+                            <div className="mb-4 p-3 bg-white rounded border">
+                                <span className="font-weight-bold">
+                                    <Icon icon="noto:airplane" className="mr-3" style={{ fontSize: '20px' }} />
+                                    Penerbangan Anda
+                                </span>
+                                {state.isLoading ?
+                                    <ReactPlaceholder type='rect' style={{ height: '30px', width: '200px' }} className="mt-3" showLoadingAnimation ready={!state.isLoading} />
+                                    :
+                                    <div>
+                                        {state.options.dateFrom ?
+                                            <div className="mt-3" style={{ borderRight: '3px solid #015386' }}>
+                                                <small>{moment(toDate(state.options.dateFrom)).locale('id', idLocale).format('ddd, DD MMM YYYY')}</small> <br />
+                                                <span className="font-weight-bold">{detailSearch.from} <Icon icon="solar:arrow-right-line-duotone" className="text-primary mx-2" /> {detailSearch.to}</span>
+                                            </div>
+                                            :
+                                            <></>
+                                        }
+                                        {state.options.dateTo ?
+                                            <div>
+                                                <hr />
+                                                <div style={{ borderRight: '3px solid #015386' }}>
+                                                    <small>{moment(toDate(state.options.dateTo)).locale('id', idLocale).format('ddd, DD MMM YYYY')}</small> <br />
+                                                    <span className="font-weight-bold">
+                                                        {detailSearch.to}
+                                                        <Icon icon="solar:arrow-right-line-duotone" className="text-primary mx-2" />
+                                                        {detailSearch.from}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            :
+                                            <></>
+                                        }
+                                    </div>
+                                }
+                            </div>
                             <WidgetFilter title='Filter' filters={state.dataFilters} values={state.filters} dispatch={dispatch} />
                         </div>
                     }
@@ -487,8 +580,41 @@ function FlightProductPage() {
                     })}>
 
                         {!isTabletOrMobile && <>
-                            <WidgetSorting data={dataSorting} dispatch={dispatch} state={state} />
-                            <h4 className="font-weight-bold text-primary">Keberangkatan</h4>
+                            <div>
+                                <div className="d-flex align-items-center justify-content-between px-3 mt-2 mb-3 rounded" style={{ background: '#015386', boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)' }}>
+                                    <div className="d-flex align-items-center text-white">
+                                        <Icon style={{ fontSize: '20px' }} icon="solar:chat-square-like-bold-duotone" className="mr-2" />
+                                        <p style={{ fontSize: '14px' }} className="pt-3 font-weight-bold">
+                                            Temukan Promo Lebih Untung Di Sini!
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <Link href='/promo'>
+                                            <span className="text-warning font-weight-bold" style={{ cursor: 'pointer' }}>Cek Sekarang</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-between px-3 mt-2 mb-3 bg-white rounded" style={{ boxShadow: '-1px 3px 11px -7px rgba(156,156,156,0.75)' }}>
+                                    <div>
+                                        {state.isLoading ?
+                                            <ReactPlaceholder type='rect' style={{ height: '30px', width: '150px' }} className="my-2" showLoadingAnimation ready={!state.isLoading} />
+                                            :
+                                            <p style={{ fontSize: '16px' }} className="pt-3">
+                                                Pencarian anda dari <span class="text-primary font-weight-bold">{detailSearch.from}</span> ke <span class="text-primary font-weight-bold">{detailSearch.to}</span>
+                                            </p>
+                                        }
+                                    </div>
+                                    <div>
+                                        <span onClick={handleSearch} style={{ cursor: 'pointer' }}>
+                                            <Icon icon="icon-park-twotone:search" className="mr-2 text-primary"></Icon>
+                                            Refresh Schedule
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <WidgetSorting data={dataSorting} dispatch={dispatch} state={state} />
+                                    </div>
+                                </div>
+                            </div>
                         </>}
                         {(state.isLoading) ?
                             [1, 2, 3, 4, 5].map((item, index) => (
@@ -531,12 +657,15 @@ function FlightProductPage() {
 }
 
 const dataSorting = {
-    type: 'button',
+    type: 'select',
     sorts: [
-        { name: 'Harga', value: 'price' },
-        { name: 'Keberangkatan', value: 'departure_time' },
-        { name: 'Kedatangan', value: 'arrival_time' },
-        { name: 'Durasi', value: 'duration' },
+       { name: 'Harga Terendah', value: 'price_asc', asc: true },
+        { name: 'Harga Tertinggi', value: 'price_desc', asc: false },
+        { name: 'Keberangkatan Paling Awal', value: 'departure_time_asc', asc: true },
+        { name: 'Keberangkatan Paling Akhir', value: 'departure_time_desc', asc: false },
+        { name: 'Tiba Paling Awal', value: 'arrival_time_asc', asc: true },
+        { name: 'Tiba Paling Akhir', value: 'arrival_time_desc', asc: false },
+        { name: 'Durasi', value: 'duration', asc: true },
     ]
 }
 

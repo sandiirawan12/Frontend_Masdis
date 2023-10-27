@@ -43,13 +43,13 @@ function FilterTime(props) {
             <div className="form-row mb-0 pb-0">
                 {data.items.map(item => (
                     <div className="col-6 py-2" key={`${item.slug}_${data.slug}`}>
-                        <label style={{ fontSize: '11px', width: '100%', display: 'inline-block' }} className={classNames("btn btn-light border form-check-label", {
+                        <label style={{ fontSize: '11px', width: '100%' }} className={classNames("btn btn-light border form-check-label", {
                             'btn-primary': value.includes(item.slug),
                             'btn-light': value.includes(item.slug)
                         })}>
-                            <Icon icon={icon[item.icon]} />
-                            <br />
-                            <input type="checkbox" value={item.slug} onChange={handleChange} style={{ opacity: 0, width: '100%', height: '100%', marginTop: '-15%', cursor: 'pointer' }} className="form-check-input bg-danger p-0 check_box filter-check" autoComplete="off" />{item.name}<br />({item.slug})
+                            <input type="checkbox" value={item.slug} onChange={handleChange} style={{ opacity: 0, width: '100%', height: '100%', marginTop: '-15%', cursor: 'pointer' }} className="form-check-input bg-danger p-0 check_box filter-check" autoComplete="off" />
+                            <span style={{ fontSize: '11px' }}>{item.name}</span> <br />
+                            <span className="font-weight-bold" style={{ fontSize: '14px', color: value.includes(item.slug) ? '#fff' : '#0070ba' }}>{item.slug}</span>
                         </label>
                     </div>
                 ))}

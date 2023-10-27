@@ -543,56 +543,81 @@ function FlightPassanger() {
                                 <h5 className="pb-0 mb-0">Rincian Harga </h5>
                             </div>
                             <div className="card-body">
-                                <div id="cart-harga">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="pb-2"><strong>Jumlah Pembayaran</strong></span>
-                                        <p>Rp{price?.subtotal.toLocaleString()}</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="pb-2"><strong>Pajak dan lainnya</strong></span>
-                                        <p>Rp{(price?.tax + price?.iwjr + price?.fee2).toLocaleString()}</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="pb-2"><strong>Biaya Penanganan</strong></span>
-                                        <p>Rp{price?.fee.toLocaleString()}</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="pb-2"><strong>Tambahan</strong></span>
-                                        <p>Rp{price?.addon}</p>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <p><b>Poin</b></p>
-                                        <p className="total_poin">{price?.user?.point.toLocaleString()}</p>
-                                    </div>
-                                    {price?.point > 0 &&
-                                        <div className="d-flex justify-content-end align-items-center">
-                                            <p className="total_poin text-danger">- {price?.point.toLocaleString()}</p>
-                                        </div>
+                                {contact?.role == 'corporate' ?
+                                    <>
+                                        <span> Company <br />
+                                            <span className="mb-0 font-weight-bold text-primary">{contact.company?.name}</span>
+                                        </span>
+                                        <br /> <br />
+                                        <span > Sisa Saldo <br />
+                                            <span className="mb-0 font-weight-bold text-primary">Rp {contact.company.saldo.toLocaleString().replaceAll(',', '.')}</span>
+                                        </span>
+                                        <hr />
+                                    </>
+                                    :
+                                    <></>
+                                }
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Jumlah Pembayaran</span>
+                                    <span><strong className="text_fee">Rp{price?.subtotal.toLocaleString()}</strong></span>
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Biaya Penanganan</span>
+                                    <span><strong className="text_fee">Rp{price?.fee.toLocaleString()}</strong></span>
+                                </div>
+                                <hr />
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Subtotal</span>
+                                    <span><strong className="text_fee text-info">Rp{(price?.subtotal + price?.fee).toLocaleString()}</strong></span>
+                                </div>
+                                <hr />
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Pajak 1.1% dan lainnya</span>
+                                    {price?.tax === 0 ?
+                                        <>
+                                            <span className="text_fee text-success"><strong>Include</strong></span>
+                                        </>
+                                        :
+                                        <>
+                                            <span className="text_fee"><strong>Rp{price?.tax.toLocaleString()}</strong></span>
+                                        </>
                                     }
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <p>
-                                            <input onClick={() => setPoint(!point)}
-                                                checked={point} type="checkbox" id="ambilpoint" />
-                                            <label className="font-weight-bold font-italic text-success" htmlFor="ambilpoint">Gunakan poin untuk pembayaran</label></p>
+                                </div>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Tambahan</span>
+                                    <span><strong className="text_fee">Rp{price?.addon.toLocaleString()}</strong></span>
+                                </div>
+                                <hr />
+                                <div id="coupon_checkout" className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Kupon</span>
+                                    <div>
+                                        <button type="button" onClick={handleOpenCoupon} className="btn btn-sm btn-warning">
+                                            Gunakan Kupon </button>
                                     </div>
-                                    <div id="coupon_checkout" className="d-flex justify-content-between align-items-center mb-2">
-                                        <span><strong>Kupon</strong></span>
-                                        <div>
-                                            <button type="button" onClick={handleOpenCoupon} className="btn btn-sm btn-warning font-weight-bold">
-                                                Gunakan Kupon </button>
-                                        </div>
+                                </div>
+                                {price?.coupon.map(item => (
+                                    <div className="d-flex justify-content-between">
+                                        <span className="pb-2 text-danger">{item.name}</span>
+                                        <p className="text-danger">- Rp{item.amount.toLocaleString()}<Icon style={{ cursor: 'pointer' }} icon={TimesCircle} onClick={() => handleRemoveCoupon(item)} /></p>
                                     </div>
-                                    {price?.coupon.map(item => (
-                                        <div className="d-flex justify-content-between">
-                                            <span className="pb-2 text-danger">{item.name}</span>
-                                            <p className="text-danger">- Rp{item.amount.toLocaleString()}<Icon style={{ cursor: 'pointer' }} icon={TimesCircle} onClick={() => handleRemoveCoupon(item)} /></p>
-                                        </div>
-                                    ))}
-                                    <hr />
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span className="pb-2"><strong>Total</strong></span>
-                                        <strong><h4 className="text-primary font-weight-bold">Rp{price?.total.toLocaleString()}</h4></strong>
+                                ))}
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <div className="text-danger font-weight-bold text-uppercase judul_point">Poin</div>
+                                    <h6><strong className="total_poin">{price?.user?.point.toLocaleString()}</strong></h6>
+                                </div>
+                                {price?.point > 0 &&
+                                    <div className="d-flex justify-content-end align-items-center mb-2">
+                                        <h6><strong className="text-danger">-{price?.point.toLocaleString()}</strong></h6>
                                     </div>
+                                }
+                                <div className="kotakambilpoint">
+                                    <input onClick={() => setPoint(!point)} checked={point} type="checkbox" id="ambilpoint" className="mr-2" />
+                                    <label className="font-weight-bold font-italic text-success" htmlFor="ambilpoint">Gunakan poin untuk potongan harga</label>
+                                </div>
+                                <hr />
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <h4>Total</h4>
+                                    <strong><h4 className="text-primary font-weight-bold">Rp{price?.total.toLocaleString()}</h4></strong>
                                 </div>
                             </div>
                         </div>

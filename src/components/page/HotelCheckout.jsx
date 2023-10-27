@@ -200,8 +200,6 @@ function HotelCheckout() {
         arr.add(value);
         setCoupon([...arr])
         // handleOpenCoupon()
-
-        console.log(textCoupon)
     }
 
     const handleSubmitCoupon = (value) => {
@@ -373,7 +371,6 @@ function HotelCheckout() {
                         if (res.success) {
                             setPrice(res.data)
                             handleOpenCoupon()
-                            console.log("coupon = " + JSON.stringify(res.data) + "----" + textCoupon);
                         } else {
                             setCoupon(coupon.filter(item => item !== res.note));
                             if (res.message.includes('coupon')) {
@@ -408,7 +405,6 @@ function HotelCheckout() {
                     setPrice(res.data)
                     cekKupon(textCoupon)
                     // setLoading(false)
-                    console.log("coupon = " + JSON.stringify(res.data) + "----" + textCoupon);
                 } else {
                     // handleRemoveCoupon(res.data)
 
@@ -599,12 +595,12 @@ function HotelCheckout() {
                                     <span>Rincian Belanja</span>
                                 </div>
                                 <div className="card-body">
-
                                     {contact?.role == 'corporate' ?
                                         <>
-                                            <span > Company <br />
+                                            <span> Company <br />
                                                 <span className="mb-0 font-weight-bold text-primary">{contact.company?.name}</span>
-                                            </span><br />
+                                            </span>
+                                            <br /> <br />
                                             <span > Sisa Saldo <br />
                                                 <span className="mb-0 font-weight-bold text-primary">Rp {contact.company.saldo.toLocaleString().replaceAll(',', '.')}</span>
                                             </span>
@@ -618,22 +614,36 @@ function HotelCheckout() {
                                         <span className="harga_markup_for_midrans" style={{ position: 'absolute', right: '4%' }}><strong /></span><br />
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <span><strong>Sub Total</strong></span>
+                                        <span>Jumlah Pembayaran</span>
                                         <span><strong className="text_fee">Rp{price?.subtotal.toLocaleString()}</strong></span>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <span><strong>Pajak</strong></span>
-                                        <span className="text_fee"><strong>Rp{(price?.total - price?.subtotal).toLocaleString()}</strong></span>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center mb-2">
-                                        <span><strong>Biaya Penanganan</strong></span>
+                                        <span>Biaya Penanganan</span>
                                         <span><strong className="text_fee">Rp{price?.fee.toLocaleString()}</strong></span>
                                     </div>
-
+                                    <hr />
+                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                        <span>Subtotal</span>
+                                        <span><strong className="text_fee text-info">Rp{(price?.subtotal + price?.fee).toLocaleString()}</strong></span>
+                                    </div>
+                                    <hr />
+                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                        <span>Pajak 1,1%</span>
+                                        {price?.tax === 0 ?
+                                            <>
+                                                <span className="text_fee text-success"><strong>Include</strong></span>
+                                            </>
+                                            :
+                                            <>
+                                                <span className="text_fee"><strong>Rp{price?.tax.toLocaleString()}</strong></span>
+                                            </>
+                                        }
+                                    </div>
+                                    <hr />
                                     {/* {contact?.role == 'user' ? */}
                                     <>
                                         <div id="coupon_checkout" className="d-flex justify-content-between align-items-center mb-2">
-                                            <span><strong>Kupon</strong></span>
+                                            <span>Kupon</span>
                                             <div>
                                                 <button type="button" onClick={handleOpenCoupon} className="btn btn-sm btn-warning">
                                                     Gunakan Kupon </button>
@@ -651,12 +661,12 @@ function HotelCheckout() {
                                         </div>
                                         {price?.point > 0 &&
                                             <div className="d-flex justify-content-end align-items-center mb-2">
-                                                <h6><strong className="text-danger">-{price?.point}</strong></h6>
+                                                <h6><strong className="text-danger">-{price?.point.toLocaleString()}</strong></h6>
                                             </div>
                                         }
                                         <div className="kotakambilpoint">
-                                            <input onClick={handleUsePoint} checked={point} type="checkbox" id="ambilpoint" />
-                                            <label className="font-weight-bold font-italic" htmlFor="ambilpoint">Gunakan poin untuk pembayaran</label>
+                                            <input onClick={handleUsePoint} checked={point} type="checkbox" id="ambilpoint" className="mr-2" />
+                                            <label className="font-weight-bold font-italic text-success" htmlFor="ambilpoint">Gunakan poin untuk potongan harga</label>
                                         </div>
                                     </>
                                     {/* :
@@ -665,15 +675,15 @@ function HotelCheckout() {
 
                                     <hr />
                                     <div className="d-flex my-2 justify-content-between mt-2">
-                                        <h5>Total</h5>
-                                        <h4 id="total_teks" className="total_teks harga_terkini">Rp{price?.total.toLocaleString()}</h4>
+                                        <h4>Total</h4>
+                                        <strong><h4 className="text-primary font-weight-bold">Rp{price?.total.toLocaleString()}</h4></strong>
                                     </div>
                                     <p>
                                         <div style={{
                                             cursor: 'pointer'
-                                        }} onClick={() => setOpenCancellationPolicy(d => !d)}><strong>Kebijakan pembatalan <Icon icon={InfoIcon} /> </strong></div>
+                                        }} onClick={() => setOpenCancellationPolicy(d => !d)}><strong>Kebijakan pembatalan <Icon icon={InfoIcon} className="ml-2 text-danger"/> </strong></div>
                                         <Collapse isOpen={openCancellationPolicy}>
-                                            <p className="text-justify">
+                                            <p className="text-justify mt-3">
                                                 {hotel?.detail?.cancellationPolicy}
                                             </p>
                                         </Collapse>

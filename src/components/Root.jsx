@@ -23,6 +23,18 @@ function Root(props) {
     useEffect(() => {
         if (!router.pathname.includes('/auth/login/success/[slug]')) {
             setIsLoading(true)
+
+            document.title = 'Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023';
+            <meta
+                name="description"
+                content="Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023"
+            />
+            // const metaDescription = document.querySelector('meta[name="description"]');
+            // if (metaDescription) {
+            //     metaDescription.setAttribute('content', 'Masterdiskon.com - Cari tiket pesawat dan Hotel Promo dan Diskon Spesial 2023');
+            // }
+            document.documentElement.lang = 'id'
+
             userApi.getProfile(access_token).then(res => {
                 if (!res.success) {
                     tokenApi.tokenPublic().then(res => res.json()).then(res => {
@@ -45,8 +57,6 @@ function Root(props) {
                         window.location.reload();
                     }
                 })
-                // alert('Perika akses internet anda')
-
             })
         } else {
             setIsLoading(false);

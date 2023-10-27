@@ -66,7 +66,7 @@ function WidgetFlight(props) {
     infant: options?.infant ? options.infant : 0
   })
 
-  const [classCabin, setClassCabin] = useState(options?.classCabin ? options.classCabin : '')
+  const [classCabin, setClassCabin] = useState(options?.classCabin ? options.classCabin : "")
 
   const [exchangeFlight, setExchangeFlight] = useState(false);
   const refTo = useRef();
@@ -216,11 +216,11 @@ function WidgetFlight(props) {
           <div className='mx-2'>
             {/* <label className='font-weight-bold'>Kelas Kabin</label> */}
             <select className="form-control" value={classCabin} onChange={(e) => setClassCabin(e.target.value)}>
-              <option value="" selected="true">Semua Cabin</option>
-              <option value="E">Ekonomi</option>
-              <option value="S">Premium Ekonomi</option>
-              <option value="B">Bisnis</option>
-              <option value="F">First</option>
+              <option value="">All</option>
+              <option value="E">Economy</option>
+              <option value="S">Premium Economy</option>
+              <option value="B">Bussiness</option>
+              <option value="F">First Class</option>
             </select>
           </div>
         </div>
@@ -253,24 +253,32 @@ function WidgetFlight(props) {
                 : (
                   <>
                     <span className="d-flex justify-content-between align-items-center ">
-                      <div>
-                        <strong style={{
-                          textOverflow: 'ellipsis',
-                          width: '220px',
-                          fontSize: '16px',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.text}
-                        </strong>
-                        <br />
-                        <small style={{
-                          width: '100%',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.city}, {option.country_name}
-                        </small>
+                      <div className='d-flex align-items-center'>
+                        <Icon icon="pepicons-print:airplane"
+                          style={{
+                            fontSize: '28px',
+                            color: '#0070ba'
+                          }}
+                        />
+                        <div className='ml-3' style={{ width: '95%' }}>
+                          <strong style={{
+                            textOverflow: 'ellipsis',
+                            width: '210px',
+                            fontSize: '16px',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.text}
+                          </strong>
+                          <br />
+                          <small style={{
+                            width: '100%',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.city}, {option.country_name}
+                          </small>
+                        </div>
                       </div>
                       <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
                     </span>
@@ -309,24 +317,32 @@ function WidgetFlight(props) {
                 </span> :
                   <>
                     <span className="d-flex justify-content-between align-items-center ">
-                      <div>
-                        <strong style={{
-                          textOverflow: 'ellipsis',
-                          width: '220px',
-                          fontSize: '16px',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.text}
-                        </strong>
-                        <br />
-                        <small style={{
-                          width: '100%',
-                          display: 'inline-block',
-                          whiteSpace: 'break-spaces'
-                        }}>
-                          {option.city}, {option.country_name}
-                        </small>
+                      <div className='d-flex align-items-center'>
+                        <Icon icon="pepicons-print:airplane"
+                          style={{
+                            fontSize: '28px',
+                            color: '#0070ba'
+                          }}
+                        />
+                        <div className='ml-3' style={{ width: '95%' }}>
+                          <strong style={{
+                            textOverflow: 'ellipsis',
+                            width: '210px',
+                            fontSize: '16px',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.text}
+                          </strong>
+                          <br />
+                          <small style={{
+                            width: '100%',
+                            display: 'inline-block',
+                            whiteSpace: 'break-spaces'
+                          }}>
+                            {option.city}, {option.country_name}
+                          </small>
+                        </div>
                       </div>
                       <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
                     </span>
@@ -386,7 +402,7 @@ function WidgetFlight(props) {
         <ListItemStyled className="list-group-item p-0 bg-warning w-20 tombolcari">
           <button onClick={handleSearch} className="btn btn-transparent d-flex justify-content-center align-items-center font-weight-bold h-100 btn-block">
             <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
-              <Image layout='fill' src={'https://cdn.masterdiskon.com/masterdiskon/icon/fe/luv.png'} />
+              <Icon icon="icon-park-twotone:search"></Icon>
             </div>
             Search</button>
         </ListItemStyled>

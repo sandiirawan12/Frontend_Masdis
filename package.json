@@ -6,8 +6,8 @@
     "build": "next build",
     "start": "next start --port 3001",
     "lint": "next lint",
-    "build-start": "next build && next start  --port 3001",
-    "export": "npm run build && next export -o _static" 
+    "build-start": "next build && next start --port 3001",
+    "export": "npm run build && next export -o _static"
   },
   "dependencies": {
     "@biotic-ui/bottom-sheet": "^0.3.14",
@@ -23,6 +23,7 @@
     "classnames": "^2.3.1",
     "formik": "^2.2.9",
     "framer-motion": "^4.1.1",
+    "fuzzy-search": "^3.2.1",
     "google-map-react": "^2.1.10",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
@@ -41,11 +42,14 @@
     "react-html-parser": "^2.0.2",
     "react-image-gallery": "^1.2.9",
     "react-midtrans": "^1.0.2",
+    "react-pdf": "^7.4.0",
+    "react-pdf-html": "^1.1.18",
     "react-placeholder": "^4.1.0",
     "react-redux": "^7.2.6",
     "react-responsive": "^9.0.0-beta.6",
     "react-responsive-carousel": "^3.2.23",
     "react-snowfall": "^1.2.1",
+    "react-to-pdf": "^1.0.1",
     "react-toastify": "^8.1.0",
     "reactstrap": "^8.10.1",
     "redux": "^4.1.2",

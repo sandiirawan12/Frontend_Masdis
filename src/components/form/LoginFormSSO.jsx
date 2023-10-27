@@ -59,7 +59,7 @@ function LoginFormSSO() {
                             dispatch(login())
                         }
                         actions.setSubmitting(false)
-                        router.push(redirectUrl ? redirectUrl : '/user/profile')
+                        router.push(redirectUrl ? redirectUrl : '/')
                         dispatch(changeRedirectUrl(''))
                     })
                 } else {

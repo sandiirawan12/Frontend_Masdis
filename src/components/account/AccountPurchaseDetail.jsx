@@ -10,6 +10,7 @@ import TabPayment from '../shared/TabPayment';
 import { toast } from 'react-toastify';
 import AccountPurchaseHotelDetail from './AccountPurchaseHotelDetail';
 import AccountPurchaseFlightDetail from './AccountPurchaseFlightDetail';
+import AccountPurchaseTrainDetail from './AccountPurchaseTrainDetail';
 import StatusLabel from '../shared/StatusLabel';
 import AccountPurchaseProductDetail from './AccountPurchaseProductDetail';
 import { useMediaQuery } from 'react-responsive';
@@ -22,6 +23,7 @@ import { stringify } from 'query-string';
 const purchaseComponent = {
     hotel: AccountPurchaseHotelDetail,
     flight: AccountPurchaseFlightDetail,
+    train: AccountPurchaseTrainDetail,
     product: AccountPurchaseProductDetail
 }
 
@@ -29,6 +31,7 @@ function AccountPurchaseDetail() {
     const { access_token } = useSelector(state => state.token)
     const router = useRouter()
     const [purchase, setPurchase] = useState();
+    const user = useSelector(state => state.user);
 
     const [loading, setLoading] = useState(true);
     const [countDown, setCountDown] = useState({
@@ -84,7 +87,7 @@ function AccountPurchaseDetail() {
     const handleSubmitIssued = () => {
         let obj = tokenIssued;
         try {
-            if (obj === '') {
+            if (obj === "") {
                 toast.error(`Token tidak boleh kosong`)
             } else {
                 Swal.fire({
@@ -100,7 +103,7 @@ function AccountPurchaseDetail() {
                     if (isConfirm) {
                         Swal.fire({
                             title: 'Pesanan diproses!',
-                            text: 'Pesanan Anda sedang kami proses.!',
+                            text: 'Pesanan Anda sedang kami proses, Mohon menunggu!',
                             icon: 'success',
                             closeOnClickOutside: false,
                             closeOnEsc: false,
@@ -109,39 +112,71 @@ function AccountPurchaseDetail() {
                         }).then(function () {
                             const req = {
                                 "product": purchase.product,
-                                "key": purchase.codeId,
+                                "key": user.role === 'user' ? purchase.period.codeId : purchase.codeId,
                                 "token": obj
                             }
-                            const number = purchase.period.codeId;
 
+                            const number = user.role === 'user' ? purchase.period.codeId : purchase.codeId;
                             const reqInv = {
-                                "note": 'B2B',
-                                "tags": purchase.product,
-                                "id_order": [number.toString()],
-                                "idOrder": [number.toString()],
+                                "id_order": number.toString(),
+                                "address": '',
+                                "memo": '',
                             }
 
-                            userApi.submitIssued(access_token, req).then(res => {
+                            userApi.submitIssued(access_token, req)
+                            .then(res => {
                                 if (res.success) {
-                                    console.log("body", JSON.stringify(reqInv))
-                                    userApi.submitInvoice(access_token, reqInv).then(res => {
-                                        Swal.fire({
-                                            title: 'Berhasil!',
-                                            text: 'Pesanan Anda berhasil!',
-                                            icon: 'success',
-                                            closeOnClickOutside: false,
-                                            closeOnEsc: false,
-                                            showConfirmButton: false,
-                                            timer: 2000
-                                        }).then(function () {
-                                            window.location.reload();
-                                        });
-
-                                    })
-
+                                    userApi.submitInvoice(access_token, reqInv)
+                                        .then(res => {
+                                            Swal.fire({
+                                                title: 'Berhasil!',
+                                                text: 'Pesanan Anda berhasil diproses!',
+                                                icon: 'success',
+                                                closeOnClickOutside: false,
+                                                closeOnEsc: false,
+                                                showConfirmButton: false,
+                                                timer: 2000
+                                            }).then(function () {
+                                                window.location.reload();
+                                            });
+                                        }).catch(error => {
+                                            Swal.fire({
+                                                title: 'Gagal!',
+                                                text: 'Cetak invoice tidak berhasil dibuat',
+                                                icon: 'danger',
+                                                closeOnClickOutside: false,
+                                                closeOnEsc: false,
+                                                showConfirmButton: false,
+                                                timer: 1000
+                                            }).then(function () {
+                                                window.location.reload();
+                                            });
+                                        })
                                 } else {
-                                    toast.error('Pesanan Gagal Dipesan "' + res.message + '"')
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Pesanan Gagal Dipesan "' + res.message + '"',
+                                        icon: 'danger',
+                                        closeOnClickOutside: false,
+                                        closeOnEsc: false,
+                                        showConfirmButton: false,
+                                        timer: 1000
+                                    }).then(function () {
+                                        window.location.reload();
+                                    });
                                 }
+                            }).catch(error => {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Pesanan gagal diproses',
+                                    icon: 'danger',
+                                    closeOnClickOutside: false,
+                                    closeOnEsc: false,
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                }).then(function () {
+                                    window.location.reload();
+                                });
                             })
                         });
                     } else {
@@ -385,17 +420,14 @@ function AccountPurchaseDetail() {
                                 <div className="card-header py-3">
                                     <h6 className="font-weight-bold text-primary">Detail Pesanan</h6>
                                 </div>
-                                {
-                                    purchase.status.id === 13 ?
-
-                                        <div className={`card-body border-bottom bg-danger py-2 bayar-disini rounded-bottom text-white`}>
-                                            <StatusLabel clickable={clickable} handleOpenPayment={handleOpenPayment} handleSubmitIssued={handleSubmitIssued} purchase={purchase} setClickable={setClickable} setTokenIssued={setTokenIssued} />
-                                        </div>
-                                        :
-
-                                        <div className={`card-body border-bottom bg-warning py-2 bayar-disini rounded-bottom`}>
-                                            <StatusLabel clickable={clickable} handleOpenPayment={handleOpenPayment} handleSubmitIssued={handleSubmitIssued} purchase={purchase} setClickable={setClickable} setTokenIssued={setTokenIssued} />
-                                        </div>
+                                {purchase.status.id === 13 ?
+                                    <div className={`card-body border-bottom bg-danger py-2 bayar-disini rounded-bottom text-white`}>
+                                        <StatusLabel clickable={clickable} handleOpenPayment={handleOpenPayment} handleSubmitIssued={handleSubmitIssued} purchase={purchase} setClickable={setClickable} setTokenIssued={setTokenIssued} />
+                                    </div>
+                                    :
+                                    <div className={`card-body border-bottom bg-warning py-2 bayar-disini rounded-bottom`}>
+                                        <StatusLabel clickable={clickable} handleOpenPayment={handleOpenPayment} handleSubmitIssued={handleSubmitIssued} purchase={purchase} setClickable={setClickable} setTokenIssued={setTokenIssued} />
+                                    </div>
                                 }
                             </div>
 
@@ -632,18 +664,17 @@ function AccountPurchaseDetail() {
                                 <h3> <b>Rp{purchase?.price.total.toLocaleString()}</b></h3>
 
                             </div>
-                            {purchase?.codeinv != 0 ?
+                            {(purchase?.codeinv != 0 && purchase.status.id === 15 || purchase.status.id === 9) && (
                                 <div className={`card-body border-bottom bg-warning py-2 bayar-disini rounded-bottom`}>
                                     <div className="row">
                                         <div className="col-md-12">
                                             <div className="form-group">
-                                                <a href={`https://cdn.masterdiskon.com/masterdiskon/order/invoice/2023/` + purchase?.codeinv + `.pdf?`} target="_blank" type="button" class="btn btn-block btn-primary  "  >Cetak Invoice</a>
+                                                <a href={'/user/invoice/detail/' + purchase.codeId} target="_blank" type="button" class="btn btn-block btn-primary">Cetak Invoice</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                : <></>
-                            }
+                            )}
                             <div className="card shadow mb-3 border-0">
                                 <div className="card-body border-bottom">
                                     <p className="mb-0 text-muted"><small>NO PESANAN</small></p>
@@ -673,15 +704,23 @@ function AccountPurchaseDetail() {
                                     </div>
                                     {purchase.product === 'flight' ?
                                         <div className="d-flex justify-content-between my-2">
-                                            <span><strong>Pajak dan lainnya </strong></span>
+                                            <span><strong>Pajak 1,1% dan lainnya </strong></span>
                                             <span className="tax-and-more">
-                                                Rp{(purchase?.price.tax + purchase?.price.iwjr + purchase?.price.fee2).toLocaleString()}
+                                                Rp{purchase?.price.tax.toLocaleString()}
                                             </span>
                                         </div>
                                         :
                                         <div className="d-flex justify-content-between my-2">
-                                            <span><strong>Pajak</strong></span>
-                                            <span className="text_fee"><strong>Rp{(purchase?.price.total - purchase?.price.subtotal).toLocaleString()}</strong></span>
+                                            <span><strong>Pajak 1,1%</strong></span>
+                                            {purchase?.price.tax === 0 ?
+                                                <>
+                                                    <span className="text_fee text-success"><strong>Include</strong></span>
+                                                </>
+                                                :
+                                                <>
+                                                    <span className="text_fee">Rp{purchase?.price?.tax.toLocaleString()}</span>
+                                                </>
+                                            }
                                         </div>
 
                                     }
@@ -694,7 +733,16 @@ function AccountPurchaseDetail() {
                                     }
                                     <div className="d-flex justify-content-between my-2">
                                         <span><strong>Biaya Penanganan</strong></span>
-                                        <span>Rp{purchase?.price.fee.toLocaleString()}</span>
+                                        {purchase?.price.fee ?
+                                            <>
+                                                <span>Rp{purchase?.price.fee.toLocaleString()}</span>
+                                            </>
+                                            :
+                                            <>
+                                                <span>Rp{purchase?.price.margin.toLocaleString()}</span>
+                                            </>
+                                        }
+                                       
                                     </div>
                                     {purchase?.price.point > 0 &&
                                         <div className="d-flex justify-content-between my-2">
