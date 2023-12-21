@@ -264,15 +264,15 @@ function TrainPassanger() {
             .then((res) => {
                 if (res.status.code === 200) {
                     router.push(`/user/purchase/detail/${res.data.id_order}`);
-                } else {
-                    res.errors.forEach(error => {
-                        toast.error(error.message, {
-                            position: 'top-right',
-                            toastId: 'checkout'
-                        });
+                } else if (res.status.code === 400) {
+                    toast.error(res.status.errors.message, {
+                        position: 'top-right',
+                        toastId: 'checkout'
                     });
                 }
-            })
+            }).catch((err) => {
+                console.log(err.message);
+            });
     }
 
     const handleSubmitCoupon = (value) => {
