@@ -1,0 +1,277 @@
+.slick-slide > div {
+  margin: 0 5px;
+  min-height: 120px;
+}
+
+.slick-track {
+  position: relative;
+  top: 0;
+  left: 0;
+  display: flex;
+  // width: 100% !important;
+}
+
+.slick-list {
+  margin: 0 -5px;
+}
+
+.slick-slide *:focus {
+  outline: none;
+}
+
+.flight-airport {
+  position: relative;
+}
+.exchange-flight {
+  z-index: 99;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.btn-exchange-flight {
+  position: relative;
+  width: 27px;
+  height: 27px;
+}
+
+@media (min-width: 767px) {
+  .exchange-flight {
+    top: 50%;
+    left: 0;
+  }
+  /* .inputdropdown {display:block;} */
+}
+@media (max-width: 767px) {
+  .exchange-flight {
+    top: 55%;
+    right: 0;
+  }
+  .pulangpergi {
+    position: relative;
+    left: 30%;
+    top: -25px;
+  }
+  .transitpesawat {
+    position: relative;
+    left: 60%;
+    top: -42px;
+  }
+  .inputDropDown {
+    position: relative;
+    left: -5px;
+    top: -30px;
+    width: 80px;
+  }
+  .typeClassFlight {
+    position: relative;
+    left: 50%;
+    top: -70px;
+  }
+  .flightFromTo {
+    display: block;
+    position: relative;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+    border-radius: 0.25rem;
+    top: -50px;
+    width: 295%;
+  }
+  .tglberangkat {
+    width: 35%;
+  }
+  #subcheck {
+    width: 35%;
+  }
+
+  /* .cariqty {
+          position: relative;
+          left: -10%;
+          overflow:hidden;
+      } */
+}
+/* .dropdown-menu{min-width: 24rem} */
+.dropdown-menu {
+  min-width: 200%;
+}
+.w-10 {
+  width: 10% !important;
+}
+.w-15 {
+  width: 15% !important;
+}
+.w-25 {
+  width: 25% !important;
+}
+.w-30 {
+  width: 30% !important;
+}
+.w-35 {
+  width: 35% !important;
+}
+.w-50 {
+  width: 50% !important;
+}
+
+a {
+  text-decoration: none !important;
+  :hover {
+    text-decoration: none !important;
+  }
+}
+
+.nav-link-active {
+  background: none;
+  color: #00426e;
+  border-bottom: 3px solid #00426e;
+  border-radius: 0;
+}
+.rc-slider-tooltip-inner {
+  width: 95px !important;
+  // background-color: $light !important;
+  // border :1px solid $primary !important;
+  // color: $primary !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: white !important;
+  margin-right: 8px !important;
+  margin-bottom: -14px !important;
+}
+
+.rc-slider-tooltip-placement-top .rc-slider-tooltip-arrow {
+  border-top-color: $primary !important;
+  // border-top-color: $light !important;
+  display: none !important;
+}
+.rc-slider-track {
+  background-color: $primary !important;
+  // background-color: $light !important;
+}
+.rc-slider-handle {
+  border: solid 2px $light !important;
+  background-color: $primary !important;
+}
+
+.text-primary {
+  color: $primary !important;
+}
+.bg-primary {
+  background-color: $primary !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  background: #f5f6fa none repeat scroll 0% 0%;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  position: absolute;
+  top: calc(50%);
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 6px;
+  display: flex;
+  -moz-box-align: center;
+  align-items: center;
+  -moz-box-pack: center;
+  justify-content: center;
+  z-index: 3;
+}
+.swiper-button-next::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-image: url("https://ottencoffee.co.id/icons/ic-angle-right.png") !important;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-size: 20px 20px;
+  position: absolute;
+}
+.swiper-button-prev::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-image: url("https://ottencoffee.co.id/icons/ic-angle-left.png") !important;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-size: 20px 20px;
+  position: absolute;
+}
+
+.rbt-menu.dropdown-menu {
+  min-width: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  a.dropdown-item {
+    padding-left: 0.5rem;
+  }
+}
+
+.selectBox {
+  .rbt-menu.dropdown-menu {
+    width: 416.633px !important;
+  }
+}
+
+body {
+  background-color: #f5f6fa;
+}
+
+.btn-outline-primary {
+  border-color: $primary;
+  color: #343a40;
+  &:active,
+  &:focus,
+  &:hover {
+    background-color: $primary !important;
+    color: white !important;
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+.Selectable
+  .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+  background-color: #f0f8ff !important;
+  color: #4a90e2;
+}
+.Selectable .DayPicker-Day {
+  border-radius: 0 !important;
+  padding: 16px 15px;
+}
+.Selectable .DayPicker-Day--start {
+  border-top-left-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+.Selectable .DayPicker-Day--end {
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+}
+
+.serta-icon {
+  height: 50px;
+  margin-bottom: 1rem;
+}
+
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #c5c5c5;
+}
+
+.carousel {
+  .thumbs-wrapper,
+  .thumbs {
+    margin-bottom: 0 !important;
+  }
+
+  .thumb {
+    width: 80px !important;
+    &.selected,
+    &:hover {
+      width: 80px !important;
+    }
+  }
+}

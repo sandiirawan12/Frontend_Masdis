@@ -1,0 +1,62 @@
+.drawer-open{
+    overflow: hidden !important;
+    .drawer{
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
+.drawer-backdrop{
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1040;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        display: none;
+        &.show{
+            display: block;
+            opacity:0.5;
+        }
+}
+
+.drawer{
+    position: fixed;
+    bottom: -200;
+    left: 0;
+    z-index: 1050;
+    width: 100%;
+    // height: 100%;
+    outline: 0;
+    // display: display;
+    &.show{
+        bottom: 0;
+    }
+
+    &.fade{
+        transition: bottom 0.15 linear;
+    }
+
+    .drawer-dialog{
+        display: block;
+        transform: none;
+        transition: transform 0.3s ease-out;
+            position: relative;
+            width: auto;
+            margin: 0.5rem;
+            pointer-events: none;
+            .drawer-content {
+                position: fixed;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                pointer-events: auto;
+                background-color: #fff;
+                background-clip: padding-box;
+                outline: 0;
+                bottom: 0;
+                left: 0;
+            }
+    }
+}

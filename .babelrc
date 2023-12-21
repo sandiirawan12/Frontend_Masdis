@@ -1,0 +1,16 @@
+{
+    "presets": [
+        "next/babel"
+    ],
+    "plugins": [
+        [
+            "styled-components",
+            {
+                "ssr": true
+            }
+        ]
+    ],
+    "entry": [
+        "regenerator-runtime/runtime.js"
+    ]
+}
