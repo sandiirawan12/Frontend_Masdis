@@ -170,7 +170,7 @@ function Blogs() {
                             onSwiper={(swiper) => console.log(swiper)}
                             onSlideChange={() => console.log('slide change')}>
                             {slider.map(item => (
-                                <SwiperSlide key={item.id_blog} style={{ width: '100%', height: '320px' }}>
+                                <SwiperSlide key={item.id_blog} style={{ width: '100%', height: '350px' }}>
                                     <Link href={`/blogs/${item.title_slug}`}>
                                         <a>
                                             <Image objectFit='cover' layout='fill' src={item.img} />

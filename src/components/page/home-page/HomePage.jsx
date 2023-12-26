@@ -25,8 +25,8 @@ import WidgetOffices from '@/components/widgets/WidgetOffices'
 import WidgetTrain from '@/components/widgets/WidgetTrain'
 import moment from 'moment';
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-import { Icon } from '@iconify/react'
-import QuestionIcon from '@iconify/icons-fa-solid/question-circle';
+import { Icon } from '@iconify/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import GoogleMapReact, { Marker, InfoWindow } from 'google-map-react';
 
@@ -252,63 +252,53 @@ function HomePage() {
           , [state.banner])}
       </section>
 
+      <section className="widget-search container">
+        <div style={{ marginTop: '170px' }} className='mb-5'>
+          <h2 className='widget-search__tabs font-weight-bold text-white'>
+            Nikmati Perjalananmu dengan Caramu
+          </h2>
+        </div>
+      </section>
+
       <section className={classNames('widget-search container', {
         focus: showOverlay
       })} tabIndex='0' onFocus={() => setShowOverlay(true)} onBlur={() => setShowOverlay(false)}>
-        <ul className='widget-search__tabs'>
-          <li className='lead' onClick={() => handleChangeActive('hotel')} role="presentation">
-            <a className={classNames({ active: active === 'hotel' })}
-              style={{ background: active === 'hotel' ? colorTab : '#fff', color: active === 'hotel' ? '#fff' : '#0070ba' }} href='#'>
-              <span style={{ fontSize: '26px', padding: '12px' }}>
-                <Icon icon="solar:bed-line-duotone" />
+        <ul className='widget-search__tabs' style={{ marginTop: '150px' }}>
+          <li onClick={() => handleChangeActive('hotel')} role="presentation">
+            <CardWidget
+              active={active}
+              style={{ background: active === 'hotel' ? '#fff' : 'none' }}
+            >
+              <span>
+                <Icon icon="solar:bed-line-duotone" style={{ color: active === 'hotel' ? '#0070ba' : '#fff' }} />
               </span>
-              Hotels
-            </a>
+              <p style={{ color: active === 'hotel' ? 'black' : '#fff' }} className='font-weight-bold mt-1'>Hotel</p>
+            </CardWidget>
           </li>
-          <li className='lead' onClick={() => handleChangeActive('flight')} role="presentation">
-            <a className={classNames({ active: active === 'flight' })}
-              style={{ background: active === 'flight' ? '#1c7ecc' : '#FFF', color: active === 'flight' ? '#fff' : '#0070ba' }} href='#'>
-              <span style={{ fontSize: '26px', padding: '12px' }}>
-                <Icon icon="ph:airplane-duotone" />
+          <li onClick={() => handleChangeActive('flight')} role="presentation" className='mx-1'>
+            <CardWidget
+              active={active}
+              style={{ background: active === 'flight' ? '#fff' : 'none' }}
+            >
+              <span>
+                <Icon icon="ph:airplane-duotone" style={{ color: active === 'flight' ? '#2abfd3' : '#fff' }} />
               </span>
-              Flights
-            </a>
+              <p style={{ color: active === 'flight' ? 'black' : '#fff' }} className='font-weight-bold mt-1'>Tiket Pesawat</p>
+            </CardWidget>
           </li>
-          <li className='lead' onClick={() => handleChangeActive('train')} role="presentation">
-            <a className={classNames({ active: active === 'train' })}
-              style={{ background: active === 'train' ? '#a92413' : '#FFF', color: active === 'train' ? '#fff' : '#0070ba' }} href='#'>
-              <span style={{ fontSize: '26px', padding: '12px' }}>
-                <Icon icon="pepicons-print:train" />
+          <li onClick={() => handleChangeActive('train')} role="presentation" className='mx-1'>
+            <CardWidget
+              active={active}
+              style={{ background: active === 'train' ? '#fff' : 'none' }}
+            >
+              <span>
+                <Icon icon="pepicons-print:train" style={{ color: active === 'train' ? '#e67b22' : '#fff' }} />
               </span>
-              Trains
-            </a>
+              <p style={{ color: active === 'train' ? 'black' : '#fff' }} className='font-weight-bold mt-1'>Tiket Kereta Api</p>
+            </CardWidget>
           </li>
-          {/* <li className='lead' onClick={() => handleChangeActive('offices')} role="presentation">
-            <a className={classNames({
-              active: active === 'offices'
-            })} href='#'>
-              <img style={{ width: '28px', marginRight: '10px', objectFit: 'contain' }} src='https://cdn.masterdiskon.com/masterdiskon/icon/fe/building-blue.png' />
-              Offices
-            </a>
-          </li>
-          <li className='lead' onClick={() => handleChangeActive('sports')} role="presentation">
-            <a className={classNames({
-              active: active === 'sports'
-            })} href='#'>
-              <img src='https://cdn.masterdiskon.com/masterdiskon/icon/general/new/icon-sports.png' />
-              Sports
-            </a>
-          </li>
-          <li className='lead' onClick={() => handleChangeActive('others')} role="presentation">
-            <a className={classNames({
-              active: active === 'others'
-            })} href='#'>
-              <img src='https://cdn.masterdiskon.com/masterdiskon/icon/fe/others.png' />
-              Others
-            </a>
-          </li> */}
         </ul>
-        <CardStyled className={classNames('', {
+        <CardStyled className={classNames('mt-3', {
           'shadow-none': showOverlay
         })}>
           {renderWidget(state.dataOther)}
@@ -316,7 +306,7 @@ function HomePage() {
       </section >
 
       <main className='container' style={{
-        marginTop: '3rem',
+        marginTop: `${active === 'hotel' ? '11rem' : '7rem'}` ,
         marginBottom: '2rem'
       }}>
         <section className='my-5'>
@@ -414,5 +404,33 @@ const CardStyled = styled.div`
     box-shadow:none;
   }
 `
+
+const CardWidget = styled.div`
+  z-index: 1;
+  padding: 10px 20px;
+  border-radius: 15px;
+  transition: all 0.2s;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid transparent;
+
+  &:hover {
+    border: 1px solid #fff;
+    color: ${props =>
+    props.active === 'hotel' ? '#fff' : '#0070ba'};
+    /* Add additional hover effects here */
+  }
+
+  span {
+    font-size: 26px;
+    padding: 12px;
+  }
+
+  p {
+    margin: 0;
+  }
+`;
 
 export default HomePage

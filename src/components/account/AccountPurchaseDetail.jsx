@@ -163,17 +163,16 @@ function AccountPurchaseDetail() {
 
                             userApi.submitIssued(access_token, req)
                             .then(res => {
-                                userApi.getPurchase(access_token, { key: router.query.id }).then(res => {
-                                    if (res.success) {
-                                        setTimeout(() => {
-                                            const number = user.role === 'user' ? purchase.period.codeId : purchase.codeId;
-                                            const reqInv = {
-                                                "id_order": number.toString(),
-                                                "address": '',
-                                                "memo": '',
-                                            }
+                                if (res.success) {
+                                    setTimeout(() => {
+                                        const number = user.role === 'user' ? purchase.period.codeId : purchase.codeId;
+                                        const reqInv = {
+                                            "id_order": number.toString(),
+                                            "address": '',
+                                            "memo": '',
+                                        }
 
-                                            userApi.submitInvoice(access_token, reqInv)
+                                        userApi.submitInvoice(access_token, reqInv)
                                             .then(res => {
                                                 Swal.fire({
                                                     title: 'Berhasil!',
@@ -199,21 +198,20 @@ function AccountPurchaseDetail() {
                                                     window.location.reload();
                                                 });
                                             })
-                                        }, 2000);
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Gagal!',
-                                            text: 'Pesanan Gagal Dipesan "' + res.message + '"',
-                                            icon: 'danger',
-                                            closeOnClickOutside: false,
-                                            closeOnEsc: false,
-                                            showConfirmButton: false,
-                                            timer: 1000
-                                        }).then(function () {
-                                            window.location.reload();
-                                        });
-                                    }
-                                })
+                                    }, 1000);
+                                } else {
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Pesanan Gagal Dipesan "' + res.message + '"',
+                                        icon: 'danger',
+                                        closeOnClickOutside: false,
+                                        closeOnEsc: false,
+                                        showConfirmButton: false,
+                                        timer: 1000
+                                    }).then(function () {
+                                        window.location.reload();
+                                    });
+                                }
                             }).catch(error => {
                                 Swal.fire({
                                     title: 'Gagal!',
@@ -657,7 +655,7 @@ function AccountPurchaseDetail() {
                                 </div>
                             </div>
                             
-                            {purchase.product === 'flight' &&
+                            {/* {purchase.product === 'flight' &&
                                 <div className="card mb-4" style={{ borderRadius: '20px' }}>
                                     <div className="card-body">
                                         <h5><b>Tarif Penumpang</b></h5>
@@ -693,7 +691,7 @@ function AccountPurchaseDetail() {
                                         </div>
                                     </div>
                                 </div>
-                            }
+                            } */}
                            
                             <div className="card mb-4" style={{ borderRadius: '20px' }}>
                                 <div className="card-body">
@@ -1051,6 +1049,39 @@ function AccountPurchaseDetail() {
                                         <span><strong>Subtotal</strong></span>
                                         <span>Rp{purchase?.price.subtotal.toLocaleString()}</span>
                                     </div>
+                                    <div className="d-flex justify-content-between my-2">
+                                        <span><strong>Biaya Penanganan</strong></span>
+                                        {purchase?.price.fee ?
+                                            <>
+                                                <span>Rp{purchase?.price.fee.toLocaleString()}</span>
+                                            </>
+                                            :
+                                            <>
+                                                <span>Rp{purchase?.price.margin.toLocaleString()}</span>
+                                            </>
+                                        }
+                                    </div>
+                                    {purchase?.price.discount > 0 &&
+                                        <div className="d-flex justify-content-between my-2">
+                                            <span><strong>Diskon</strong></span>
+                                            <span className="text-danger">-Rp{purchase?.price.discount.toLocaleString()}</span>
+                                        </div>
+                                    }
+                                    <hr />
+                                    {purchase.product === 'flight' &&
+                                        <div className="d-flex justify-content-between my-2">
+                                            <span><strong>Tambahan</strong></span>
+                                            {purchase?.price.addon > 0 ?
+                                                <>
+                                                    <span className="extra-flight text-success"><strong>Include</strong></span>
+                                                </>
+                                                :
+                                                <>
+                                                    <span className="extra-flight"><strong>Rp{purchase?.price.addon.toLocaleString()}</strong></span>
+                                                </>
+                                            }
+                                        </div>
+                                    }
                                     {purchase.product === 'flight' ?
                                         <div className="d-flex justify-content-between my-2">
                                             <span><strong>Pajak 1,1% dan lainnya </strong></span>
@@ -1073,36 +1104,10 @@ function AccountPurchaseDetail() {
                                         </div>
 
                                     }
-
-                                    {purchase.product === 'flight' &&
-                                        <div className="d-flex justify-content-between my-2">
-                                            <span><strong>Tambahan</strong></span>
-                                            <span className="extra-flight">Rp{purchase?.price.addon}</span>
-                                        </div>
-                                    }
-                                    <div className="d-flex justify-content-between my-2">
-                                        <span><strong>Biaya Penanganan</strong></span>
-                                        {purchase?.price.fee ?
-                                            <>
-                                                <span>Rp{purchase?.price.fee.toLocaleString()}</span>
-                                            </>
-                                            :
-                                            <>
-                                                <span>Rp{purchase?.price.margin.toLocaleString()}</span>
-                                            </>
-                                        }
-                                       
-                                    </div>
                                     {purchase?.price.point > 0 &&
                                         <div className="d-flex justify-content-between my-2">
                                             <span><strong><small>Point digunakan</small></strong></span>
                                             <span className="text-danger">-{purchase?.price.point.toLocaleString()}</span>
-                                        </div>
-                                    }
-                                    {purchase?.price.discount > 0 &&
-                                        <div className="d-flex justify-content-between my-2">
-                                            <span><strong><small>Diskon</small></strong></span>
-                                            <span className="text-danger">-Rp{purchase?.price.discount.toLocaleString()}</span>
                                         </div>
                                     }
                                     <hr />

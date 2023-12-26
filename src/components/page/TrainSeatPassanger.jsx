@@ -69,6 +69,7 @@ function TrainSeatPassanger() {
     const router = useRouter()
     const [purchase, setPurchase] = useState();
     const [dataSeat, setDataSeat] = useState();
+    const [dataSeatReturn, setDataSeatReturn] = useState();
     const [bookingDetailData, setBookingDetail] = useState();
     const [isOpenSeat, setIsOpenSeat] = useState(false)
 
@@ -84,11 +85,17 @@ function TrainSeatPassanger() {
     })
 
     const [isShowArray, setIsShowArray] = useState([]);
+    const [isShowArrayReturn, setIsShowArrayReturn] = useState([]);
 
     const [seatRow, setSeatRow] = useState();
+    const [seatRowReturn, setSeatRowReturn] = useState();
     const [seats, seatData] = useState({});
     const [selectedOption, setSelectedOption] = useState('');
     const [wagonSeats, setWagonSeats] = useState();
+    const [dataSeats, setDataSeats] = useState();
+    const [dataSeatsReturn, setDataSeatsReturn] = useState();
+    const [isWagonSeatsDefault, setIsWagonSeatDefault] = useState(false);
+    const [nextTrain, setNextTrain] = useState(0);
 
     const toggleShow = (id, data) => {
         setIsShowArray((prevArray) => {
@@ -118,6 +125,34 @@ function TrainSeatPassanger() {
         });
     };
 
+    const toggleShowReturn = (id, data) => {
+        setIsShowArrayReturn((prevArray) => {
+            // Find the index of the clicked element
+            const clickedIndex = prevArray.findIndex((show, i) => id === `rtn-${i + 1}`);
+
+            // Create a copy of the array
+            const newArray = [...prevArray];
+
+            // Toggle show state of clicked element
+            newArray[clickedIndex] = !newArray[clickedIndex];
+
+            if (newArray[clickedIndex] === false) {
+                newArray[clickedIndex] = true;
+            }
+
+            // Hide all other divs (except clicked element)
+            for (let i = 0; i < newArray.length; i++) {
+                if (i !== clickedIndex) {
+                    newArray[i] = false;
+                }
+            }
+
+            setSeatRowReturn(data)
+
+            return newArray;
+        });
+    };
+
     const handleSeatChoose = () => {
         setIsOpenSeat(prevState => !prevState)
     }
@@ -125,86 +160,207 @@ function TrainSeatPassanger() {
     const handleOptionChange = (index, i, seatRow, seats) => {
         setSelectedOption(index);
 
-        // Ensure journeys[0] exists and seat is an array within it
-        if (
-            bookingDetailData &&
-            bookingDetailData.journeys &&
-            bookingDetailData.journeys[0] &&
-            Array.isArray(bookingDetailData.journeys[0].seat)
-        ) {
-            const selectedIndex = index;
+        if (nextTrain === 0) {
+            if (
+                bookingDetailData &&
+                bookingDetailData.journeys &&
+                bookingDetailData.journeys[0] &&
+                Array.isArray(bookingDetailData.journeys[0].seat)
+            ) {
+                const selectedIndex = index;
 
-            const selectedSeat = bookingDetailData.journeys[0].seat[selectedIndex];
+                const selectedSeat = bookingDetailData.journeys[0].seat[selectedIndex];
 
-            // Check if the selectedSeat is an object or an array to spread properly
-            const updatedSeats_1 = Array.isArray(selectedSeat)
-                ? [...selectedSeat]
-                : selectedSeat
-                    ? { ...selectedSeat }
-                    : null;
+                // Check if the selectedSeat is an object or an array to spread properly
+                const updatedSeats_1 = Array.isArray(selectedSeat)
+                    ? [...selectedSeat]
+                    : selectedSeat
+                        ? { ...selectedSeat }
+                        : null;
 
-            if (updatedSeats_1) {
-                const newData = {
-                    passenger_fullname: i.passenger_fullname,
-                    wagon_code: seatRow.wagon_code,
-                    wagon_no: String(seatRow.wagon_no),
-                    seat_number: seats.seat_no,
-                    seat_id_new: seats.seat_id
-                };
-
-                // Update data dalam array wagon_seats
-                const updatedWagonSeats = bookingDetailData?.journeys[0].seat.map((seat, index) => {
-                    if (index === selectedIndex) {
-                        return newData; // Mengganti data dengan data yang baru pada index 1
-                    }
-
-                    const seatData = seatRow?.seat.find(data => data.seat_no === seat.seat_number);
-
-                    return {
-                        passenger_fullname: seat.passenger_fullname,
-                        wagon_code: seat.wagon_code,
-                        wagon_no: seat.wagon_no,
-                        seat_number: seat.seat_number,
-                        seat_id_new: seat.seat_id_new || seatData.seat_id,
+                if (updatedSeats_1) {
+                    const newData = {
+                        passenger_fullname: i.passenger_fullname,
+                        wagon_code: seatRow.wagon_code,
+                        wagon_no: String(seatRow.wagon_no),
+                        seat_number: seats.seat_no,
+                        seat_id_new: seats.seat_id
                     };
-                });
 
-                setWagonSeats(updatedWagonSeats)
+                    // Update data dalam array wagon_seats
+                    const updatedWagonSeats = bookingDetailData?.journeys[0].seat.map((seat, index) => {
+                        if (index === selectedIndex) {
+                            return newData; // Mengganti data dengan data yang baru pada index 1
+                        }
+
+                        const seatDataAll = dataSeats.find(data => data.wagon_no == seat.wagon_no);
+                        const seatDataUpdateAll = seatDataAll?.seat.find(data => data.seat_no === seat.seat_number);
+
+                        return {
+                            passenger_fullname: seat.passenger_fullname,
+                            wagon_code: seat.wagon_code,
+                            wagon_no: seat.wagon_no,
+                            seat_number: seat.seat_number,
+                            seat_id_new: seat.seat_id_new || seatDataUpdateAll.seat_id,
+                        };
+                    });
+
+                    setWagonSeats(updatedWagonSeats)
+                } else {
+                    console.error('Data kursi yang dipilih pada indeks tidak valid:', selectedIndex);
+                }
             } else {
-                console.error('Data kursi yang dipilih pada indeks tidak valid:', selectedIndex);
+                console.error('Struktur data tidak valid atau data yang diperlukan tidak ada');
             }
         } else {
-            console.error('Struktur data tidak valid atau data yang diperlukan tidak ada');
+            if (
+                bookingDetailData &&
+                bookingDetailData.journeys &&
+                bookingDetailData.journeys[1] &&
+                Array.isArray(bookingDetailData.journeys[1].seat)
+            ) {
+                const selectedIndex = index;
+
+                const selectedSeat = bookingDetailData.journeys[1].seat[selectedIndex];
+
+                // Check if the selectedSeat is an object or an array to spread properly
+                const updatedSeats_1 = Array.isArray(selectedSeat)
+                    ? [...selectedSeat]
+                    : selectedSeat
+                        ? { ...selectedSeat }
+                        : null;
+
+                if (updatedSeats_1) {
+                    const newData = {
+                        passenger_fullname: i.passenger_fullname,
+                        wagon_code: seatRow.wagon_code,
+                        wagon_no: String(seatRow.wagon_no),
+                        seat_number: seats.seat_no,
+                        seat_id_new: seats.seat_id
+                    };
+
+                    // Update data dalam array wagon_seats
+                    const updatedWagonSeats = bookingDetailData?.journeys[1].seat.map((seat, index) => {
+                        if (index === selectedIndex) {
+                            return newData; // Mengganti data dengan data yang baru pada index 1
+                        }
+
+                        const seatDataAll = dataSeatsReturn.find(data => data.wagon_no == seat.wagon_no);
+                        const seatDataUpdateAll = seatDataAll?.seat.find(data => data.seat_no === seat.seat_number);
+
+                        return {
+                            passenger_fullname: seat.passenger_fullname,
+                            wagon_code: seat.wagon_code,
+                            wagon_no: seat.wagon_no,
+                            seat_number: seat.seat_number,
+                            seat_id_new: seat.seat_id_new || seatDataUpdateAll.seat_id,
+                        };
+                    });
+
+                    setWagonSeats(updatedWagonSeats)
+                } else {
+                    console.error('Data kursi yang dipilih pada indeks tidak valid:', selectedIndex);
+                }
+            } else {
+                console.error('Struktur data tidak valid atau data yang diperlukan tidak ada');
+            }
         }
     };
 
+    const handleSeatDefault = async (purchase) => {
+        if (nextTrain === 0) {
+            const updatedWagonSeats = purchase.guest.map((seat, index) => {
+                const seatDataAll = dataSeats.find(data => data.wagon_no == seat.departure.wagon_no);
+                const seatDataUpdateAll = seatDataAll?.seat.find(data => data.seat_no === seat.departure.seat_number);
 
+                return {
+                    passenger_fullname: seat.firstName,
+                    wagon_code: seat.departure.wagon_code,
+                    wagon_no: seat.departure.wagon_no,
+                    seat_number: seat.departure.seat_number,
+                    seat_id_new: seat.seat_id_new || seatDataUpdateAll.seat_id,
+                };
+            });
+
+            setWagonSeats(updatedWagonSeats);
+            setIsWagonSeatDefault(true);
+        } else {
+            const updatedWagonSeats = purchase.guest.map((seat, index) => {
+                const seatDataAll = dataSeatsReturn.find(data => data.wagon_no == seat.return.wagon_no);
+                const seatDataUpdateAll = seatDataAll?.seat.find(data => data.seat_no === seat.return.seat_number);
+
+                return {
+                    passenger_fullname: seat.firstName,
+                    wagon_code: seat.return.wagon_code,
+                    wagon_no: seat.return.wagon_no,
+                    seat_number: seat.return.seat_number,
+                    seat_id_new: seat.seat_id_new || seatDataUpdateAll.seat_id,
+                };
+            });
+
+            setWagonSeats(updatedWagonSeats);
+            setIsWagonSeatDefault(true);
+        }
+    };
+
+    const handleNextTrain = (index) => {
+        setNextTrain(index)
+    }
+
+    useEffect(() => {
+        if (isWagonSeatsDefault) {
+            // Lakukan logika setelah wagonSeats ter-update di sini
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi Kursi',
+                text: 'Kursi akan di set default, Ingin lanjut?',
+                allowOutsideClick: false,
+                confirmButtonColor: '#0070ba',
+                confirmButtonText: 'Ya, Lanjut',
+            }).then(respon => {
+                if (respon.isConfirmed) {
+                    confirmSimpanSeat();
+                }
+            });
+        }
+    }, [isWagonSeatsDefault]);
 
     useEffect(() => {
         if (purchase) {
-            setInterval(() => {
-                const time = Date.parse(moment(purchase?.status?.timelimit, 'DD MMM YYYY HH:mm').toDate()) - Date.parse(new Date());
-                if (time < 0) {
-                    setCountDown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            // setInterval(() => {
+            //     const time = Date.parse(moment(purchase?.status?.timelimit5Menit, 'DD MMM YYYY HH:mm').toDate()) - Date.parse(new Date());
+            //     if (time < 0) {
+            //         setCountDown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            //     } else {
+            //         const seconds = Math.floor((time / 1000) % 60);
+            //         const minutes = Math.floor((time / 1000 / 60) % 60);
+            //         const hours = Math.floor((time / (1000 * 60 * 60)) % 24);
+            //         const days = Math.floor(time / (1000 * 60 * 60 * 24));
+            //         setCountDown({ days, hours, minutes, seconds });
+            //     }
+            // }, 1000)
 
-                    setTimeout(() => {
-                        Swal.fire({
-                            title: "Waktu Habis",
-                            text: "Waktu yang di sediakan untuk pemilihan kursi sudah habis, silahkan lanjut ke halaman pembayaran",
-                            icon: "info",
-                            allowOutsideClick: false
-                        }).then(function (isConfirm) {
-                            router.push('/user/purchase/detail/12569');
-                        });
-                    }, 1000);
-                } else {
-                    const seconds = Math.floor((time / 1000) % 60);
-                    const minutes = Math.floor((time / 1000 / 60) % 60);
-                    const hours = Math.floor((time / (1000 * 60 * 60)) % 24);
-                    const days = Math.floor(time / (1000 * 60 * 60 * 24));
-                    setCountDown({ days, hours, minutes, seconds });
-                }
-            }, 1000)
+            const time = Date.parse(moment(purchase?.status?.timelimit5Menit, 'DD MMM YYYY HH:mm').toDate()) - Date.parse(new Date());
+            if (time < 0) {
+                setCountDown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+                setTimeout(() => {
+                    Swal.fire({
+                        title: "Waktu Habis",
+                        text: "Waktu yang di sediakan untuk pemilihan kursi sudah habis, silahkan lanjut ke halaman pembayaran",
+                        icon: "info",
+                        allowOutsideClick: false
+                    }).then(function (isConfirm) {
+                        router.push('/user/purchase/detail/12569');
+                    });
+                }, 1000);
+            } else {
+                const seconds = Math.floor((time / 1000) % 60);
+                const minutes = Math.floor((time / 1000 / 60) % 60);
+                const hours = Math.floor((time / (1000 * 60 * 60)) % 24);
+                const days = Math.floor(time / (1000 * 60 * 60 * 24));
+                setCountDown({ days, hours, minutes, seconds });
+            }
         }
     }, [purchase])
 
@@ -238,6 +394,32 @@ function TrainSeatPassanger() {
                                             row.length > 0
                                         ));
                                         toggleShow('eks-1', res.data.seat_maps[0])
+                                        
+                                        setDataSeats(res.data.seat_maps)
+                                    }
+                                })
+
+                                // ====== DATA SEAT RETURN ========
+                                const reqReturn = {
+                                    "origin": res.data.destination,
+                                    "destination": res.data.origin,
+                                    "departure_date": responseData.bookingDetail.return_date,
+                                    "train_no": responseData.options.dataScheduleReturn.no_kereta,
+                                    "subclass": responseData.options.dataScheduleReturn.tipe_kereta,
+                                    "segment_code": res.data.journeys[1].segment_code
+                                }
+
+                                userApi.getSeatKAI(access_token, reqReturn).then(res => {
+                                    if (res.status.code === 200) {
+                                        setDataSeatReturn(res.data)
+                                        setIsShowArrayReturn(res.data.seat_maps.map((row) =>
+                                            row.length > 0
+                                        ));
+                                        toggleShowReturn('rtn-1', res.data.seat_maps[0])
+
+                                        setDataSeatsReturn(res.data.seat_maps)
+
+                                        setLoading(false)
                                     }
                                 })
                                 setIsFirstRender(false);
@@ -245,7 +427,6 @@ function TrainSeatPassanger() {
                         }
                     })
                 }
-                setLoading(false)
             })
         }
     }, [router.query.id])
@@ -332,6 +513,54 @@ function TrainSeatPassanger() {
         }
     });
 
+    // ============
+    const rowsReturn = seatRowReturn?.total_row;
+    const columnsReturn = seatRowReturn?.detail_col;
+
+    const generatedSeatsReturn = [];
+    for (let i = 1; i <= rowsReturn; i++) {
+        for (const col of columnsReturn) {
+            generatedSeatsReturn.push(`${i}${col}`);
+        }
+    }
+
+    const tableCellsReturn = [];
+    for (let i = 0; i < rowsReturn; i++) {
+        tableCellsReturn.push(
+            <td key={i}>
+                <CardSeat className="mr-2" style={{ border: 'none' }}>
+                    <span>{i + 1}</span>
+                </CardSeat>
+            </td>
+        );
+    }
+
+    const updatedSeatsReturn = generatedSeatsReturn.map(seat => {
+        const seatDataReturn = seatRowReturn?.seat.find(data => data.seat_no === seat);
+
+        if (seatDataReturn) {
+            bookingDetailData?.journeys[1].seat.forEach(booking => {
+                const bookedSeatNumber = booking?.seat_number;
+                const bookedSeatCode = booking?.wagon_code;
+                const bookedSeatNo = booking?.wagon_no;
+
+                if (
+                    seatDataReturn.seat_no == bookedSeatNumber &&
+                    seatRowReturn?.wagon_code == bookedSeatCode &&
+                    seatRowReturn?.wagon_no == bookedSeatNo
+                ) {
+                    seatDataReturn.seat_status = 2; // Ubah status kursi dari seatData
+                }
+            });
+            return seatDataReturn; // Kembalikan seatData yang telah dimodifikasi
+        } else {
+            return {
+                seat_no: seat,
+                seat_status: 3 // Menunjukkan bahwa kursi tidak ada dalam data JSON
+            };
+        }
+    });
+
     const changeSeatStatus = (dSeat) => {
         if (dSeat.seat_status === 1) {
             toast.error(`Kursi ini telah dipesan`)
@@ -343,29 +572,63 @@ function TrainSeatPassanger() {
         }
     };
 
-    const confirmSimpanSeat = () => {
-        const req = {
-            "booking_no": purchase?.kodeBooking,
-            "seat_requests": [
-                {
-                    "booking_code": bookingDetailData.journeys[0].booking_code,
-                    "wagon_seats": wagonSeats
-                }
-            ]
+    const confirmSimpanSeat = async () => {
+        if (!wagonSeats) {
+            toast.error('Anda belum memilih yang ingin pindah seat');
+            return; // Mengembalikan fungsi jika tidak ada wagonSeats
         }
 
-        shopApi.updateSeat(access_token, req).then(res => {
-            if (res.status.code === 200) {
-                window.location.reload();
-            } else {
-                toast.error('Seat gagal disimpan, pastikan data benar')
-            }
-        })
+        try {
+           if (nextTrain === 0) {
+               const req = {
+                   "booking_no": purchase?.kodeBooking,
+                   "seat_requests": [
+                       {
+                           "booking_code": bookingDetailData.journeys[0].booking_code,
+                           "wagon_seats": wagonSeats
+                       }
+                   ]
+               };
+
+               const res = await shopApi.updateSeat(access_token, req);
+               if (res.status.code === 200) {
+                   toast.success('Seat berhasil diubah');
+                   window.location.reload();
+
+                   handleNextTrain(0)
+               } else {
+                   toast.error('Seat tidak berhasil diubah');
+               }
+           } else {
+               const req = {
+                   "booking_no": purchase?.kodeBooking,
+                   "seat_requests": [
+                       {
+                           "booking_code": bookingDetailData.journeys[1].booking_code,
+                           "wagon_seats": wagonSeats
+                       }
+                   ]
+               };
+
+               const res = await shopApi.updateSeat(access_token, req);
+               if (res.status.code === 200) {
+                   toast.success('Seat berhasil diubah');
+                   window.location.reload();
+
+                   handleNextTrain(1)
+               } else {
+                   toast.error('Seat tidak berhasil diubah');
+               }
+           }
+        } catch (error) {
+            console.error('Terjadi kesalahan:', error);
+            toast.error('Terjadi kesalahan saat mengubah seat');
+        }
     };
 
     return (
         <>
-            {(moment(Date()).isBefore(moment(purchase?.status?.timelimit, 'DD MMM YYYY HH:mm')) && purchase.status.id === 3) && (
+            {(moment(Date()).isBefore(moment(purchase?.status?.timelimit5Menit, 'DD MMM YYYY HH:mm')) && purchase.status.id === 3) && (
                 <section id="timer" className="bg-danger py-2">
                     <div className="container">
                         <div className="d-flex justify-content-center align-items-center">
@@ -381,133 +644,265 @@ function TrainSeatPassanger() {
                     <h4 className="font-weight-bold mt-5 mb-3">Pilih Kursi</h4>
                     <div className="row">
                         <div className="col-md-8">
-                            <Swiper slidesPerView={3.5} style={{ padding: '0 0 10px 0' }} spaceBetween={10}>
-                                {dataSeat?.seat_maps.map((row) => (
-                                    <SwiperSlide >
-                                        <div className={`card ${isShowArray[row.wagon_no - 1] ? 'border border-primary' : ''}`} style={{
-                                            borderRadius: '20px',
-                                            cursor: 'pointer',
-                                        }} onClick={() => toggleShow(`eks-${row.wagon_no}`, row)}>
-                                            <div className="card-body">
-                                                <center>
-                                                    <b>{row.wagon_code} {row.wagon_no}</b> <br />
-                                                    <small>Tersedia {row.available_seat} Kursi</small>
-                                                </center>
-                                            </div>
-                                        </div>
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
+                            {nextTrain === 0 ?
+                                <>
+                                    <Swiper slidesPerView={3.5} style={{ padding: '0 0 10px 0' }} spaceBetween={10}>
+                                        {dataSeat?.seat_maps.map((row) => (
+                                            <SwiperSlide >
+                                                <div className={`card ${isShowArray[row.wagon_no - 1] ? 'border border-primary' : ''}`} style={{
+                                                    borderRadius: '20px',
+                                                    cursor: 'pointer',
+                                                }} onClick={() => toggleShow(`eks-${row.wagon_no}`, row)}>
+                                                    <div className="card-body">
+                                                        <center>
+                                                            <b>{row.wagon_code} {row.wagon_no}</b> <br />
+                                                            <small>Tersedia {row.available_seat} Kursi</small>
+                                                        </center>
+                                                    </div>
+                                                </div>
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
 
-                            <div className='row'>
-                                {bookingDetailData?.journeys[0].seat.map((i, index) => (
-                                    <div className="col-md-3" key={index}>
-                                        <div className="card border" style={{
-                                            borderRadius: '10px',
-                                        }}>
-                                            <div className="row">
-                                                <div className='col-md-4 bg-primary' style={{
+                                    <div className='row'>
+                                        {bookingDetailData?.journeys[0].seat.map((i, index) => (
+                                            <div className="col-md-3" key={index}>
+                                                <div className="card border" style={{
                                                     borderRadius: '10px',
                                                 }}>
-                                                    <p style={{ fontSize: '27px', marginTop: '20px' }} className='text-white '>{`P${index + 1}`}</p>
-                                                </div>
-                                                <div className='col-md-8'>
-                                                    <p style={{ fontSize: '12px' }} className='mt-2 mb-0 font-weight-bold'>
-                                                        {i.passenger_fullname}
-                                                    </p>
-                                                    <p className='mb-2' style={{ fontSize: '12px' }}>{i.wagon_code} {i.wagon_no} - {i.seat_number}</p>
+                                                    <div className="row">
+                                                        <div className='col-md-4 bg-primary' style={{
+                                                            borderRadius: '10px',
+                                                        }}>
+                                                            <p style={{ fontSize: '27px', marginTop: '20px' }} className='text-white '>{`P${index + 1}`}</p>
+                                                        </div>
+                                                        <div className='col-md-8'>
+                                                            <p style={{ fontSize: '12px' }} className='mt-2 mb-0 font-weight-bold'>
+                                                                {i.passenger_fullname}
+                                                            </p>
+                                                            <p className='mb-2' style={{ fontSize: '12px' }}>{i.wagon_code} {i.wagon_no} - {i.seat_number}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
 
-                            <div className='mt-3' style={{ overflow: 'auto' }}>
-                                <table>
-                                    <tbody>
-                                        {seatRow?.left_col.map((item) => (
-                                            <tr key={item} style={{ width: "20%" }}>
-                                                <td>
-                                                    <CardSeat className="mr-2" style={{ border: "none" }}>
-                                                        <span>{item}</span>
-                                                    </CardSeat>
-                                                </td>
-                                                {updatedSeats
-                                                    .filter((seat) => seat.seat_no.includes(item))
-                                                    .map((dSeat) => (
-                                                        <td key={dSeat.seat_no}>
-                                                            {dSeat.seat_status === 3 ? 
-                                                                <></>
-                                                                :
-                                                                <CardSeat
-                                                                    className="mr-2"
-                                                                    style={{
-                                                                        cursor: "pointer",
-                                                                        background: (
-                                                                            dSeat.seat_status === 0
-                                                                                ? "#fff"
-                                                                                : dSeat.seat_status === 1
-                                                                                    ? "#dfdfdf"
-                                                                                    : dSeat.seat_status === 2
-                                                                                        ? "#007bff"
-                                                                                        : ""
-                                                                        ),
-                                                                    }}
-                                                                    onClick={() => changeSeatStatus(dSeat)}
-                                                                >
-                                                                    <p>{dSeat.seat_no}</p>
-                                                                </CardSeat>
-                                                            }
+                                    <div className='mt-3' style={{ overflow: 'auto' }}>
+                                        <table>
+                                            <tbody>
+                                                {seatRow?.left_col.map((item) => (
+                                                    <tr key={item} style={{ width: "20%" }}>
+                                                        <td>
+                                                            <CardSeat className="mr-2" style={{ border: "none" }}>
+                                                                <span>{item}</span>
+                                                            </CardSeat>
                                                         </td>
-                                                    ))}
-                                            </tr>
-                                        ))}
-                                        <tr>
-                                            <CardSeat style={{ border: 'none' }} />
-                                            {tableCells}
-                                        </tr>
-                                        {seatRow?.right_col.map((item) => (
-                                            <tr key={item} style={{ width: "20%" }}>
-                                                <td>
-                                                    <CardSeat className="mr-2" style={{ border: "none" }}>
-                                                        <span>{item}</span>
-                                                    </CardSeat>
-                                                </td>
-                                                {updatedSeats
-                                                    .filter((seat) => seat.seat_no.includes(item))
-                                                    .map((dSeat) => (
-                                                        <td key={dSeat.seat_no}>
-                                                            {dSeat.seat_status === 3 ?
-                                                                <></>
-                                                                :
-                                                                <CardSeat
-                                                                    className="mr-2"
-                                                                    style={{
-                                                                        cursor: "pointer",
-                                                                        background: (
-                                                                            dSeat.seat_status === 0
-                                                                                ? "#fff"
-                                                                                : dSeat.seat_status === 1
-                                                                                    ? "#dfdfdf"
-                                                                                    : dSeat.seat_status === 2
-                                                                                        ? "#007bff"
-                                                                                        : ""
-                                                                        ),
-                                                                    }}
-                                                                    onClick={() => changeSeatStatus(dSeat)}
-                                                                >
-                                                                    <p>{dSeat.seat_no}</p>
-                                                                </CardSeat>
-                                                            }
+                                                        {updatedSeats
+                                                            .filter((seat) => seat.seat_no.includes(item))
+                                                            .map((dSeat) => (
+                                                                <td key={dSeat.seat_no}>
+                                                                    {dSeat.seat_status === 3 ?
+                                                                        <></>
+                                                                        :
+                                                                        <CardSeat
+                                                                            className="mr-2"
+                                                                            style={{
+                                                                                cursor: "pointer",
+                                                                                background: (
+                                                                                    dSeat.seat_status === 0
+                                                                                        ? "#fff"
+                                                                                        : dSeat.seat_status === 1
+                                                                                            ? "#dfdfdf"
+                                                                                            : dSeat.seat_status === 2
+                                                                                                ? "#007bff"
+                                                                                                : ""
+                                                                                ),
+                                                                            }}
+                                                                            onClick={() => changeSeatStatus(dSeat)}
+                                                                        >
+                                                                            <p>{dSeat.seat_no}</p>
+                                                                        </CardSeat>
+                                                                    }
+                                                                </td>
+                                                            ))}
+                                                    </tr>
+                                                ))}
+                                                <tr>
+                                                    <CardSeat style={{ border: 'none' }} />
+                                                    {tableCells}
+                                                </tr>
+                                                {seatRow?.right_col.map((item) => (
+                                                    <tr key={item} style={{ width: "20%" }}>
+                                                        <td>
+                                                            <CardSeat className="mr-2" style={{ border: "none" }}>
+                                                                <span>{item}</span>
+                                                            </CardSeat>
                                                         </td>
-                                                    ))}
-                                            </tr>
+                                                        {updatedSeats
+                                                            .filter((seat) => seat.seat_no.includes(item))
+                                                            .map((dSeat) => (
+                                                                <td key={dSeat.seat_no}>
+                                                                    {dSeat.seat_status === 3 ?
+                                                                        <></>
+                                                                        :
+                                                                        <CardSeat
+                                                                            className="mr-2"
+                                                                            style={{
+                                                                                cursor: "pointer",
+                                                                                background: (
+                                                                                    dSeat.seat_status === 0
+                                                                                        ? "#fff"
+                                                                                        : dSeat.seat_status === 1
+                                                                                            ? "#dfdfdf"
+                                                                                            : dSeat.seat_status === 2
+                                                                                                ? "#007bff"
+                                                                                                : ""
+                                                                                ),
+                                                                            }}
+                                                                            onClick={() => changeSeatStatus(dSeat)}
+                                                                        >
+                                                                            <p>{dSeat.seat_no}</p>
+                                                                        </CardSeat>
+                                                                    }
+                                                                </td>
+                                                            ))}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                                :
+                                <>
+                                    <Swiper slidesPerView={3.5} style={{ padding: '0 0 10px 0' }} spaceBetween={10}>
+                                        {dataSeatReturn?.seat_maps.map((row) => (
+                                            <SwiperSlide >
+                                                <div className={`card ${isShowArrayReturn[row.wagon_no - 1] ? 'border border-primary' : ''}`} style={{
+                                                    borderRadius: '20px',
+                                                    cursor: 'pointer',
+                                                }} onClick={() => toggleShowReturn(`rtn-${row.wagon_no}`, row)}>
+                                                    <div className="card-body">
+                                                        <center>
+                                                            <b>{row.wagon_code} {row.wagon_no}</b> <br />
+                                                            <small>Tersedia {row.available_seat} Kursi</small>
+                                                        </center>
+                                                    </div>
+                                                </div>
+                                            </SwiperSlide>
                                         ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </Swiper>
 
+                                    <div className='row'>
+                                        {bookingDetailData?.journeys[1].seat.map((i, index) => (
+                                            <div className="col-md-3" key={index}>
+                                                <div className="card border" style={{
+                                                    borderRadius: '10px',
+                                                }}>
+                                                    <div className="row">
+                                                        <div className='col-md-4 bg-primary' style={{
+                                                            borderRadius: '10px',
+                                                        }}>
+                                                            <p style={{ fontSize: '27px', marginTop: '20px' }} className='text-white '>{`P${index + 1}`}</p>
+                                                        </div>
+                                                        <div className='col-md-8'>
+                                                            <p style={{ fontSize: '12px' }} className='mt-2 mb-0 font-weight-bold'>
+                                                                {i.passenger_fullname}
+                                                            </p>
+                                                            <p className='mb-2' style={{ fontSize: '12px' }}>{i.wagon_code} {i.wagon_no} - {i.seat_number}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className='mt-3' style={{ overflow: 'auto' }}>
+                                        <table>
+                                            <tbody>
+                                                {seatRowReturn?.left_col?.map((item) => (
+                                                    <tr key={item} style={{ width: "20%" }}>
+                                                        <td>
+                                                            <CardSeat className="mr-2" style={{ border: "none" }}>
+                                                                <span>{item}</span>
+                                                            </CardSeat>
+                                                        </td>
+                                                        {updatedSeatsReturn
+                                                            .filter((seat) => seat.seat_no.includes(item))
+                                                            .map((dSeat) => (
+                                                                <td key={dSeat.seat_no}>
+                                                                    {dSeat.seat_status === 3 ?
+                                                                        <></>
+                                                                        :
+                                                                        <CardSeat
+                                                                            className="mr-2"
+                                                                            style={{
+                                                                                cursor: "pointer",
+                                                                                background: (
+                                                                                    dSeat.seat_status === 0
+                                                                                        ? "#fff"
+                                                                                        : dSeat.seat_status === 1
+                                                                                            ? "#dfdfdf"
+                                                                                            : dSeat.seat_status === 2
+                                                                                                ? "#007bff"
+                                                                                                : ""
+                                                                                ),
+                                                                            }}
+                                                                            onClick={() => changeSeatStatus(dSeat)}
+                                                                        >
+                                                                            <p>{dSeat.seat_no}</p>
+                                                                        </CardSeat>
+                                                                    }
+                                                                </td>
+                                                            ))}
+                                                    </tr>
+                                                ))}
+                                                <tr>
+                                                    <CardSeat style={{ border: 'none' }} />
+                                                    {tableCellsReturn}
+                                                </tr>
+                                                {seatRowReturn?.right_col?.map((item) => (
+                                                    <tr key={item} style={{ width: "20%" }}>
+                                                        <td>
+                                                            <CardSeat className="mr-2" style={{ border: "none" }}>
+                                                                <span>{item}</span>
+                                                            </CardSeat>
+                                                        </td>
+                                                        {updatedSeatsReturn
+                                                            .filter((seat) => seat.seat_no.includes(item))
+                                                            .map((dSeat) => (
+                                                                <td key={dSeat.seat_no}>
+                                                                    {dSeat.seat_status === 3 ?
+                                                                        <></>
+                                                                        :
+                                                                        <CardSeat
+                                                                            className="mr-2"
+                                                                            style={{
+                                                                                cursor: "pointer",
+                                                                                background: (
+                                                                                    dSeat.seat_status === 0
+                                                                                        ? "#fff"
+                                                                                        : dSeat.seat_status === 1
+                                                                                            ? "#dfdfdf"
+                                                                                            : dSeat.seat_status === 2
+                                                                                                ? "#007bff"
+                                                                                                : ""
+                                                                                ),
+                                                                            }}
+                                                                            onClick={() => changeSeatStatus(dSeat)}
+                                                                        >
+                                                                            <p>{dSeat.seat_no}</p>
+                                                                        </CardSeat>
+                                                                    }
+                                                                </td>
+                                                            ))}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            }
                             <div className="mt-3">
                                 <div className='d-flex justify-content-center'>
                                     <div className='mr-3'>
@@ -532,20 +927,46 @@ function TrainSeatPassanger() {
                             </div>
                             
                             <div className="d-flex align-items-center justify-content-end mt-3">
-                                <button className='btn btn-warning mr-3'>
-                                    Kembalikan ke kursi awal
-                                </button>
-                                {purchase?.bookingDetail?.journey_type === 'RT' ?
+                                {nextTrain === 0 ?
                                     <>
-                                        <button className='btn btn-primary'>
-                                            Next Train
+                                        <button className='btn btn-warning mr-3' onClick={() => handleSeatDefault(purchase)}>
+                                            Kembalikan ke kursi awal
                                         </button>
+                                        {purchase?.bookingDetail?.journey_type === 'RT' ?
+                                            <>
+                                                <button className='btn btn-primary' onClick={() => handleNextTrain(1)}>
+                                                    Next Train
+                                                </button>
+                                            </>
+                                            :
+                                            <>
+                                                <button className='btn btn-primary'>
+                                                    Lanjut
+                                                </button>
+                                            </>
+                                        }
                                     </>
                                     :
                                     <>
-                                        <button className='btn btn-primary'>
-                                            Lanjut
+                                        <button className='btn btn-warning mr-3' onClick={() => handleSeatDefault(purchase)}>
+                                            Kembalikan ke kursi awal
                                         </button>
+                                        {purchase?.bookingDetail?.journey_type === 'RT' ?
+                                            <>
+                                                <button className='btn btn-danger mr-3' onClick={() => handleNextTrain(0)}>
+                                                    Back Train
+                                                </button>
+                                                <button className='btn btn-primary'>
+                                                    Lanjut
+                                                </button>
+                                            </>
+                                            :
+                                            <>
+                                                <button className='btn btn-primary'>
+                                                    Lanjut
+                                                </button>
+                                            </>
+                                        }
                                     </>
                                 }
                             </div>
@@ -726,46 +1147,95 @@ function TrainSeatPassanger() {
                                             Kursi yang dipilih :
                                         </div>
                                         <div>
-                                            <b className='text-primary' style={{ fontSize: '24px' }}>{seatRow?.wagon_code} {seatRow?.wagon_no} - {seats?.seat_no}</b>
+                                            {nextTrain === 0 ?
+                                                <>
+                                                    <b className='text-primary' style={{ fontSize: '24px' }}>{seatRow?.wagon_code} {seatRow?.wagon_no} - {seats?.seat_no}</b>
+                                                </>
+                                                :
+                                                <>
+                                                    <b className='text-primary' style={{ fontSize: '24px' }}>{seatRowReturn?.wagon_code} {seatRowReturn?.wagon_no} - {seats?.seat_no}</b>
+                                                </>
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className='row mt-3'>
-                                {bookingDetailData?.journeys[0].seat.map((i, index) => (
-                                    <div className="col-md-12 mt-2" key={index}>
-                                        <div className="card border" style={{
-                                            borderRadius: '10px',
-                                        }}>
-                                            <div className="row">
-                                                <div className='col-md-2 bg-primary' style={{
+                                {nextTrain === 0 ?
+                                    <>
+                                        {bookingDetailData?.journeys[0].seat.map((i, index) => (
+                                            <div className="col-md-12 mt-2" key={index}>
+                                                <div className="card border" style={{
                                                     borderRadius: '10px',
                                                 }}>
-                                                    <p style={{ fontSize: '30px', textAlign: 'center', marginTop: '20px' }} className='text-white '>{`P${index + 1}`}</p>
-                                                </div>
-                                                <div className='col-md-10'>
-                                                    <div className="d-flex align-items-center justify-content-between">
-                                                        <div>
-                                                            <p style={{ fontSize: '12px' }} className='mt-2 mb-0 font-weight-bold'>
-                                                                {i.passenger_fullname}
-                                                            </p>
-                                                            <p className='mb-2' style={{ fontSize: '12px' }}>{i.wagon_code} {i.wagon_no} - {i.seat_number}</p>
+                                                    <div className="row">
+                                                        <div className='col-md-2 bg-primary' style={{
+                                                            borderRadius: '10px',
+                                                        }}>
+                                                            <p style={{ fontSize: '30px', textAlign: 'center', marginTop: '20px' }} className='text-white '>{`P${index + 1}`}</p>
                                                         </div>
-                                                        <div>
-                                                            <span
-                                                                key={index}
-                                                                className={`mr-3 text-white badge badge-sm ${selectedOption === index ? 'badge-success' : 'badge-primary'}`}
-                                                                onClick={() => handleOptionChange(index, i, seatRow, seats)}
-                                                            >
-                                                                <Icon icon={`${selectedOption === index ? 'carbon:circle-filled' : 'ic:outline-circle'}`} />
-                                                            </span>
+                                                        <div className='col-md-10'>
+                                                            <div className="d-flex align-items-center justify-content-between">
+                                                                <div>
+                                                                    <p style={{ fontSize: '12px' }} className='mt-2 mb-0 font-weight-bold'>
+                                                                        {i.passenger_fullname}
+                                                                    </p>
+                                                                    <p className='mb-2' style={{ fontSize: '12px' }}>{i.wagon_code} {i.wagon_no} - {i.seat_number}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <span
+                                                                        key={index}
+                                                                        className={`mr-3 text-white badge badge-sm ${selectedOption === index ? 'badge-success' : 'badge-primary'}`}
+                                                                        onClick={() => handleOptionChange(index, i, seatRow, seats)}
+                                                                    >
+                                                                        <Icon icon={`${selectedOption === index ? 'carbon:circle-filled' : 'ic:outline-circle'}`} />
+                                                                    </span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                        ))}
+                                    </>
+                                    :
+                                    <>
+                                        {bookingDetailData?.journeys[1].seat.map((i, index) => (
+                                            <div className="col-md-12 mt-2" key={index}>
+                                                <div className="card border" style={{
+                                                    borderRadius: '10px',
+                                                }}>
+                                                    <div className="row">
+                                                        <div className='col-md-2 bg-primary' style={{
+                                                            borderRadius: '10px',
+                                                        }}>
+                                                            <p style={{ fontSize: '30px', textAlign: 'center', marginTop: '20px' }} className='text-white '>{`P${index + 1}`}</p>
+                                                        </div>
+                                                        <div className='col-md-10'>
+                                                            <div className="d-flex align-items-center justify-content-between">
+                                                                <div>
+                                                                    <p style={{ fontSize: '12px' }} className='mt-2 mb-0 font-weight-bold'>
+                                                                        {i.passenger_fullname}
+                                                                    </p>
+                                                                    <p className='mb-2' style={{ fontSize: '12px' }}>{i.wagon_code} {i.wagon_no} - {i.seat_number}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <span
+                                                                        key={index}
+                                                                        className={`mr-3 text-white badge badge-sm ${selectedOption === index ? 'badge-success' : 'badge-primary'}`}
+                                                                        onClick={() => handleOptionChange(index, i, seatRowReturn, seats)}
+                                                                    >
+                                                                        <Icon icon={`${selectedOption === index ? 'carbon:circle-filled' : 'ic:outline-circle'}`} />
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </>
+                                }
                             </div>
                             <div className='mt-3'>
                                 <button className='btn btn-primary' onClick={() => confirmSimpanSeat()}>

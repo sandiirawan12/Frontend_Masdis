@@ -12,12 +12,12 @@ function AccountQuickpickEdit() {
     const { id } = router.query;
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
     const [quickpick, setQuickpick] = useState({});
+    
     useEffect(() => {
         userApi.getQuickpick(access_token, { id }).then(res => {
             if (res.success) {
                 setQuickpick(res.data)
             }
-
         })
 
     }, [id])

@@ -85,7 +85,7 @@ function WidgetFlight(props) {
   useEffect(() => {
     const timerId = setTimeout(() => {
       if (options?.from) {
-        if (options?.from.length >= 3) {
+        if (options?.from.length > 3) {
           homeApi.getAutoCompleteElasticFlight({ query: options?.from }).then(res => {
             if (res.success) {
               handleChangeFrom('selected', res.data.filter(item => item.id === options.from))
@@ -116,14 +116,14 @@ function WidgetFlight(props) {
 
   useEffect(() => {
     handleChangeFrom('isLoading', true);
-    if (stateFrom.keyword.length > 2 || stateFrom.keyword.length < 1) {
+    if (stateFrom.keyword.length > 2) {
       debouncedFetchFrom(access_token, stateFrom.keyword, handleChangeFrom)
     }
   }, [stateFrom.keyword, debouncedFetchFrom])
 
   useEffect(() => {
     handleChangeTo('isLoading', true)
-    if (stateTo.keyword.length > 2 || stateTo.keyword.length < 1) {
+    if (stateTo.keyword.length > 2) {
       debouncedFetchTo(access_token, stateTo.keyword, handleChangeTo)
     }
   }, [stateTo.keyword, debouncedFetchTo])
@@ -195,238 +195,499 @@ function WidgetFlight(props) {
     return new Date(from[2], from[1] - 1, from[0])
   }
 
+  const isHomePage = window.location.pathname === '/';
 
   return (
-    <div style={{
-      padding: '15px',
-      color: 'white',
-      background: 'linear-gradient(90deg, rgba(9,113,185,1) 0%, rgba(53,142,230,1) 50%, rgba(41,193,209,1) 100%)',
-      // background: 'linear-gradient(270deg, rgb(9, 113, 185) 0%, rgb(225, 196, 81) 30%, rgb(230, 124, 0) 45%, rgb(9, 113, 185) 100%)',
-      borderRadius: '20px'
-    }}>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div className='d-flex'>
-          <div className="custom-control custom-radio mx-2">
-            <input type="radio" onChange={handleChangeFlightReturn} className="custom-control-input form-widget form-isreturn" id="oneway" checked={!flightReturn} />
-            <label className="custom-control-label font-weight-bold" htmlFor="oneway">One Way</label>
-          </div>
-          <div className="custom-control custom-radio mx-2">
-            <input checked={flightReturn} onChange={handleChangeFlightReturn} type="radio" className="custom-control-input form-widget " id="pulangterbang" />
-            <label className="custom-control-label font-weight-bold" htmlFor="pulangterbang">Round Trip</label>
-          </div>
-          <div className="custom-control custom-checkbox mx-2">
-            <input type="checkbox" checked={directOnly} onChange={() => setDirectOnly(!directOnly)} className="custom-control-input" id='directOnly' />
-            <label className="custom-control-label" htmlFor='directOnly'>
-              Direct Only
-            </label>
-          </div>
-        </div>
-        <div className='d-flex'>
-          <div className="mx-2">
-            <DropdownPassanger passanger={passanger} addPassanger={addPassanger} reducedPassanger={reducedPassanger} />
-          </div>
-          <div className='mx-2'>
-            {/* <label className='font-weight-bold'>Kelas Kabin</label> */}
-            <select className="form-control" value={classCabin} onChange={(e) => setClassCabin(e.target.value)}>
-              <option value="">All</option>
-              <option value="E">Economy</option>
-              <option value="S">Premium Economy</option>
-              <option value="B">Bussiness</option>
-              <option value="F">First Class</option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <>
+            {isHomePage ? (
+              <div style={{
+                padding: '15px',
+                color: 'white',
+                borderRadius: '20px'
+              }}>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className='d-flex'>
+                    <div className="custom-control custom-radio mx-2">
+                      <input type="radio" onChange={handleChangeFlightReturn} className="custom-control-input form-widget form-isreturn" id="oneway" checked={!flightReturn} />
+                      <label className="custom-control-label font-weight-bold" htmlFor="oneway">One Way</label>
+                    </div>
+                    <div className="custom-control custom-radio mx-2">
+                      <input checked={flightReturn} onChange={handleChangeFlightReturn} type="radio" className="custom-control-input form-widget " id="pulangterbang" />
+                      <label className="custom-control-label font-weight-bold" htmlFor="pulangterbang">Round Trip</label>
+                    </div>
+                    <div className="custom-control custom-checkbox mx-2">
+                      <input type="checkbox" checked={directOnly} onChange={() => setDirectOnly(!directOnly)} className="custom-control-input" id='directOnly' />
+                      <label className="custom-control-label" htmlFor='directOnly'>
+                        Direct Only
+                      </label>
+                    </div>
+                  </div>
+                  <div className='d-flex'>
+                    <div className="mx-2">
+                      <DropdownPassanger passanger={passanger} addPassanger={addPassanger} reducedPassanger={reducedPassanger} />
+                    </div>
+                    <div className='mx-2'>
+                      {/* <label className='font-weight-bold'>Kelas Kabin</label> */}
+                      <select className="form-control" value={classCabin} onChange={(e) => setClassCabin(e.target.value)}>
+                        <option value="">All</option>
+                        <option value="E">Economy</option>
+                        <option value="S">Premium Economy</option>
+                        <option value="B">Bussiness</option>
+                        <option value="F">First Class</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
 
-      <ul className="list-group list-group-horizontal text-dark list-menu">
-        <ListItemStyled className={classNames("list-group-item pb-0", {
-          'w-25': flightReturn,
-          'w-35': !flightReturn
-        })}>
-          <div className="form-group mb-2">
-            <label className="mb-0 font-weight-bold">Dari</label>
-            <Typeahead
-              id='from'
-              inputProps={{
-                style: inputStyle,
-                placeholder: 'Kota atau bandara'
-              }}
-              selected={stateFrom.selected}
-              onChange={(val) => handleChangeFrom('selected', val)}
-              filterBy={() => true}
-              minLength={3}
-              labelKey="text"
-              onSearch={() => { }}
-              onInputChange={(q) => handleChangeFrom('keyword', q)}
-              options={stateFrom.options}
-              renderMenuItemChildren={(option) => stateFrom.isLoading ?
-                <span className='d-flex justify-content-between align-items-center py-2 px-1'>
-                  <ReactPlaceholder type='text' rows={1} />
-                </span>
-                : (
-                  <>
-                    <span className="d-flex justify-content-between align-items-center ">
-                      <div className='d-flex align-items-center'>
-                        <Icon icon="pepicons-print:airplane"
-                          style={{
-                            fontSize: '28px',
-                            color: '#0070ba'
-                          }}
-                        />
-                        <div className='ml-3' style={{ width: '95%' }}>
-                          <strong style={{
-                            textOverflow: 'ellipsis',
-                            width: '210px',
-                            fontSize: '16px',
-                            display: 'inline-block',
-                            whiteSpace: 'break-spaces'
-                          }}>
-                            {option.text}
-                          </strong>
-                          <br />
-                          <small style={{
-                            width: '100%',
-                            display: 'inline-block',
-                            whiteSpace: 'break-spaces'
-                          }}>
-                            {option.city}, {option.country_name}
-                          </small>
+                <ul className="list-group list-group-horizontal text-white list-menu mb-4" style={{ listStyle: 'none' }}>
+                  <li className={classNames("bg-transparent pb-0", {
+                    'w-25': flightReturn,
+                    'w-30': !flightReturn
+                  })}>
+                    <div className="form-group mb-0">
+                      <label className="mb-0 font-weight-bold ml-2">Dari</label>
+                    </div>
+                  </li>
+                  <li className={classNames("bg-transparent pb-0", {
+                    'w-25': flightReturn,
+                    'w-35': !flightReturn
+                  })}>
+                    <div className="form-group mb-0">
+                      <label className="mb-0 font-weight-bold ml-2">Ke</label>
+                    </div>
+                  </li>
+                  <li className={classNames("bg-transparent pb-0", {
+                    'w-25': flightReturn,
+                    'w-35': !flightReturn
+                  })}>
+                    <div className="form-group mb-0">
+                      <label className="mb-0 font-weight-bold ml-2">Tanggal Pergi</label>
+                    </div>
+                  </li>
+                  {flightReturn &&
+                    <li className={classNames("bg-transparent pb-0", {
+                        'w-25': flightReturn,
+                        'w-35': !flightReturn
+                      })}>
+                        <div className="form-group mb-0">
+                          <label className="mb-0 font-weight-bold ml-2">Tanggal Pulang</label>
                         </div>
-                      </div>
-                      <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
-                    </span>
-                  </>
-                )} />
-          </div>
-        </ListItemStyled>
-        <ListItemStyled className={classNames("list-group-item pb-0", {
-          'w-25': flightReturn,
-          'w-35': !flightReturn
-        })}>
-          <div className="exchange-flight p-1 bg-white">
-            <button onClick={handleSwitch} type="button" className={classNames("btn rounded-circle btn-primary btn-exchange-flight p-0", {
-              'rotate': exchangeFlight
-            })}>
-              <Icon icon={ExchangeAltIcon} style={{ verticalAlign: 'middle', marginTop: '-4.7px' }} />
-            </button>
-          </div>
-          <div className="form-group mb-2 ml-2">
-            <label className="mb-0 font-weight-bold">Ke</label>
-            <Typeahead id='to'
-              inputProps={{
-                placeholder: 'Kota atau bandara tujuan',
-                style: inputStyle
-              }}
-              selected={stateTo.selected}
-              onChange={(val) => handleChangeTo('selected', val)}
-              filterBy={() => true}
-              labelKey="text"
-              // isLoading={stateTo.isLoading}
-              onSearch={() => { }}
-              onInputChange={(q) => handleChangeTo('keyword', q)}
-              options={stateTo.options} renderMenuItemChildren={(option) => (
-                stateTo.isLoading ? <span className='d-flex justify-content-between align-items-center py-2 px-1'>
-                  <ReactPlaceholder type='text' rows={1} />
-                </span> :
-                  <>
-                    <span className="d-flex justify-content-between align-items-center ">
-                      <div className='d-flex align-items-center'>
-                        <Icon icon="pepicons-print:airplane"
-                          style={{
-                            fontSize: '28px',
-                            color: '#0070ba'
+                    </li>
+                  }
+                  <li className="w-20">
+                  </li>
+                </ul>
+                <div style={{ borderRadius: '20px', marginTop: '-10px' }}>
+                  <ul className="list-group list-group-horizontal text-dark list-menu">
+                    <ListItemStyledHome className={classNames("list-group-item pb-0", {
+                      'w-25': flightReturn,
+                      'w-35': !flightReturn
+                    })}>
+                      <div className="form-group mb-2">
+                        <Typeahead
+                          id='from'
+                          inputProps={{
+                            style: inputStyle,
+                            placeholder: 'Kota atau bandara'
                           }}
-                        />
-                        <div className='ml-3' style={{ width: '95%' }}>
-                          <strong style={{
-                            textOverflow: 'ellipsis',
-                            width: '210px',
-                            fontSize: '16px',
-                            display: 'inline-block',
-                            whiteSpace: 'break-spaces'
-                          }}>
-                            {option.text}
-                          </strong>
-                          <br />
-                          <small style={{
-                            width: '100%',
-                            display: 'inline-block',
-                            whiteSpace: 'break-spaces'
-                          }}>
-                            {option.city}, {option.country_name}
-                          </small>
-                        </div>
+                          selected={stateFrom.selected}
+                          onChange={(val) => handleChangeFrom('selected', val)}
+                          filterBy={() => true}
+                          minLength={3}
+                          labelKey="text"
+                          onSearch={() => { }}
+                          onInputChange={(q) => handleChangeFrom('keyword', q)}
+                          options={stateFrom.options}
+                          renderMenuItemChildren={(option) => stateFrom.isLoading ?
+                            <span className='d-flex justify-content-between align-items-center py-2 px-1'>
+                              <ReactPlaceholder type='text' rows={1} />
+                            </span>
+                            : (
+                              <>
+                                <span className="d-flex justify-content-between align-items-center ">
+                                  <div className='d-flex align-items-center'>
+                                    <Icon icon="pepicons-print:airplane"
+                                      style={{
+                                        fontSize: '28px',
+                                        color: '#0070ba'
+                                      }}
+                                    />
+                                    <div className='ml-3' style={{ width: '95%' }}>
+                                      <strong style={{
+                                        textOverflow: 'ellipsis',
+                                        width: '210px',
+                                        fontSize: '16px',
+                                        display: 'inline-block',
+                                        whiteSpace: 'break-spaces'
+                                      }}>
+                                        {option.text}
+                                      </strong>
+                                      <br />
+                                      <small style={{
+                                        width: '100%',
+                                        display: 'inline-block',
+                                        whiteSpace: 'break-spaces'
+                                      }}>
+                                        {option.city}, {option.country_name}
+                                      </small>
+                                    </div>
+                                  </div>
+                                  <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
+                                </span>
+                              </>
+                            )} />
                       </div>
-                      <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
-                    </span>
-                  </>
-              )} />
-          </div>
-        </ListItemStyled>
-        <ListItemStyled className="list-group-item pb-0" style={{ width: '20%' }}>
-          <div className={classNames("form-group mb-2 InputFromTo", {
-            'range': flightReturn
-          })}>
-            <label className="mb-0 d-block font-weight-bold">Berangkat</label>
-            <DayPickerInput value={date.from} formatDate={formatDate} format={'ddd, DD MMM YYYY'} parseDate={parseDate}
-              dayPickerProps={{
-                disabledDays: { before: new Date() },
-                // selectedDays: [date.from],
-                selectedDays: [date.from, flightReturn && { from: date.from, to: date.to }],
-                modifiers,
-                numberOfMonths: flightReturn ? 2 : 1,
-                locale: 'id',
-                localeUtils: MomentLocaleUtils,
-                onDayClick: () => !flightReturn && refTo.current?.getInput().focus(),
-              }} onDayChange={handleDateFromChange} inputProps={{
-                className: 'form-control w-100',
-                readOnly: true,
-                style: inputStyle
-              }} />
-          </div>
-        </ListItemStyled>
-        {flightReturn &&
-          <ListItemStyled style={{ width: '20%' }} className={classNames("list-group-item pb-0 InputFromTo range InputFromTo-to")}>
-            <div className="form-group mb-2">
-              <label className="mb-0 font-weight-bold">Pulang</label>
-              <DayPickerInput
-                ref={refTo}
-                format={'ddd, DD MMM YYYY'}
-                value={date.to}
-                formatDate={formatDate}
-                parseDate={parseDate}
-                dayPickerProps={{
-                  selectedDays: [date.from, { from: date.from, to: date.to }],
-                  disabledDays: [{ before: date.from }, { before: new Date() }],
-                  modifiers,
-                  localeUtils: MomentLocaleUtils,
-                  month: date.from,
-                  fromMonth: date.from,
-                  locale: 'id',
-                  numberOfMonths: 2,
-                }} onDayChange={handleDateToChange} style={{ width: '200px' }} inputProps={{
-                  className: 'form-control bg-transparent'
-                  , readOnly: true,
-                  style: inputStyle
-                }} />
-            </div>
-          </ListItemStyled>
-        }
-        <ListItemStyled className="list-group-item p-0 bg-warning w-20 tombolcari">
-          <button onClick={handleSearch} className="btn btn-transparent d-flex justify-content-center align-items-center font-weight-bold h-100 btn-block">
-            <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
-              <Icon icon="icon-park-twotone:search"></Icon>
-            </div>
-            Search</button>
-        </ListItemStyled>
-      </ul>
-      {/* <div className="d-flex w-100 align-items-center justify-content-end mt-3">
-        <button type="button" onClick={handleSearch} className="btn btn-md btn-warning font-weight-bold rounded-pill px-3 py-2">
-          <Icon icon={SearchIcon} className='pr-1' />
-          Cari Penerbangan</button>
-      </div> */}
-    </div >
+                    </ListItemStyledHome>
+                    <ListItemStyledHome className={classNames("list-group-item pb-0", {
+                        'w-25': flightReturn,
+                        'w-35': !flightReturn
+                      })}>
+                        <div className="exchange-flight p-1 bg-white">
+                          <button onClick={handleSwitch} type="button" className={classNames("btn rounded-circle btn-primary btn-exchange-flight p-0", {
+                            'rotate': exchangeFlight
+                          })}>
+                            <Icon icon={ExchangeAltIcon} style={{ verticalAlign: 'middle', marginTop: '-4.7px' }} />
+                          </button>
+                        </div>
+                        <div className="form-group mb-2 ml-2">
+                          <Typeahead id='to'
+                            inputProps={{
+                              placeholder: 'Kota atau bandara tujuan',
+                              style: inputStyle
+                            }}
+                            selected={stateTo.selected}
+                            onChange={(val) => handleChangeTo('selected', val)}
+                            filterBy={() => true}
+                            labelKey="text"
+                            // isLoading={stateTo.isLoading}
+                            onSearch={() => { }}
+                            onInputChange={(q) => handleChangeTo('keyword', q)}
+                            options={stateTo.options} renderMenuItemChildren={(option) => (
+                              stateTo.isLoading ? <span className='d-flex justify-content-between align-items-center py-2 px-1'>
+                                <ReactPlaceholder type='text' rows={1} />
+                              </span> :
+                                <>
+                                  <span className="d-flex justify-content-between align-items-center ">
+                                    <div className='d-flex align-items-center'>
+                                      <Icon icon="pepicons-print:airplane"
+                                        style={{
+                                          fontSize: '28px',
+                                          color: '#0070ba'
+                                        }}
+                                      />
+                                      <div className='ml-3' style={{ width: '95%' }}>
+                                        <strong style={{
+                                          textOverflow: 'ellipsis',
+                                          width: '210px',
+                                          fontSize: '16px',
+                                          display: 'inline-block',
+                                          whiteSpace: 'break-spaces'
+                                        }}>
+                                          {option.text}
+                                        </strong>
+                                        <br />
+                                        <small style={{
+                                          width: '100%',
+                                          display: 'inline-block',
+                                          whiteSpace: 'break-spaces'
+                                        }}>
+                                          {option.city}, {option.country_name}
+                                        </small>
+                                      </div>
+                                    </div>
+                                    <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
+                                  </span>
+                                </>
+                            )} />
+                        </div>
+                    </ListItemStyledHome>
+                    <ListItemStyledHome className={classNames("list-group-item pb-0", {
+                      'w-25': flightReturn,
+                      'w-35': !flightReturn
+                    })}>
+                      <div className={classNames("form-group mb-2 InputFromTo", {
+                        'range': flightReturn
+                      })}>
+                        <DayPickerInput value={date.from} formatDate={formatDate} format={'ddd, DD MMM YYYY'} parseDate={parseDate}
+                          dayPickerProps={{
+                            disabledDays: { before: new Date() },
+                            // selectedDays: [date.from],
+                            selectedDays: [date.from, flightReturn && { from: date.from, to: date.to }],
+                            modifiers,
+                            numberOfMonths: flightReturn ? 2 : 1,
+                            locale: 'id',
+                            localeUtils: MomentLocaleUtils,
+                            onDayClick: () => !flightReturn && refTo.current?.getInput().focus(),
+                          }} onDayChange={handleDateFromChange} inputProps={{
+                            className: 'form-control w-100',
+                            readOnly: true,
+                            style: inputStyle
+                          }} />
+                      </div>
+                    </ListItemStyledHome>
+                    {flightReturn &&
+                      <ListItemStyledHome style={{ width: '20%' }} className={classNames("list-group-item pb-0 InputFromTo range InputFromTo-to")}>
+                        <div className="form-group mb-2">
+                          <DayPickerInput
+                            ref={refTo}
+                            format={'ddd, DD MMM YYYY'}
+                            value={date.to}
+                            formatDate={formatDate}
+                            parseDate={parseDate}
+                            dayPickerProps={{
+                              selectedDays: [date.from, { from: date.from, to: date.to }],
+                              disabledDays: [{ before: date.from }, { before: new Date() }],
+                              modifiers,
+                              localeUtils: MomentLocaleUtils,
+                              month: date.from,
+                              fromMonth: date.from,
+                              locale: 'id',
+                              numberOfMonths: 2,
+                            }} onDayChange={handleDateToChange} style={{ width: '200px' }} inputProps={{
+                              className: 'form-control bg-transparent'
+                              , readOnly: true,
+                              style: inputStyle
+                            }} />
+                        </div>
+                      </ListItemStyledHome>
+                    }
+                    <ListItemStyledHome className="list-group-item p-0 bg-warning w-20 tombolcari">
+                      <button onClick={handleSearch} className="btn btn-transparent d-flex justify-content-center align-items-center font-weight-bold h-100 btn-block">
+                        <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
+                          <Icon icon="icon-park-twotone:search"></Icon>
+                        </div>
+                      </button>
+                    </ListItemStyledHome>
+                  </ul>
+                </div>
+              </div >
+            ) : (
+              <div style={{
+                padding: '15px',
+                color: 'white',
+                background: 'linear-gradient(90deg, rgba(9,113,185,1) 0%, rgba(53,142,230,1) 50%, rgba(41,193,209,1) 100%)',
+                // background: 'linear-gradient(270deg, rgb(9, 113, 185) 0%, rgb(225, 196, 81) 30%, rgb(230, 124, 0) 45%, rgb(9, 113, 185) 100%)',
+                borderRadius: '20px'
+              }}>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className='d-flex'>
+                    <div className="custom-control custom-radio mx-2">
+                      <input type="radio" onChange={handleChangeFlightReturn} className="custom-control-input form-widget form-isreturn" id="oneway" checked={!flightReturn} />
+                      <label className="custom-control-label font-weight-bold" htmlFor="oneway">One Way</label>
+                    </div>
+                    <div className="custom-control custom-radio mx-2">
+                      <input checked={flightReturn} onChange={handleChangeFlightReturn} type="radio" className="custom-control-input form-widget " id="pulangterbang" />
+                      <label className="custom-control-label font-weight-bold" htmlFor="pulangterbang">Round Trip</label>
+                    </div>
+                    <div className="custom-control custom-checkbox mx-2">
+                      <input type="checkbox" checked={directOnly} onChange={() => setDirectOnly(!directOnly)} className="custom-control-input" id='directOnly' />
+                      <label className="custom-control-label" htmlFor='directOnly'>
+                        Direct Only
+                      </label>
+                    </div>
+                  </div>
+                  <div className='d-flex'>
+                    <div className="mx-2">
+                      <DropdownPassanger passanger={passanger} addPassanger={addPassanger} reducedPassanger={reducedPassanger} />
+                    </div>
+                    <div className='mx-2'>
+                      {/* <label className='font-weight-bold'>Kelas Kabin</label> */}
+                      <select className="form-control" value={classCabin} onChange={(e) => setClassCabin(e.target.value)}>
+                        <option value="">All</option>
+                        <option value="E">Economy</option>
+                        <option value="S">Premium Economy</option>
+                        <option value="B">Bussiness</option>
+                        <option value="F">First Class</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
 
+                <ul className="list-group list-group-horizontal text-dark list-menu">
+                  <ListItemStyled className={classNames("list-group-item pb-0", {
+                    'w-25': flightReturn,
+                    'w-35': !flightReturn
+                  })}>
+                    <div className="form-group mb-2">
+                      <label className="mb-0 font-weight-bold">Dari</label>
+                      <Typeahead
+                        id='from'
+                        inputProps={{
+                          style: inputStyle,
+                          placeholder: 'Kota atau bandara'
+                        }}
+                        selected={stateFrom.selected}
+                        onChange={(val) => handleChangeFrom('selected', val)}
+                        filterBy={() => true}
+                        minLength={3}
+                        labelKey="text"
+                        onSearch={() => { }}
+                        onInputChange={(q) => handleChangeFrom('keyword', q)}
+                        options={stateFrom.options}
+                        renderMenuItemChildren={(option) => stateFrom.isLoading ?
+                          <span className='d-flex justify-content-between align-items-center py-2 px-1'>
+                            <ReactPlaceholder type='text' rows={1} />
+                          </span>
+                          : (
+                            <>
+                              <span className="d-flex justify-content-between align-items-center ">
+                                <div className='d-flex align-items-center'>
+                                  <Icon icon="pepicons-print:airplane"
+                                    style={{
+                                      fontSize: '28px',
+                                      color: '#0070ba'
+                                    }}
+                                  />
+                                  <div className='ml-3' style={{ width: '95%' }}>
+                                    <strong style={{
+                                      textOverflow: 'ellipsis',
+                                      width: '210px',
+                                      fontSize: '16px',
+                                      display: 'inline-block',
+                                      whiteSpace: 'break-spaces'
+                                    }}>
+                                      {option.text}
+                                    </strong>
+                                    <br />
+                                    <small style={{
+                                      width: '100%',
+                                      display: 'inline-block',
+                                      whiteSpace: 'break-spaces'
+                                    }}>
+                                      {option.city}, {option.country_name}
+                                    </small>
+                                  </div>
+                                </div>
+                                <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
+                              </span>
+                            </>
+                          )} />
+                    </div>
+                  </ListItemStyled>
+                  <ListItemStyled className={classNames("list-group-item pb-0", {
+                    'w-25': flightReturn,
+                    'w-35': !flightReturn
+                  })}>
+                    <div className="exchange-flight p-1 bg-white">
+                      <button onClick={handleSwitch} type="button" className={classNames("btn rounded-circle btn-primary btn-exchange-flight p-0", {
+                        'rotate': exchangeFlight
+                      })}>
+                        <Icon icon={ExchangeAltIcon} style={{ verticalAlign: 'middle', marginTop: '-4.7px' }} />
+                      </button>
+                    </div>
+                    <div className="form-group mb-2 ml-2">
+                      <label className="mb-0 font-weight-bold">Ke</label>
+                      <Typeahead id='to'
+                        inputProps={{
+                          placeholder: 'Kota atau bandara tujuan',
+                          style: inputStyle
+                        }}
+                        selected={stateTo.selected}
+                        onChange={(val) => handleChangeTo('selected', val)}
+                        filterBy={() => true}
+                        labelKey="text"
+                        // isLoading={stateTo.isLoading}
+                        onSearch={() => { }}
+                        onInputChange={(q) => handleChangeTo('keyword', q)}
+                        options={stateTo.options} renderMenuItemChildren={(option) => (
+                          stateTo.isLoading ? <span className='d-flex justify-content-between align-items-center py-2 px-1'>
+                            <ReactPlaceholder type='text' rows={1} />
+                          </span> :
+                            <>
+                              <span className="d-flex justify-content-between align-items-center ">
+                                <div className='d-flex align-items-center'>
+                                  <Icon icon="pepicons-print:airplane"
+                                    style={{
+                                      fontSize: '28px',
+                                      color: '#0070ba'
+                                    }}
+                                  />
+                                  <div className='ml-3' style={{ width: '95%' }}>
+                                    <strong style={{
+                                      textOverflow: 'ellipsis',
+                                      width: '210px',
+                                      fontSize: '16px',
+                                      display: 'inline-block',
+                                      whiteSpace: 'break-spaces'
+                                    }}>
+                                      {option.text}
+                                    </strong>
+                                    <br />
+                                    <small style={{
+                                      width: '100%',
+                                      display: 'inline-block',
+                                      whiteSpace: 'break-spaces'
+                                    }}>
+                                      {option.city}, {option.country_name}
+                                    </small>
+                                  </div>
+                                </div>
+                                <span className="badge bg-primary text-uppercase text-white ml-1">{option.id}</span>
+                              </span>
+                            </>
+                        )} />
+                    </div>
+                  </ListItemStyled>
+                  <ListItemStyled className="list-group-item pb-0" style={{ width: '20%' }}>
+                    <div className={classNames("form-group mb-2 InputFromTo", {
+                      'range': flightReturn
+                    })}>
+                      <label className="mb-0 d-block font-weight-bold">Berangkat</label>
+                      <DayPickerInput value={date.from} formatDate={formatDate} format={'ddd, DD MMM YYYY'} parseDate={parseDate}
+                        dayPickerProps={{
+                          disabledDays: { before: new Date() },
+                          // selectedDays: [date.from],
+                          selectedDays: [date.from, flightReturn && { from: date.from, to: date.to }],
+                          modifiers,
+                          numberOfMonths: flightReturn ? 2 : 1,
+                          locale: 'id',
+                          localeUtils: MomentLocaleUtils,
+                          onDayClick: () => !flightReturn && refTo.current?.getInput().focus(),
+                        }} onDayChange={handleDateFromChange} inputProps={{
+                          className: 'form-control w-100',
+                          readOnly: true,
+                          style: inputStyle
+                        }} />
+                    </div>
+                  </ListItemStyled>
+                  {flightReturn &&
+                    <ListItemStyled style={{ width: '20%' }} className={classNames("list-group-item pb-0 InputFromTo range InputFromTo-to")}>
+                      <div className="form-group mb-2">
+                        <label className="mb-0 font-weight-bold">Pulang</label>
+                        <DayPickerInput
+                          ref={refTo}
+                          format={'ddd, DD MMM YYYY'}
+                          value={date.to}
+                          formatDate={formatDate}
+                          parseDate={parseDate}
+                          dayPickerProps={{
+                            selectedDays: [date.from, { from: date.from, to: date.to }],
+                            disabledDays: [{ before: date.from }, { before: new Date() }],
+                            modifiers,
+                            localeUtils: MomentLocaleUtils,
+                            month: date.from,
+                            fromMonth: date.from,
+                            locale: 'id',
+                            numberOfMonths: 2,
+                          }} onDayChange={handleDateToChange} style={{ width: '200px' }} inputProps={{
+                            className: 'form-control bg-transparent'
+                            , readOnly: true,
+                            style: inputStyle
+                          }} />
+                      </div>
+                    </ListItemStyled>
+                  }
+                  <ListItemStyled className="list-group-item p-0 bg-warning w-20 tombolcari">
+                    <button onClick={handleSearch} className="btn btn-transparent d-flex justify-content-center align-items-center font-weight-bold h-100 btn-block">
+                      <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
+                        <Icon icon="icon-park-twotone:search"></Icon>
+                      </div>
+                      Search</button>
+                  </ListItemStyled>
+                </ul>
+              </div >
+            )}
+        </>
   )
 }
 
@@ -443,7 +704,10 @@ const inputStyle = {
 const ListItemStyled = styled.li`
   height:83px !important;
   padding-bottom:0 !important;
+`
 
+const ListItemStyledHome = styled.li`
+  height: 50px !important;
 `
 
 export default WidgetFlight

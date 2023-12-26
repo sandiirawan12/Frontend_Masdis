@@ -469,7 +469,7 @@ function DetailHotel() {
                         </ol>
                     </nav>
 
-                    <nav className="navbar" style={{ position: 'fixed', top: 100, left: 0, right: 0, backgroundColor: '#1a83c8', zIndex: 100 }}>
+                    <nav className="navbar" style={{ position: 'fixed', top: 125, left: 0, right: 0, backgroundColor: '#1a83c8', zIndex: 100 }}>
                         <div className="container mt-2 mb-1">
                             <div className="d-flex justify-content-between align-items-center" style={{fontSize: '14px'}}>
                                 <div className='px-1 pb-1'>

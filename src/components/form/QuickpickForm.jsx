@@ -26,7 +26,7 @@ function QuickpickForm(props) {
         phone: Yup.string().required('Nomor telepon tidak boleh kosong'),
         nationality_id: Yup.string().required('Kebangsaan tidak boleh kosong'),
         birthdate: Yup.string().required('Tanggal lahir tidak boleh kosong'),
-        identity_card_number: Yup.number().typeError('Nomor kartu identitas tidak valid'),
+        identity_card_number: Yup.number().typeError('Nomor kartu identitas tidak valid').required('Tidak boleh kosong'),
         passport_number: Yup.number().typeError('Nomor kartu identitas tidak valid'),
     })
 
@@ -258,7 +258,7 @@ function QuickpickForm(props) {
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label>Nomor kartu identitas</label>
+                                    <label>Nomor kartu identitas <span className='text-danger'>*</span></label>
                                     <input type="text"  {...getFieldProps('identity_card_number')} className={classNames("form-control", {
                                         "is-invalid": Boolean(touched.identity_card_number && errors.identity_card_number)
                                     })} placeholder="Masukkan Nomor kartu identitas" />

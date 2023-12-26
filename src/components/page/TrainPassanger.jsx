@@ -164,54 +164,70 @@ function TrainPassanger() {
 
     const handleSeat = () => {
         const req = {
-            "product": "train",
-            "key": trainRepricing.key,
-            price: { ...price, discount: price.discount.grandTotal },
-            coupon,
-            "paymentMethod": paymentMethodSelected,
-            contact: { ...contact, firstName: contact.first, lastName: contact.last },
-            "guest": passenger.adult.map(item => ({
-                ...item,
-                dob: item.dob === '-' ? '' : moment(item.dob).format('DD-MM-YYYY'),
-                "passport": {
-                    "nat": item.nat,
-                    "num": item.num ?? '',
-                    "doi": moment(item.doi).format('DD-MM-YYYY') ?? '',
-                    "doe": moment(item.doe).format('DD-MM-YYYY') ?? ''
-                }
-
+            "id_schedule": router.query.id,
+            "first_name": contact.first,
+            "last_name": contact.last,
+            "title": contact.title.toUpperCase(),
+            "phone_code": contact.phoneCode,
+            "phone_number": contact.phone,
+            "email": contact.email,
+            "origin": dataSchedule.origin,
+            "destination": dataSchedule.destination,
+            "departure_date": dataSchedule.departure_date,
+            "return_date": dataSchedule.direction === 'OW' ? dataSchedule.departure_date : dataSchedule.return_date,
+            "journey_type": dataSchedule.direction,
+            "adult": dataSchedule.adult,
+            "child": dataSchedule.child,
+            "infant": dataSchedule.infant,
+            "segment_code": dataSchedule.data_schedule.segment_code,
+            "segment_code_return": dataSchedule.direction === 'OW' ? null : dataSchedule.data_schedule_return.segment_code,
+            "passengers": passenger.adult.map(item => ({
+                "fullname": `${item.firstName + ' ' + item.lastName}`,
+                "title": item.title,
+                "identity_number": item.no_type,
+                "identity_type": item.id_type,
+                "phone_number": item.phone,
+                "birth_date": item.dob === '' ? '' : moment(item.dob).format('YYYY-MM-DD'),
+                "pax_type": "ADT",
             })).concat(passenger.child.map(item => ({
-                ...item,
-                dob: moment(item.dob).format('DD-MM-YYYY'),
-                "passport": {
-                    "nat": item.nat,
-                    "num": item.num ?? '',
-                    "doi": moment(item.doi).format('DD-MM-YYYY') ?? '',
-                    "doe": moment(item.doe).format('DD-MM-YYYY') ?? ''
-                }
+                "fullname": `${item.firstName + ' ' + item.lastName}`,
+                "title": item.title,
+                "identity_number": item.no_type,
+                "identity_type": item.id_type,
+                "phone_number": 0,
+                "birth_date": item.dob === '' ? '' : moment(item.dob).format('YYYY-MM-DD'),
+                "pax_type": "CHD",
             }))).concat(passenger.infant.map(item => ({
-                ...item,
-                dob: moment(item.dob).format('DD-MM-YYYY'),
-                "passport": {
-                    "nat": item.nat,
-                    "num": item.num ?? '',
-                    "doi": moment(item.doi).format('DD-MM-YYYY') ?? '',
-                    "doe": moment(item.doe).format('DD-MM-YYYY') ?? ''
-                }
+                "fullname": `${item.firstName + ' ' + item.lastName}`,
+                "title": item.title,
+                "identity_number": item.no_type,
+                "identity_type": item.id_type,
+                "phone_number": item.phone,
+                "birth_date": item.dob === '' ? '' : moment(item.dob).format('YYYY-MM-DD'),
+                "pax_type": "INF",
             })))
         }
 
-        shopApi.submitCheckout(access_token, req).then(res => {
-            if (res.success) {
-                router.push(`/user/purchase/detail/${res.data.id_order}`);
+        shopApi.submitCheckoutTrain(req)
+        .then((res) => {
+            if (res.status.code === 200) {
+                router.push(`/product/train/train-seat-passenger/${res.data.id_order}`);
             } else {
-                toast.error(res.message, {
-                    position: 'top-right', toastId: 'checkout'
-                })
+                if (Array.isArray(res.errors)) {
+                    res.errors.forEach(error => {
+                        toast.error(error.message, {
+                            position: 'top-right',
+                            toastId: 'checkout'
+                        });
+                    });
+                } else {
+                    toast.error('Terdapat kesalahan pengisian pada form', {
+                        position: 'top-right',
+                        toastId: 'checkout'
+                    });
+                }
             }
         })
-
-
     }
 
     const handleConfirm = () => {
@@ -261,18 +277,25 @@ function TrainPassanger() {
         }
 
         shopApi.submitCheckoutTrain(req)
-            .then((res) => {
-                if (res.status.code === 200) {
-                    router.push(`/user/purchase/detail/${res.data.id_order}`);
-                } else if (res.status.code === 400) {
-                    toast.error(res.status.errors.message, {
+        .then((res) => {
+            if (res.status.code === 200) {
+                router.push(`/user/purchase/detail/${res.data.id_order}`);
+            } else {
+                if (Array.isArray(res.errors)) {
+                    res.errors.forEach(error => {
+                        toast.error(error.message, {
+                            position: 'top-right',
+                            toastId: 'checkout'
+                        });
+                    });
+                } else {
+                    toast.error('Terdapat kesalahan pengisian pada form', {
                         position: 'top-right',
                         toastId: 'checkout'
                     });
                 }
-            }).catch((err) => {
-                console.log(err.message);
-            });
+            }
+        })
     }
 
     const handleSubmitCoupon = (value) => {

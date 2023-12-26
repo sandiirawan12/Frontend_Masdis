@@ -672,14 +672,10 @@ function EvoucherAdmin() {
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama Lengkap</th>
-                                                {purchase.guest[0]?.dob &&
-                                                    <th>Tanggal Lahir</th>
-                                                }
+                                                <th>Tanggal Lahir</th>
+                                                <th>Nomor Identitas</th>
                                                 {purchase.guest[0]?.type &&
                                                     <th>Tipe</th>
-                                                }
-                                                {purchase.guest[0]?.identificationNumber &&
-                                                    <th>Nomor Identitas</th>
                                                 }
                                                 {purchase.guest[0]?.seatNumberDeparture &&
                                                     <th>Nomor Kursi</th>
@@ -700,14 +696,10 @@ function EvoucherAdmin() {
                                                 <tr key={index}>
                                                     <td>{++index}</td>
                                                     <td>{item?.title} {item.firstName} {item.lastName}</td>
-                                                    {item?.dob &&
-                                                        <td>{item.dob}</td>
-                                                    }
+                                                    <td>{item.dob}</td>
+                                                    <td>{item.identificationNumber}</td>
                                                     {item?.type &&
                                                         <td>{item.type === "adt" ? "Dewasa" : item.type === "chd" ? "Anak" : item.type === "inf" ? "Bayi" : ""}</td>
-                                                    }
-                                                    {item?.identificationNumber &&
-                                                        <td>{item.identificationNumber}</td>
                                                     }
                                                     {item?.passport?.nat &&
                                                         <td>{item?.passport?.nat}</td>

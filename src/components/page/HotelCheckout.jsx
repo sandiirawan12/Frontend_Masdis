@@ -181,9 +181,35 @@ function HotelCheckout() {
 
         shopApi.submitCheckout(access_token, req).then(res => {
             if (res.success) {
-                router.push(`/user/purchase/detail/${res.data.key}`);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Informasi Pemesanan',
+                    text: 'Kamar tersedia silahkan lanjut',
+                    allowOutsideClick: false,
+                    confirmButtonColor: '#0070ba',
+                    confirmButtonText: 'Lanjut',
+                }).then(respon => {
+                    if (respon.isConfirmed) {
+                        router.push(`/user/purchase/detail/${res.data.key}`);
+                    }
+                })
             } else {
-                toast.error('Pesanan gagal dibuat, pastikan data lengkap')
+                if (res.message == 'Gagal melakukan booking ke traveloka') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Informasi Pemesanan',
+                        text: res.note,
+                        allowOutsideClick: false,
+                        confirmButtonColor: '#0070ba',
+                        confirmButtonText: 'Ok, Kembali ke halaman sebelumnya',
+                    }).then(res => {
+                        if (res.isConfirmed) {
+                            router.back()
+                        }
+                    })
+                } else {
+                    toast.error('Pesanan gagal dibuat, pastikan data lengkap')
+                }
             }
             setIsLoading(false)
         })

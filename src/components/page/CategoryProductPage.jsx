@@ -14,6 +14,7 @@ import HeaderBack from '@/components-mobile/header/HeaderBack';
 import WidgetFilterFlight from '@/components-mobile/shared/WidgetFilterFlight';
 import { BottomSheet, SheetContent } from '@biotic-ui/bottom-sheet';
 import CardProductGeneral from '@/components/shared/CardProductGeneral';
+import HeaderAll from '../header/HeaderAll'
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('G-56R5954QCE');
@@ -302,6 +303,8 @@ function CategoryProductPage() {
 
     return (
         <>
+            <HeaderAll />
+
             {isTabletOrMobile &&
                 <HeaderBack title='Tours' onBack={() => router.back()} />
             }

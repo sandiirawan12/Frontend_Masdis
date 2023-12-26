@@ -7,23 +7,23 @@ import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import styled from "styled-components";
 
 const RootNav = styled(Nav)`
-         font-size:12px;
-     @media (max-width: 1224px){
-            .nav-item {
-                width:100%;
-                border:0;
-                .nav-link{ 
-                    text-align:left;
-                    
-                    &:first-child{
-            border-top-left-radius:0 !important;
-           }
-           &:last-child{
-            border-top-right-radius:0 !important;
-           }
-                }
-                }
+    font-size:12px;
+    @media (max-width: 1224px){
+        .nav-item {
+            width:100%;
+            border:0;
+            .nav-link{ 
+                text-align:left;
+                
+                &:first-child{
+        border-top-left-radius:0 !important;
         }
+        &:last-child{
+        border-top-right-radius:0 !important;
+        }
+            }
+            }
+    }
     .nav-item{
         color:black;
         font-weight:bold;
@@ -63,6 +63,7 @@ function TabPayment(props) {
     const { access_token } = useSelector(state => state.token)
     const [paymentCategory, setPaymentCategory] = useState([])
     const [activeTab, setActiveTab] = useState()
+    const [activePayment, setActivePayment] = useState()
     const { flightRepricing, handleChangePaymentMethod, paymentMethodSelected } = props
 
     useEffect(() => {
@@ -87,6 +88,10 @@ function TabPayment(props) {
         setActiveTab(item.id_payment_method_category)
     }
 
+    const handleChangePayment = (item) => {
+        setActivePayment(item);
+    }
+
     return (
         <>
             <RootNav tabs>
@@ -106,8 +111,8 @@ function TabPayment(props) {
                     <TabPane key={item.id_payment_method_category} tabId={item.id_payment_method_category}>
                         <div className="row mt-2">
                             {item.payment_method?.map(pm => (
-                                <div className="col-md-6 px-4 mb-2" onClick={() => handleChangePaymentMethod(pm.id_payment_method)}>
-                                    <label style={{ border: '1px solid #2121', background: paymentMethodSelected === pm.id_payment_method && 'rgba(145, 196, 255, 0.623)' }} className="mt-2 d-flex align-items-center rounded p-2 mb-0 pointer" htmlFor="credit_card">
+                                <div className="col-md-6 px-4 mb-2" onClick={() => handleChangePayment(pm.id_payment_method)}>
+                                    <label style={{ border: '1px solid #2121', background: activePayment == pm.id_payment_method ? 'rgba(145, 196, 255, 0.623)' : paymentMethodSelected == pm.id_payment_method ? '#d3d3d3' : '' }} className="mt-2 d-flex align-items-center rounded p-2 mb-0 pointer" htmlFor="credit_card">
                                         <div className="mr-3" style={{
                                             height: '60px',
                                             width: '60px',
@@ -119,7 +124,6 @@ function TabPayment(props) {
                                         </div>
                                         {pm.name_payment_method}
                                     </label>
-
                                 </div>
                             ))}
                         </div>

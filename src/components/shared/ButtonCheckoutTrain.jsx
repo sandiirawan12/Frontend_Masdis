@@ -8,7 +8,7 @@ function ButtonChekoutTrain(props) {
                     <h3 className="ml-4 text-primary font-weight-bold">Rp {total?.toLocaleString()}</h3>
                 </div>
                 <div className="col-md-2">
-                    {/* <button id="submit-cart" style={isLoading ?
+                    <button id="submit-cart" style={isLoading ?
                         {
                             opacity: 0.8,
                             pointerEvents: 'none'
@@ -18,7 +18,7 @@ function ButtonChekoutTrain(props) {
                         onClick={selectSeat}
                         className="btn btn-md btn-warning font-weight-bold float-right">
                         {isLoading ? 'Loading...' : 'Pilih Seat'}
-                    </button> */}
+                    </button>
                 </div>
                 <div className="col-md-2">
                     <button id="submit-cart" style={isLoading ? {

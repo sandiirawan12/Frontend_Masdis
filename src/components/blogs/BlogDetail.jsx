@@ -79,7 +79,9 @@ function BlogDetail() {
                                 </div>
                             </div>
                             <div className="featured-banner p-1 bg-white" style={{
-                                boxShadow: '5px 5px 10px -5px rgba(0,0,0,.5)', borderRadius: '15px'
+                                boxShadow: '5px 5px 10px -5px rgba(0,0,0,.5)',
+                                borderRadius: '15px',
+                                height: 'auto'
                             }}>
                                 <img src={blog?.img} className="card-img-top featured_image" style={{ objectFit: 'cover', borderRadius: '15px' }} />
                                 <span className="imgSource"><span className="sumber-foto px-2">Sumber foto: <a target="_blank" href={blog?.image_source_url}>{blog?.image_source}</a></span></span>

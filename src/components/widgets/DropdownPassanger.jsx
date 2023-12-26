@@ -24,7 +24,7 @@ function DropdownPassanger(props) {
                 {/* <label className="font-weight-bold">Penumpang</label> */}
                 <DropdownToggle
                     tag={'div'}
-                    data-toggle="dropdown" className="input-group">
+                    data-toggle="dropdown" className="input-group bg-transparent">
                     <div className="input-group-append">
                         <span className='input-group-text text-primary'>
                             <Icon icon='heroicons:user-group' />

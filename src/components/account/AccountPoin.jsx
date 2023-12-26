@@ -19,7 +19,7 @@ function AccountPoin() {
                         <div className="row">
                             <div className="col-md-3 p-3 bg-primary" style={{ borderRadius: '15px 0px 0px 15px' }}>
                                 <span className="font-weight-bold text-white">Total Point</span><br />
-                                <span style={{ fontSize: '26px' }} className="text-white"><Icon icon="tabler:coin-monero-filled" className="mr-3" /> 0</span>
+                                <span style={{ fontSize: '26px' }} className="text-white"><Icon icon="tabler:coin-monero-filled" className="mr-3" /> {user.point}</span>
                                 <br /><br /><br />
                                 <small className="font-weight-bold text-white" style={{ cursor: 'pointer' }}>Info Lengkap</small>
                             </div>

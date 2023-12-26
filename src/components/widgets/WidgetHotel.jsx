@@ -303,219 +303,463 @@ function WidgetHotel(props) {
 
     const modifiers = { start: date.checkin, end: date.checkout }
 
+    const isHomePage = window.location.pathname === '/';
+
     return (
-        <div style={{ borderRadius: '20px', background: `linear-gradient(90deg, ${colorA} 0%, ${colorB} 30%, ${colorC} 60%, ${colorA} 100%)`, padding: '10px' }}>
-            <ul className="list-group list-group-horizontal">
-                <ListItemStyled className="list-group-item pb-0" style={{ width: '40%', borderTopLeftRadius: '20px', borderBottomLeftRadius: '20px' }}>
-                    <label><span className={classNames("", {
-                        'font-weight-bold': willSearch
-                    })}>Destinasi / Nama Hotel </span></label>
-                    <fieldset style={{ marginTop: '-14px' }} className="form-group mb-0">
-                        <div className="multiselect">
-                            <div id="selectBox1" className="selectBox">
-                                <Typeahead
-                                    id='from'
-                                    placeholder='Pencarian kota, hotel, tempat tujuan'
-                                    selected= {hotelSelected}
-                                    onChange= {(val) => setHotelSelected(val)}
-                                    filterBy= {() => true}
-                                    minLength= {3}
-                                    labelKey= "fullname"
-                                    onSearch= {handleChangeKeyword}
-                                    onInputChange= {handleChangeKeyword}
-                                    options= {listHotel}
-                                    inputProps= {{
-                                        className: classNames('border-0 p-0 bg-transparent', {
-                                            'font-weight-bold': !willSearch
-                                        }),
-                                        style: { boxShadow: 'none', cursor: 'pointer', color: 'black' }
-                                    }}
-
-                                    renderMenuItemChildren={(option) => {
-                                        return loadingSearch ?
-                                        <li className='d-flex justify-content-between align-items-center py-2 px-1'>
-                                            <ReactPlaceholder type='text' rows={1} />
-                                        </li>
-                                        :
-                                        <li className='d-flex justify-content-between align-items-center px-1'>
-                                            <div className='d-flex align-items-center'>
-                                                {/* <Icon icon={icon[option.level]} className='text-primary' /> */}
-                                                <Icon icon={
-                                                    option.level === 'REGION' ? 'streamline:travel-map-navigation-map-maps-gps' :
-                                                        option.level === 'CITY' ? 'solar:city-broken' :
-                                                            option.level === 'AREA' ? 'streamline:travel-map-location-pin-navigation-map-maps-pin-gps-location' :
-                                                                option.level === 'HOTEL' ? 'solar:bed-line-duotone' :
-                                                                    option.level === 'APARTMENT' ? 'fluent-mdl2:city-next' :
-                                                                        option.level === 'RESORT' ? 'fluent-mdl2:ski-resorts' :
-                                                                            option.level === 'CAMPING' ? 'material-symbols:camping-outline-rounded' :
-                                                                                option.level === 'HOSTEL' ? 'icon-park-outline:hotel' :
-                                                                                    option.level === 'VILLA' ? 'material-symbols:villa-outline-rounded' :
-                                                                                        option.level === 'HOMESTAY' ? 'icon-park-outline:homestay' :
-                                                                                            option.level === 'GUESTHOUSE' ? 'uil:house-user' :
-                                                                                                option.level === 'BED_AND_BREAKFAST' ? 'fluent-mdl2:breakfast' :
-                                                                                                    option.level === 'OTHER' ? 'fluent:home-more-20-regular' : 'fluent:home-more-20-regular'
-                                                    }
-                                                    style={{
-                                                        fontSize: '30px',
-                                                        color:
-                                                            option.level === 'REGION' ? '#f44336' :
-                                                                option.level === 'CITY' ? '#ce7e00' :
-                                                                    option.level === 'AREA' ? '#c90076' :
-                                                                        option.level === 'HOTEL' ? '#008cf5' :
-                                                                            option.level === 'APARTMENT' ? '#514fb7' :
-                                                                                option.level === 'RESORT' ? '#24b9ac' :
-                                                                                    option.level === 'CAMPING' ? '#38761d' :
-                                                                                        option.level === 'HOSTEL' ? '#bcc441' :
-                                                                                            option.level === 'VILLA' ? '#c47041' :
-                                                                                                option.level === 'HOMESTAY' ? '#c90076' :
-                                                                                                    option.level === 'GUESTHOUSE' ? '#d943cd' :
-                                                                                                        option.level === 'BED_AND_BREAKFAST' ? '#ea7d41' :
-                                                                                                            option.level === 'OTHER' ? '#7f6000' : '#7f6000'
-                                                    }}
-                                                />
-                                                <div className='ml-3' style={{ width: '95%', textTransform: 'capitalize' }}>
-                                                        <strong style={{ whiteSpace: 'break-spaces', width: '100%', display: 'inline-block' }}>
-                                                        <Highlighter highlightClassName='text-primary bg-transparent p-0 m-0' search={keyword}>
-                                                            {option.name}
-                                                        </Highlighter>
-                                                    </strong><br />
-                                                        <small style={{ whiteSpace: 'break-spaces' }}>
-                                                        <Highlighter highlightClassName='text-primary bg-transparent m-0 p-0' search={keyword}>
-                                                            {option.address}
-                                                        </Highlighter>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <span>
-                                                <span
-                                                    className="badge text-uppercase text-white"
-                                                    style={{
-                                                        background:
-                                                            option.level === 'REGION' ? '#f44336' :
-                                                                option.level === 'CITY' ? '#ce7e00' :
-                                                                    option.level === 'AREA' ? '#c90076' :
-                                                                        option.level === 'HOTEL' ? '#008cf5' :
-                                                                            option.level === 'APARTMENT' ? '#514fb7' :
-                                                                                option.level === 'RESORT' ? '#24b9ac' :
-                                                                                    option.level === 'CAMPING' ? '#38761d' :
-                                                                                        option.level === 'HOSTEL' ? '#bcc441' :
-                                                                                            option.level === 'VILLA' ? '#c47041' :
-                                                                                                option.level === 'HOMESTAY' ? '#c90076' :
-                                                                                                    option.level === 'GUESTHOUSE' ? '#d943cd' :
-                                                                                                        option.level === 'BED_AND_BREAKFAST' ? '#ea7d41' :
-                                                                                                            option.level === 'OTHER' ? '#7f6000' : '#7f6000'
-                                                    }}
-                                                    >
-                                                        {option.level}
-                                                        {/* {option.level.split('_').join(' ')} */}
-                                                    </span>
+        <>
+            {isHomePage ? (
+                <div className='bg-transparent border-0'>
+                    <div className='mt-4'>
+                        <ul className="list-group list-group-horizontal text-white" style={{ listStyle: 'none' }}>
+                            <li className="bg-transparent pb-0" style={{ width: '36%' }}>
+                                <div className="form-row">
+                                    <div className="col-md-12">
+                                        <label className='ml-3'>
+                                            <span className="font-weight-bold" style={{ marginBottom: '-20px' }}>Destinasi / Nama Hotel</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </li>
+                            <li className="bg-transparent pb-0" style={{ width: '36%' }}>
+                                <div className="form-row">
+                                    <div className="col-md-4">
+                                        <label>
+                                            <span className="font-weight-bold ml-2" style={{ marginBottom: '-20px' }}>Check In
                                             </span>
-                                        </li>
-                                    }} />
-                            </div>
-                        </div>
-                    </fieldset>
-                </ListItemStyled>
-                <ListItemStyled className="list-group-item pb-0">
-                    <div className="form-row">
-                        <div className="col-md-5 InputFromTo range">
-                            <label style={{ marginBottom: '-20px' }}> <span className={classNames("", { 'font-weight-bold': willSearch })}>Check In</span> </label>
-                            <DayPickerInput style={{ marginTop: '-14px' }} value={date.checkin} formatDate={formatDate} format={'ddd, DD MMM YYYY'} parseDate={parseDate}
-                                dayPickerProps={{
-                                    disabledDays: { before: new Date() },
-                                    selectedDays: [date.checkin, { from: date.checkin, to: date.checkout }],
-                                    modifiers,
-                                    numberOfMonths: 2,
-                                    locale: 'id',
-                                    localeUtils: MomentLocaleUtils,
-                                    onDayClick: () => refCheckout.current?.getInput().focus(),
-                                }} onDayChange={handleChangeCheckin} inputProps={{
-                                    className: classNames('form-control bg-transparent border-0 p-0 m-0', {
-                                        'font-weight-bold': !willSearch
-                                    }),
-                                    readOnly: true,
-                                    style: { cursor: 'pointer', boxShadow: 'none', color: 'black' }
-                                }} />
-                        </div>
-                        <div className="col-md-2">
-                            <label style={{ marginBottom: '-20px' }}><span className={classNames("", {
+                                        </label>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <label>
+                                            <span className="font-weight-bold ml-2" style={{ marginBottom: '-20px' }}>Malam
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div className="col-md-5">
+                                        <label>
+                                            <span className="font-weight-bold ml-2" style={{ marginBottom: '-20px' }}>Check Out
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </li>
+                            <li className="bg-transparent pb-0 w-40">
+                                <div className="form-group mb-0">
+                                    <label htmlFor="exampleInputEmail1" style={{ marginBottom: '-20px' }} aria-label="true">
+                                        <span className={classNames("ml-2", {
+                                            'font-weight-bold': willSearch
+                                        })}>Tamu &amp; Kamar</span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style={{ borderRadius: '20px', padding: '10px', marginTop: '-10px' }}>
+                        <ul className="list-group list-group-horizontal">
+                            <ListItemStyledHome className="list-group-item pb-0" style={{ width: '40%', borderTopLeftRadius: '20px', borderBottomLeftRadius: '20px' }}>
+                                <fieldset style={{ marginTop: '-8px' }} className="form-group mb-0">
+                                    <div className="multiselect">
+                                        <div id="selectBox1" className="selectBox">
+                                            <Typeahead
+                                                id='from'
+                                                placeholder='Pencarian kota, hotel, tempat tujuan'
+                                                selected={hotelSelected}
+                                                onChange={(val) => setHotelSelected(val)}
+                                                filterBy={() => true}
+                                                minLength={3}
+                                                labelKey="fullname"
+                                                onSearch={handleChangeKeyword}
+                                                onInputChange={handleChangeKeyword}
+                                                options={listHotel}
+                                                inputProps={{
+                                                    className: classNames('border-0 p-0 bg-transparent', {
+                                                        'font-weight-bold': !willSearch
+                                                    }),
+                                                    style: { cursor: 'pointer', color: 'black' }
+                                                }}
+                                                renderMenuItemChildren={(option) => {
+                                                    return loadingSearch ?
+                                                        <li className='d-flex justify-content-between align-items-center py-2 px-1'>
+                                                            <ReactPlaceholder type='text' rows={1} />
+                                                        </li>
+                                                        :
+                                                        <li className='d-flex justify-content-between align-items-center px-1'>
+                                                            <div className='d-flex align-items-center'>
+                                                                {/* <Icon icon={icon[option.level]} className='text-primary' /> */}
+                                                                <Icon icon={
+                                                                    option.level === 'REGION' ? 'streamline:travel-map-navigation-map-maps-gps' :
+                                                                        option.level === 'CITY' ? 'solar:city-broken' :
+                                                                            option.level === 'AREA' ? 'streamline:travel-map-location-pin-navigation-map-maps-pin-gps-location' :
+                                                                                option.level === 'HOTEL' ? 'solar:bed-line-duotone' :
+                                                                                    option.level === 'APARTMENT' ? 'fluent-mdl2:city-next' :
+                                                                                        option.level === 'RESORT' ? 'fluent-mdl2:ski-resorts' :
+                                                                                            option.level === 'CAMPING' ? 'material-symbols:camping-outline-rounded' :
+                                                                                                option.level === 'HOSTEL' ? 'icon-park-outline:hotel' :
+                                                                                                    option.level === 'VILLA' ? 'material-symbols:villa-outline-rounded' :
+                                                                                                        option.level === 'HOMESTAY' ? 'icon-park-outline:homestay' :
+                                                                                                            option.level === 'GUESTHOUSE' ? 'uil:house-user' :
+                                                                                                                option.level === 'BED_AND_BREAKFAST' ? 'fluent-mdl2:breakfast' :
+                                                                                                                    option.level === 'OTHER' ? 'fluent:home-more-20-regular' : 'fluent:home-more-20-regular'
+                                                                }
+                                                                    style={{
+                                                                        fontSize: '30px',
+                                                                        color:
+                                                                            option.level === 'REGION' ? '#f44336' :
+                                                                                option.level === 'CITY' ? '#ce7e00' :
+                                                                                    option.level === 'AREA' ? '#c90076' :
+                                                                                        option.level === 'HOTEL' ? '#008cf5' :
+                                                                                            option.level === 'APARTMENT' ? '#514fb7' :
+                                                                                                option.level === 'RESORT' ? '#24b9ac' :
+                                                                                                    option.level === 'CAMPING' ? '#38761d' :
+                                                                                                        option.level === 'HOSTEL' ? '#bcc441' :
+                                                                                                            option.level === 'VILLA' ? '#c47041' :
+                                                                                                                option.level === 'HOMESTAY' ? '#c90076' :
+                                                                                                                    option.level === 'GUESTHOUSE' ? '#d943cd' :
+                                                                                                                        option.level === 'BED_AND_BREAKFAST' ? '#ea7d41' :
+                                                                                                                            option.level === 'OTHER' ? '#7f6000' : '#7f6000'
+                                                                    }}
+                                                                />
+                                                                <div className='ml-3' style={{ width: '95%', textTransform: 'capitalize' }}>
+                                                                    <strong style={{ whiteSpace: 'break-spaces', width: '100%', display: 'inline-block' }}>
+                                                                        <Highlighter highlightClassName='text-primary bg-transparent p-0 m-0' search={keyword}>
+                                                                            {option.name}
+                                                                        </Highlighter>
+                                                                    </strong><br />
+                                                                    <small style={{ whiteSpace: 'break-spaces' }}>
+                                                                        <Highlighter highlightClassName='text-primary bg-transparent m-0 p-0' search={keyword}>
+                                                                            {option.address}
+                                                                        </Highlighter>
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                            <span>
+                                                                <span
+                                                                    className="badge text-uppercase text-white"
+                                                                    style={{
+                                                                        background:
+                                                                            option.level === 'REGION' ? '#f44336' :
+                                                                                option.level === 'CITY' ? '#ce7e00' :
+                                                                                    option.level === 'AREA' ? '#c90076' :
+                                                                                        option.level === 'HOTEL' ? '#008cf5' :
+                                                                                            option.level === 'APARTMENT' ? '#514fb7' :
+                                                                                                option.level === 'RESORT' ? '#24b9ac' :
+                                                                                                    option.level === 'CAMPING' ? '#38761d' :
+                                                                                                        option.level === 'HOSTEL' ? '#bcc441' :
+                                                                                                            option.level === 'VILLA' ? '#c47041' :
+                                                                                                                option.level === 'HOMESTAY' ? '#c90076' :
+                                                                                                                    option.level === 'GUESTHOUSE' ? '#d943cd' :
+                                                                                                                        option.level === 'BED_AND_BREAKFAST' ? '#ea7d41' :
+                                                                                                                            option.level === 'OTHER' ? '#7f6000' : '#7f6000'
+                                                                    }}
+                                                                >
+                                                                    {option.level}
+                                                                    {/* {option.level.split('_').join(' ')} */}
+                                                                </span>
+                                                            </span>
+                                                        </li>
+                                                }} />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </ListItemStyledHome>
+                            <ListItemStyledHome className="list-group-item pb-0">
+                                <div className="form-row">
+                                    <div className="col-md-5 InputFromTo range">
+                                        <DayPickerInput style={{ marginTop: '-14px' }} value={date.checkin} formatDate={formatDate} format={'ddd, DD MMM YYYY'} parseDate={parseDate}
+                                            dayPickerProps={{
+                                                disabledDays: { before: new Date() },
+                                                selectedDays: [date.checkin, { from: date.checkin, to: date.checkout }],
+                                                modifiers,
+                                                numberOfMonths: 2,
+                                                locale: 'id',
+                                                localeUtils: MomentLocaleUtils,
+                                                onDayClick: () => refCheckout.current?.getInput().focus(),
+                                            }} onDayChange={handleChangeCheckin} inputProps={{
+                                                className: classNames('form-control bg-transparent border-0 p-0 m-0', {
+                                                    'font-weight-bold': !willSearch
+                                                }),
+                                                readOnly: true,
+                                                style: { cursor: 'pointer', color: 'black' }
+                                            }} />
+                                    </div>
+                                    <div className="col-md-2">
+                                        <div className="text-center" id="night">
+                                            <span className="mr-3" style={{ fontWeight: '14px' }}>
+                                                {night}
+                                            </span>
+                                            <Icon icon='mdi:weather-night' style={{ fontSize: '20px', rotate: '15deg', marginTop: '-3.5px', color: '#2986cc' }} />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-5 pl-3 InputFromTo range InputFromTo-to hotel">
+                                        <DayPickerInput
+                                            ref={refCheckout}
+                                            style={{ marginTop: '-14px' }}
+                                            format={'ddd, DD MMM YYYY'}
+                                            value={date.checkout}
+                                            formatDate={formatDate}
+                                            parseDate={parseDate}
+                                            dayPickerProps={{
+                                                selectedDays: [{ from: date.checkin, to: date.checkout }],
+                                                disabledDays: [{ before: new Date() }],
+                                                modifiers,
+                                                localeUtils: MomentLocaleUtils,
+                                                month: date.checkin,
+                                                // fromMonth: date.checkin,
+                                                className: 'picker-hotel-checkout',
+                                                locale: 'id',
+                                                numberOfMonths: 2,
+                                            }}
+                                            onDayChange={handleChangeCheckout}
+                                            inputProps={{
+
+                                                className: classNames('form-control bg-transparent border-0 p-0 m-0', {
+                                                    'font-weight-bold': !willSearch
+                                                }),
+                                                readOnly: true,
+                                                style: { cursor: 'pointer', color: 'black' }
+
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </ListItemStyledHome>
+                            <ListItemStyledHome className="list-group-item pb-0 w-40">
+                                <div className="form-group mb-0">
+                                    <DropdownVisitor willSearch={willSearch} visitor={visitor} childAge={childAge} room={room} handleAddVisitor={handleAddVisitor} handleChangeAge={handleChangeAge} handleChangeRoom={handleChangeRoom} handleReduceVisitor={handleReduceVisitor} />
+                                </div>
+                            </ListItemStyledHome>
+                            <ListItemStyledHome className="list-group-item p-0 border-0 bg-transparent w-20">
+                                <button
+                                    onClick={handleSearch}
+                                    style={{
+                                        width: '100px', borderRadius: '0 !important', borderTopRightRadius: '20px', borderBottomRightRadius: '20px'
+                                    }}
+                                    className="btn font-weight-bold btn-warning d-flex justify-content-center align-items-center h-100 btn-block">
+                                    <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
+                                        <Icon icon="icon-park-twotone:search"></Icon>
+                                    </div>
+                                </button>
+                            </ListItemStyledHome>
+                        </ul>
+                    </div>
+                </div>
+            ) : (
+                <div style={{ borderRadius: '20px', background: `linear-gradient(90deg, ${colorA} 0%, ${colorB} 30%, ${colorC} 60%, ${colorA} 100%)`, padding: '10px' }}>
+                    <ul className="list-group list-group-horizontal">
+                        <ListItemStyled className="list-group-item pb-0" style={{ width: '40%', borderTopLeftRadius: '20px', borderBottomLeftRadius: '20px' }}>
+                            <label><span className={classNames("", {
                                 'font-weight-bold': willSearch
-                            })}>Malam</span></label>
-                            <div className="text-center" id="night">
-                                <span className="mr-3" style={{ fontWeight: '14px' }}>
-                                    {night}
-                                </span>
-                                <Icon icon='mdi:weather-night' style={{ fontSize: '20px', rotate: '15deg', marginTop: '-3.5px', color: '#2986cc' }} />
+                            })}>Destinasi / Nama Hotel </span></label>
+                            <fieldset style={{ marginTop: '-14px' }} className="form-group mb-0">
+                                <div className="multiselect">
+                                    <div id="selectBox1" className="selectBox">
+                                        <Typeahead
+                                            id='from'
+                                            placeholder='Pencarian kota, hotel, tempat tujuan'
+                                            selected={hotelSelected}
+                                            onChange={(val) => setHotelSelected(val)}
+                                            filterBy={() => true}
+                                            minLength={3}
+                                            labelKey="fullname"
+                                            onSearch={handleChangeKeyword}
+                                            onInputChange={handleChangeKeyword}
+                                            options={listHotel}
+                                            inputProps={{
+                                                className: classNames('border-0 p-0 bg-transparent', {
+                                                    'font-weight-bold': !willSearch
+                                                }),
+                                                style: { boxShadow: 'none', cursor: 'pointer', color: 'black' }
+                                            }}
+
+                                            renderMenuItemChildren={(option) => {
+                                                return loadingSearch ?
+                                                    <li className='d-flex justify-content-between align-items-center py-2 px-1'>
+                                                        <ReactPlaceholder type='text' rows={1} />
+                                                    </li>
+                                                    :
+                                                    <li className='d-flex justify-content-between align-items-center px-1'>
+                                                        <div className='d-flex align-items-center'>
+                                                            {/* <Icon icon={icon[option.level]} className='text-primary' /> */}
+                                                            <Icon icon={
+                                                                option.level === 'REGION' ? 'streamline:travel-map-navigation-map-maps-gps' :
+                                                                    option.level === 'CITY' ? 'solar:city-broken' :
+                                                                        option.level === 'AREA' ? 'streamline:travel-map-location-pin-navigation-map-maps-pin-gps-location' :
+                                                                            option.level === 'HOTEL' ? 'solar:bed-line-duotone' :
+                                                                                option.level === 'APARTMENT' ? 'fluent-mdl2:city-next' :
+                                                                                    option.level === 'RESORT' ? 'fluent-mdl2:ski-resorts' :
+                                                                                        option.level === 'CAMPING' ? 'material-symbols:camping-outline-rounded' :
+                                                                                            option.level === 'HOSTEL' ? 'icon-park-outline:hotel' :
+                                                                                                option.level === 'VILLA' ? 'material-symbols:villa-outline-rounded' :
+                                                                                                    option.level === 'HOMESTAY' ? 'icon-park-outline:homestay' :
+                                                                                                        option.level === 'GUESTHOUSE' ? 'uil:house-user' :
+                                                                                                            option.level === 'BED_AND_BREAKFAST' ? 'fluent-mdl2:breakfast' :
+                                                                                                                option.level === 'OTHER' ? 'fluent:home-more-20-regular' : 'fluent:home-more-20-regular'
+                                                            }
+                                                                style={{
+                                                                    fontSize: '30px',
+                                                                    color:
+                                                                        option.level === 'REGION' ? '#f44336' :
+                                                                            option.level === 'CITY' ? '#ce7e00' :
+                                                                                option.level === 'AREA' ? '#c90076' :
+                                                                                    option.level === 'HOTEL' ? '#008cf5' :
+                                                                                        option.level === 'APARTMENT' ? '#514fb7' :
+                                                                                            option.level === 'RESORT' ? '#24b9ac' :
+                                                                                                option.level === 'CAMPING' ? '#38761d' :
+                                                                                                    option.level === 'HOSTEL' ? '#bcc441' :
+                                                                                                        option.level === 'VILLA' ? '#c47041' :
+                                                                                                            option.level === 'HOMESTAY' ? '#c90076' :
+                                                                                                                option.level === 'GUESTHOUSE' ? '#d943cd' :
+                                                                                                                    option.level === 'BED_AND_BREAKFAST' ? '#ea7d41' :
+                                                                                                                        option.level === 'OTHER' ? '#7f6000' : '#7f6000'
+                                                                }}
+                                                            />
+                                                            <div className='ml-3' style={{ width: '95%', textTransform: 'capitalize' }}>
+                                                                <strong style={{ whiteSpace: 'break-spaces', width: '100%', display: 'inline-block' }}>
+                                                                    <Highlighter highlightClassName='text-primary bg-transparent p-0 m-0' search={keyword}>
+                                                                        {option.name}
+                                                                    </Highlighter>
+                                                                </strong><br />
+                                                                <small style={{ whiteSpace: 'break-spaces' }}>
+                                                                    <Highlighter highlightClassName='text-primary bg-transparent m-0 p-0' search={keyword}>
+                                                                        {option.address}
+                                                                    </Highlighter>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <span>
+                                                            <span
+                                                                className="badge text-uppercase text-white"
+                                                                style={{
+                                                                    background:
+                                                                        option.level === 'REGION' ? '#f44336' :
+                                                                            option.level === 'CITY' ? '#ce7e00' :
+                                                                                option.level === 'AREA' ? '#c90076' :
+                                                                                    option.level === 'HOTEL' ? '#008cf5' :
+                                                                                        option.level === 'APARTMENT' ? '#514fb7' :
+                                                                                            option.level === 'RESORT' ? '#24b9ac' :
+                                                                                                option.level === 'CAMPING' ? '#38761d' :
+                                                                                                    option.level === 'HOSTEL' ? '#bcc441' :
+                                                                                                        option.level === 'VILLA' ? '#c47041' :
+                                                                                                            option.level === 'HOMESTAY' ? '#c90076' :
+                                                                                                                option.level === 'GUESTHOUSE' ? '#d943cd' :
+                                                                                                                    option.level === 'BED_AND_BREAKFAST' ? '#ea7d41' :
+                                                                                                                        option.level === 'OTHER' ? '#7f6000' : '#7f6000'
+                                                                }}
+                                                            >
+                                                                {option.level}
+                                                                {/* {option.level.split('_').join(' ')} */}
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                            }} />
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </ListItemStyled>
+                        <ListItemStyled className="list-group-item pb-0">
+                            <div className="form-row">
+                                <div className="col-md-5 InputFromTo range">
+                                    <label style={{ marginBottom: '-20px' }}> <span className={classNames("", { 'font-weight-bold': willSearch })}>Check In</span> </label>
+                                    <DayPickerInput style={{ marginTop: '-14px' }} value={date.checkin} formatDate={formatDate} format={'ddd, DD MMM YYYY'} parseDate={parseDate}
+                                        dayPickerProps={{
+                                            disabledDays: { before: new Date() },
+                                            selectedDays: [date.checkin, { from: date.checkin, to: date.checkout }],
+                                            modifiers,
+                                            numberOfMonths: 2,
+                                            locale: 'id',
+                                            localeUtils: MomentLocaleUtils,
+                                            onDayClick: () => refCheckout.current?.getInput().focus(),
+                                        }} onDayChange={handleChangeCheckin} inputProps={{
+                                            className: classNames('form-control bg-transparent border-0 p-0 m-0', {
+                                                'font-weight-bold': !willSearch
+                                            }),
+                                            readOnly: true,
+                                            style: { cursor: 'pointer', boxShadow: 'none', color: 'black' }
+                                        }} />
+                                </div>
+                                <div className="col-md-2">
+                                    <label style={{ marginBottom: '-20px' }}><span className={classNames("", {
+                                        'font-weight-bold': willSearch
+                                    })}>Malam</span></label>
+                                    <div className="text-center" id="night">
+                                        <span className="mr-3" style={{ fontWeight: '14px' }}>
+                                            {night}
+                                        </span>
+                                        <Icon icon='mdi:weather-night' style={{ fontSize: '20px', rotate: '15deg', marginTop: '-3.5px', color: '#2986cc' }} />
+                                    </div>
+                                </div>
+                                <div className="col-md-5 pl-3 InputFromTo range InputFromTo-to hotel">
+                                    <label style={{ marginBottom: '-20px' }}> <span className={classNames('', {
+                                        "font-weight-bold": willSearch
+                                    })}>Check Out</span> </label>
+                                    <DayPickerInput
+                                        ref={refCheckout}
+                                        style={{ marginTop: '-14px' }}
+                                        format={'ddd, DD MMM YYYY'}
+                                        value={date.checkout}
+                                        formatDate={formatDate}
+                                        parseDate={parseDate}
+                                        dayPickerProps={{
+                                            selectedDays: [{ from: date.checkin, to: date.checkout }],
+                                            disabledDays: [{ before: new Date() }],
+                                            modifiers,
+                                            localeUtils: MomentLocaleUtils,
+                                            month: date.checkin,
+                                            // fromMonth: date.checkin,
+                                            className: 'picker-hotel-checkout',
+                                            locale: 'id',
+                                            numberOfMonths: 2,
+                                        }}
+                                        onDayChange={handleChangeCheckout}
+                                        inputProps={{
+
+                                            className: classNames('form-control bg-transparent border-0 p-0 m-0', {
+                                                'font-weight-bold': !willSearch
+                                            }),
+                                            readOnly: true,
+                                            style: { cursor: 'pointer', boxShadow: 'none', color: 'black' }
+
+                                        }}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="col-md-5 pl-3 InputFromTo range InputFromTo-to hotel">
-                            <label style={{ marginBottom: '-20px' }}> <span className={classNames('', {
-                                "font-weight-bold": willSearch
-                            })}>Check Out</span> </label>
-                            <DayPickerInput
-                                ref={refCheckout}
-                                style={{ marginTop: '-14px' }}
-                                format={'ddd, DD MMM YYYY'}
-                                value={date.checkout}
-                                formatDate={formatDate}
-                                parseDate={parseDate}
-                                dayPickerProps={{
-                                    selectedDays: [{ from: date.checkin, to: date.checkout }],
-                                    disabledDays: [{ before: new Date() }],
-                                    modifiers,
-                                    localeUtils: MomentLocaleUtils,
-                                    month: date.checkin,
-                                    // fromMonth: date.checkin,
-                                    className: 'picker-hotel-checkout',
-                                    locale: 'id',
-                                    numberOfMonths: 2,
+                        </ListItemStyled>
+                        <ListItemStyled className="list-group-item pb-0 w-40">
+                            <div className="form-group mb-0">
+                                <label htmlFor="exampleInputEmail1" style={{ marginBottom: '-20px' }} aria-label="true">
+                                    <span className={classNames("", {
+                                        'font-weight-bold': willSearch
+                                    })}>Tamu &amp; Kamar</span>
+                                </label>
+                                <DropdownVisitor willSearch={willSearch} visitor={visitor} childAge={childAge} room={room} handleAddVisitor={handleAddVisitor} handleChangeAge={handleChangeAge} handleChangeRoom={handleChangeRoom} handleReduceVisitor={handleReduceVisitor} />
+
+                            </div>
+                        </ListItemStyled>
+                        <ListItemStyled className="list-group-item p-0 border-0 bg-transparent w-20">
+                            <button
+                                onClick={handleSearch}
+                                style={{
+                                    width: '100px', borderRadius: '0 !important', borderTopRightRadius: '20px', borderBottomRightRadius: '20px'
                                 }}
-                                onDayChange={handleChangeCheckout}
-                                inputProps={{
-
-                                    className: classNames('form-control bg-transparent border-0 p-0 m-0', {
-                                        'font-weight-bold': !willSearch
-                                    }),
-                                    readOnly: true,
-                                    style: { cursor: 'pointer', boxShadow: 'none', color: 'black' }
-
-                                }}
-                            />
-                        </div>
-                    </div>
-                </ListItemStyled>
-                <ListItemStyled className="list-group-item pb-0 w-40">
-                    <div className="form-group mb-0">
-                        <label htmlFor="exampleInputEmail1" style={{ marginBottom: '-20px' }} aria-label="true">
-                            <span className={classNames("", {
-                            'font-weight-bold': willSearch
-                            })}>Tamu &amp; Kamar</span>
-                        </label>
-                        <DropdownVisitor willSearch={willSearch} visitor={visitor} childAge={childAge} room={room} handleAddVisitor={handleAddVisitor} handleChangeAge={handleChangeAge} handleChangeRoom={handleChangeRoom} handleReduceVisitor={handleReduceVisitor} />
-
-                    </div>
-                </ListItemStyled>
-                <ListItemStyled className="list-group-item p-0 border-0 bg-transparent w-20">
-                    <button
-                        onClick={handleSearch}
-                        style={{
-                            width: '100px', borderRadius: '0 !important', borderTopRightRadius: '20px', borderBottomRightRadius: '20px'
-                        }}
-                        className="btn font-weight-bold btn-warning d-flex justify-content-center align-items-center h-100 btn-block">
-                        <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
-                            <Icon icon="icon-park-twotone:search"></Icon>
-                        </div>
-                        Search
-                    </button>
-                </ListItemStyled>
-            </ul>
-        </div>
+                                className="btn font-weight-bold btn-warning d-flex justify-content-center align-items-center h-100 btn-block">
+                                <div style={{ width: '25px', height: '25px', position: 'relative', }} className='d-inline-block'>
+                                    <Icon icon="icon-park-twotone:search"></Icon>
+                                </div>
+                                Search
+                            </button>
+                        </ListItemStyled>
+                    </ul>
+                </div>
+            )}
+        </>
     )
 }
 
-const ListItemStyled = styled.li`
-  height:80px !important;
+const ListItemStyledHome = styled.li`
+  height: 50px !important;
+`
 
+const ListItemStyled = styled.li`
+  height: 80px !important;
 `
 
 export default WidgetHotel

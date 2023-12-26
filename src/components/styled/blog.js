@@ -38,16 +38,13 @@ export const CardStyle = styled.div`
 
 
 export const WrapperImage = styled.div`
-width:100%;
-height:160px;
-position:relative;
-padding:0;
+width: 100%;
+height: 150px;
+position: relative;
+padding: 0;
 img{
-    padding:0;
-    height:100%;
-    width:100%;
-    object-fit:cover;
-    border-radius: 30px 30px 0 0 !important;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0 !important;
 }
 
 @media screen and (max-width:1224px){

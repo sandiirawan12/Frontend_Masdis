@@ -11,14 +11,14 @@ const CardStyle = styled.div`
     &:hover {
         background-image: url(${props => props.img}) no-repeat center center;
     }
-    position: relative;
+    position: absolute;
     z-index:1;
     width:100%;
     background: url(${props => props.img}) no-repeat center center;
     background-size: cover;
-    height: 380px;
+    margin-top: -200px;
     transition: all .2s;
-    border-radius: 0px 0px 30px 30px;
+    border-radius: 0px 0px 50px 50px;
     @media screen and (max-width:1224px){
         min-height:250px;
     }
@@ -43,13 +43,11 @@ function Banner(props) {
     }
 
     return <>
-        <Swiper slidesPerView={isTabletOrMobile ? 1 : 1} spaceBetween={10}>
+        <CardStyle>
             {data?.map(item => (
-                <SwiperSlide key={item.image}>
-                    <CardStyle className="card" img={item.image}></CardStyle>
-                </SwiperSlide>
+                <img className="card" src={item.image} style={{ width: '100%', height: '650px', borderRadius: '0px 0px 50px 50px'}}></img>
             ))}
-        </Swiper>
+        </CardStyle>
     </>
 }
 

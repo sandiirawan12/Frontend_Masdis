@@ -23,6 +23,8 @@ function parseQueryOptions(location) {
     const optionValues = {
         page: 1,
         limit: 5,
+        search: "",
+        type: "",
     };
 
     if (typeof query.page === "string") {

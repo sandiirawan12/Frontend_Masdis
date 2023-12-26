@@ -161,8 +161,8 @@ function AccountPurchase() {
             option: "status",
             value: status,
         });
-
     }
+    
     return (
         <>
             {isTabletOrMobile &&

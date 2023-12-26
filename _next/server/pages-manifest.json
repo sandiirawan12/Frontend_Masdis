@@ -1,5 +1,8 @@
 {
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
-  "/_error": "pages/_error.js"
+  "/_error": "pages/_error.js",
+  "/": "pages/index.js",
+  "/user/purchase/detail/[id]": "pages/user/purchase/detail/[id].js",
+  "/404": "pages/404.js"
 }

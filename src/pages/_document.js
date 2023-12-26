@@ -35,7 +35,7 @@ class MyDocument extends Document {
                     <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='true' />
                     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet" />
                     <link rel="preload" href="/assets/fonts/blogger-sans.ttf" as='blogger-sans' crossOrigin="" />
-                    <link rel="shortcut icon" href="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/favicon/favicon.png"></link>
+                    <link rel="shortcut icon" href="https://cdn.masterdiskon.com/masterdiskon/assets/front/img/favicon/favicon1.png"></link>
                     <script type="text/javascript"
                         src={process.env.NEXT_PUBLIC_MIDTRANS_URL}
                         data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_KEY}></script>

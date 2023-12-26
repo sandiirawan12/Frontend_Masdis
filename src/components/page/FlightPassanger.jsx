@@ -717,7 +717,15 @@ function FlightPassanger() {
                                 </div>
                                 <div className="d-flex justify-content-between align-items-center mb-2">
                                     <span>Tambahan</span>
-                                    <span><strong className="text_fee">Rp{price?.addon.toLocaleString()}</strong></span>
+                                    {price?.addon > 0 ?
+                                        <>
+                                            <span className="text_fee text-success"><strong>Include</strong></span>
+                                        </>
+                                        :
+                                        <>
+                                            <span className="text_fee"><strong>Rp{price?.addon.toLocaleString()}</strong></span>
+                                        </>
+                                    }
                                 </div>
                                 <hr />
                                 <div className="d-flex justify-content-between align-items-center">
